@@ -1,0 +1,68 @@
+name: scaffassistant
+description: "A new Flutter project."
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+dependencies:
+  flutter:
+    sdk: flutter
+  ## === Custom Splash Screen === ##
+  flutter_native_splash: ^2.4.6
+
+  ## === Google Fonts and icon === ##
+  google_fonts: ^6.3.2
+  lucide_icons_flutter: ^3.1.4
+
+  ## === State Management === ##
+  get: ^4.7.2
+
+  ## === HTTP Requests === ##
+  http: ^1.6.0
+  dio: ^5.9.0
+  url_launcher: ^6.3.2
+
+  ## === Storage === ##
+  get_storage: ^2.1.1
+  shared_preferences: ^2.5.4
+
+    ## === UI Enhancements === ##
+  persistent_bottom_nav_bar: ^6.2.1
+
+  shimmer_animation: ^2.2.2+1
+  image_picker: ^1.0.7
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/branding/logo_yellow.png"
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/branding/
+    - assets/images/
+    - assets/icons/
+    - assets/icons/menu_icon/
+
+  fonts:
+    - family: sfPro
+      fonts:
+        - asset: assets/fonts/sf_pro/bold.otf
+          weight: 900
+        - asset: assets/fonts/sf_pro/medium.otf
+          weight: 500
+        - asset: assets/fonts/sf_pro/regular.otf
+          weight: 400
+          style: normal

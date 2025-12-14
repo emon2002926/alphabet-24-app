@@ -1,0 +1,17 @@
+class RouteNames {
+  // === Authentication Routes === //
+  static const String login = '/login';
+  static const String signup = '/signup';
+  static const String mailVerification = '/mailVerification';
+  static const String otpVerification = '/otpVerification';
+  static const String passwordReset = '/passwordReset';
+
+  // === Home Routes === //
+  static const String initial = '/';
+  static const String home = '/home';
+  static const String profile = '/profile';
+
+  // === Settings Routes === //
+  static const String tramsAndPrivacy = '/tramsAndPrivacy';
+  static const String onboarding = '/onboarding';
+}
