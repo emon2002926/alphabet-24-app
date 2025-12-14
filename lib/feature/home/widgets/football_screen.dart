@@ -49,16 +49,16 @@ class _FootballScreenState extends State<FootballScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LabelWidget('Live Now', false),
+                    LabelWidget('Live Now', true),
                     SizedBox(height: DynamicSize.small(context)),
-                    _ScoureCard(context, isNew),
+                    _ScoureCard(context, isNew,),
                   ],
                 );
               } else {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LabelWidget('Live Now', false),
+                    LabelWidget('Live Now', true),
                     SizedBox(height: DynamicSize.small(context)),
                     _testScoureCardWithSampleData(context),
                   ],
@@ -118,14 +118,14 @@ class _FootballScreenState extends State<FootballScreen> {
 // For live data (existing)
   SizedBox _ScoureCard(BuildContext context, bool isNew) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.33,
+      height: MediaQuery.of(context).size.height * 0.25,
       child: Obx(() {
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           separatorBuilder: (_, __) => const SizedBox(width: 12),
           itemCount: liveMatchController.liveMatches.length,
           itemBuilder: (context, index) {
-            return ScoureCardWidget(index: index); // Using index
+            return ScoureCardWidget(index: index,shrink: true,); // Using index
           },
         );
       }),
@@ -137,13 +137,13 @@ class _FootballScreenState extends State<FootballScreen> {
     final sampleData = SampleLiveMatchData.getSampleData();
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.33,
+      height: MediaQuery.of(context).size.height * 0.25,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemCount: sampleData.matches.length,
         itemBuilder: (context, index) {
-          return ScoureCardWidget(match: sampleData.matches[index]); // Using match directly
+          return ScoureCardWidget(match: sampleData.matches[index], shrink: true,); // Using match directly
         },
       ),
     );

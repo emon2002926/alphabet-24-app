@@ -7,40 +7,34 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:get/get.dart';
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 class FootballLiveMatchController extends GetxController {
-  // Reactive list of live matches
   RxList<LiveMatch> liveMatches = <LiveMatch>[].obs;
-
-  // Loading indicator
   RxBool isLoading = false.obs;
-
-  // Timer for periodic updates
   Timer? _updateTimer;
-
-  // Update interval (10 seconds)
   final Duration updateInterval = const Duration(seconds: 100000);
 
   @override
   void onInit() {
     super.onInit();
-    fetchLiveMatches(); // Initial fetch
-    startAutoUpdate(); // Start periodic updates
+    fetchLiveMatches();
+    startAutoUpdate();
   }
 
   @override
   void onClose() {
-    stopAutoUpdate(); // Clean up timer when controller is disposed
+    stopAutoUpdate();
     super.onClose();
   }
 
-  // Start automatic updates every 10 seconds
   void startAutoUpdate() {
     _updateTimer = Timer.periodic(updateInterval, (timer) {
       fetchLiveMatches();
     });
   }
 
-  // Stop automatic updates
   void stopAutoUpdate() {
     _updateTimer?.cancel();
     _updateTimer = null;
@@ -48,27 +42,19 @@ class FootballLiveMatchController extends GetxController {
 
   Future<void> fetchLiveMatches() async {
     try {
-      // Only show loading indicator on initial load
-      if (liveMatches.isEmpty) {
-        isLoading.value = true;
-      }
+      if (liveMatches.isEmpty) isLoading.value = true;
 
       GetAPIRequest getAPIRequest = GetAPIRequest(
         url: APIEndpoint.footballLiveMatch,
-        headers: {
-          'Authorization': 'Bearer ${UserInfo.getAccessToken()}'
-        },
+        headers: {'Authorization': 'Bearer ${UserInfo.getAccessToken()}'},
       );
 
       final response = await getAPIRequest.fetchData();
 
       if (response.isNotEmpty) {
-        // Parse JSON into LiveMatch model
         final liveMatchResponse = LiveMatchResponse.fromJson(response);
-        liveMatches.value = liveMatchResponse.matches; // update RxList
+        liveMatches.value = liveMatchResponse.matches;
         print('Live Matches Updated: ${liveMatches.length}');
-      } else {
-        print('Failed to fetch live match data');
       }
     } catch (e) {
       print('Error fetching live matches: $e');
@@ -77,24 +63,95 @@ class FootballLiveMatchController extends GetxController {
     }
   }
 
-  // Manual refresh method (for pull-to-refresh)
   Future<void> refreshMatches() async {
     await fetchLiveMatches();
   }
 
-  // ===== FAVORITE TOGGLE =====
-  void toggleFavorite(int matchId) {
+  // ===== TOGGLE FAVORITE =====
+  Future<void> toggleFavorite(int matchId) async {
     final index = liveMatches.indexWhere((m) => m.id == matchId);
+    if (index == -1) return;
 
-    if (index != -1) {
-      // Toggle favorite status
-      liveMatches[index].isFavoriteMatch = !liveMatches[index].isFavoriteMatch;
+    final previousState = liveMatches[index].isFavoriteMatch;
+    liveMatches[index].isFavoriteMatch = !previousState;
+    liveMatches.refresh();
 
-      // Trigger UI update
+    try {
+      final teamId = liveMatches[index].homeTeam.id;
+
+      final response = await http.post(
+        Uri.parse('${APIEndpoint.addToFavorite}'),
+        headers: {
+          'Authorization': 'Bearer ${UserInfo.getAccessToken()}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'type': 'TEAM', 'team_id': teamId}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          _showSuccessMessage(data['message'], liveMatches[index].isFavoriteMatch);
+        } else {
+          throw Exception(data['message']);
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+      liveMatches[index].isFavoriteMatch = previousState;
       liveMatches.refresh();
-
-      // TODO: Add API call here later
-      print('Match $matchId favorite status: ${liveMatches[index].isFavoriteMatch}');
+      _showErrorMessage();
     }
+  }
+
+  void _showSuccessMessage(String? message, bool isFavorite) {
+    Get.snackbar(
+      '',
+      '',
+      titleText: SizedBox.shrink(),
+      messageText: Row(
+        children: [
+          Icon(
+            isFavorite ? Icons.favorite : Icons.favorite_border,
+            color: Colors.white,
+            size: 20,
+          ),
+          SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              message ?? (isFavorite ? 'Added to favorites' : 'Removed from favorites'),
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: isFavorite ? Colors.red : Colors.grey[700],
+      duration: Duration(seconds: 2),
+      margin: EdgeInsets.all(8),
+      snackPosition: SnackPosition.TOP,
+    );
+  }
+
+  void _showErrorMessage() {
+    Get.snackbar(
+      'Error',
+      'Failed to update favorite',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      duration: Duration(seconds: 2),
+      margin: EdgeInsets.all(8),
+      snackPosition: SnackPosition.TOP,
+    );
+  }
+
+  List<LiveMatch> getFavoriteMatches() {
+    return liveMatches.where((match) => match.isFavoriteMatch).toList();
+  }
+
+  bool isFavorite(int matchId) {
+    final match = liveMatches.firstWhereOrNull((m) => m.id == matchId);
+    return match?.isFavoriteMatch ?? false;
   }
 }
