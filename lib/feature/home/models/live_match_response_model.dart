@@ -512,3 +512,99 @@ class FavoritesCount {
         leagues: json['leagues'] ?? 0,
       );
 }
+
+
+
+class FavouriteFixture {
+  final int id;
+  final int fixtureId;
+  final DateTime fixtureDate;
+  final String homeTeam;
+  final String awayTeam;
+  final String status;
+  final DateTime createdAt;
+
+  FavouriteFixture({
+    required this.id,
+    required this.fixtureId,
+    required this.fixtureDate,
+    required this.homeTeam,
+    required this.awayTeam,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory FavouriteFixture.fromJson(Map<String, dynamic> json) {
+    return FavouriteFixture(
+      id: json['id'] ?? 0,
+      fixtureId: json['fixture_id'] ?? 0,
+      fixtureDate: DateTime.tryParse(json['fixture_date'] ?? '') ?? DateTime.now(),
+      homeTeam: json['home_team'] ?? '',
+      awayTeam: json['away_team'] ?? '',
+      status: json['status'] ?? '',
+      createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
+    );
+  }
+}
+
+class FavouriteLeague {
+  final int id;
+  final int leagueId;
+  final String leagueName;
+  final String leagueLogo;
+  final String leagueCountry;
+  final String leagueType;
+  final DateTime createdAt;
+
+  FavouriteLeague({
+    required this.id,
+    required this.leagueId,
+    required this.leagueName,
+    required this.leagueLogo,
+    required this.leagueCountry,
+    required this.leagueType,
+    required this.createdAt,
+  });
+
+  factory FavouriteLeague.fromJson(Map<String, dynamic> json) {
+    return FavouriteLeague(
+      id: json['id'] ?? 0,
+      leagueId: json['league_id'] ?? 0,
+      leagueName: json['league_name'] ?? '',
+      leagueLogo: json['league_logo'] ?? '',
+      leagueCountry: json['league_country'] ?? '',
+      leagueType: json['league_type'] ?? '',
+      createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
+    );
+  }
+}
+
+class FavouriteResponse {
+  final List<dynamic> teams;
+  final List<FavouriteLeague> leagues;
+  final List<FavouriteFixture> fixtures;
+  final int total;
+
+  FavouriteResponse({
+    required this.teams,
+    required this.leagues,
+    required this.fixtures,
+    required this.total,
+  });
+
+  factory FavouriteResponse.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] ?? {};
+    final favorites = data['favorites'] ?? {};
+
+    return FavouriteResponse(
+      teams: favorites['teams'] ?? [],
+      leagues: (favorites['leagues'] as List? ?? [])
+          .map((e) => FavouriteLeague.fromJson(e))
+          .toList(),
+      fixtures: (favorites['fixtures'] as List? ?? [])
+          .map((e) => FavouriteFixture.fromJson(e))
+          .toList(),
+      total: data['total'] ?? 0,
+    );
+  }
+}

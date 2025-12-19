@@ -39,6 +39,7 @@ class League {
   int category;
   DateTime lastPlayedAt;
   Country country;
+  bool isFavorite; // ADD THIS
 
   League({
     required this.id,
@@ -51,6 +52,7 @@ class League {
     required this.category,
     required this.lastPlayedAt,
     required this.country,
+    this.isFavorite = false, // ADD THIS
   });
 
   factory League.fromJson(Map<String, dynamic> json) {
@@ -65,6 +67,7 @@ class League {
       category: json['category'] ?? 0,
       lastPlayedAt: DateTime.parse(json['last_played_at']),
       country: Country.fromJson(json['country']),
+      isFavorite: json['is_favorite'] ?? false, // ADD THIS
     );
   }
 
@@ -79,9 +82,9 @@ class League {
     'category': category,
     'last_played_at': lastPlayedAt.toIso8601String(),
     'country': country.toJson(),
+    'is_favorite': isFavorite,
   };
 }
-
 class Country {
   int id;
   String name;

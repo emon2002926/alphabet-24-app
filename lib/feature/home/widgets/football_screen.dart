@@ -9,7 +9,6 @@ import 'package:scaffassistant/feature/home/controllers/sports_data/football_dat
 import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/news_list_controller.dart';
 import 'package:scaffassistant/core/universal_widgets/league_list_widget.dart';
 import 'package:scaffassistant/feature/news/views/news_screen.dart';
-import '../../../core/sample_data/sample_data.dart';
 import '../../../core/universal_widgets/news_card_widget.dart';
 import '../../ligue/views/ligue_list_screen.dart';
 
@@ -40,8 +39,6 @@ class _FootballScreenState extends State<FootballScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Live Now
-
-
             Obx(() {
               if (liveMatchController.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
@@ -49,24 +46,15 @@ class _FootballScreenState extends State<FootballScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LabelWidget('Live Now', true),
+                    LabelWidget('Live Now', false),
                     SizedBox(height: DynamicSize.small(context)),
-                    _ScoureCard(context, isNew,),
+                    _ScoureCard(context, isNew),
                   ],
                 );
               } else {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    LabelWidget('Live Now', true),
-                    SizedBox(height: DynamicSize.small(context)),
-                    _testScoureCardWithSampleData(context),
-                  ],
-                );
+                return const SizedBox.shrink();
               }
             }),
-
-
             SizedBox(height: DynamicSize.medium(context)),
 
             // Leagues
@@ -115,40 +103,24 @@ class _FootballScreenState extends State<FootballScreen> {
     );
   }
 
-// For live data (existing)
   SizedBox _ScoureCard(BuildContext context, bool isNew) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.25,
+      height: MediaQuery.of(context).size.height * 0.28, // Reduced from 0.33
+
       child: Obx(() {
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           separatorBuilder: (_, __) => const SizedBox(width: 12),
           itemCount: liveMatchController.liveMatches.length,
           itemBuilder: (context, index) {
-            return ScoureCardWidget(index: index,shrink: true,); // Using index
+            return ScoureCardWidget(
+              index: index,
+            );
           },
         );
       }),
     );
   }
-
-// For sample data (when no live matches)
-  SizedBox _testScoureCardWithSampleData(BuildContext context) {
-    final sampleData = SampleLiveMatchData.getSampleData();
-
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.25,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemCount: sampleData.matches.length,
-        itemBuilder: (context, index) {
-          return ScoureCardWidget(match: sampleData.matches[index], shrink: true,); // Using match directly
-        },
-      ),
-    );
-  }
-
 
   // Horizontal scroll for news
   SizedBox _NewsCard(BuildContext context) {

@@ -14,4 +14,6 @@ class APIEndpoint {
 
   static String newsList ="${baseURL}sports-data/news/personalized/";
   static String addToFavorite ="${baseURL}sports-data/user/favorites/";
+  static  String userFavorites = "${baseURL}sports-data/user/favorites/";
+
 }

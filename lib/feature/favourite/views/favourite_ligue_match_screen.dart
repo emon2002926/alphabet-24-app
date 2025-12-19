@@ -15,7 +15,7 @@ class FavouriteLigueMatchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: SColor.bodyColor,
-      appBar: SAppBar(title: 'All Ligue', isHomeScreen: true),
+      appBar: SAppBar(title: 'Favourite', isHomeScreen: true),
       body: SafeArea(
         child: DefaultTabController(
           length: 3,

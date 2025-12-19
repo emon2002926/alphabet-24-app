@@ -8,7 +8,6 @@ import 'package:scaffassistant/feature/home/controllers/sports_data/football_dat
 
 import '../../../core/universal_widgets/news_card_widget.dart';
 import '../../../core/universal_widgets/scoure_card_widget.dart';
-import '../../../core/universal_widgets/searchbar.dart';
 
 class PredictedBasketballTab extends StatefulWidget {
   const PredictedBasketballTab({super.key});
@@ -20,8 +19,6 @@ class PredictedBasketballTab extends StatefulWidget {
 class _PredictedBasketballTabState extends State<PredictedBasketballTab> {
 
   final FootballLiveMatchController footballLiveMatchController = Get.put(FootballLiveMatchController());
-
-  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,41 +49,17 @@ class _PredictedBasketballTabState extends State<PredictedBasketballTab> {
           scrollDirection: Axis.vertical,
           child: Padding(
             padding: EdgeInsets.all(DynamicSize.small(context)),
-            child:
-            Column(
-              children: [
-                SearchWidget(
-                  controller: searchController,
-                  onChanged: (value) {
-                    print('Searching: $value');
-                    // Filter matches based on search
-                  },
-                  onSubmitted: (value) {
-                    print('Search submitted: $value');
-                    // Perform search action
-                  },
-                  hintText: 'Search Your match',
-                ),
-                SizedBox(height: DynamicSize.small(context)),
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: footballLiveMatchController.liveMatches.length,
-                  itemBuilder: (context, index) {
-                    return ScoureCardWidget(index: index,shrink: true,);
-                  },
-                ),
-              ],
-            )
-
+            child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: footballLiveMatchController.liveMatches.length,
+              itemBuilder: (context, index) {
+                return ScoureCardWidget(index: index);
+              },
+            ),
           ),
         );
       }),
     );
   }
 }
-
-
-
-
-
