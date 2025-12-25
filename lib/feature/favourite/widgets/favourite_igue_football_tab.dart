@@ -9,6 +9,7 @@ import 'package:scaffassistant/core/universal_widgets/s_text_field.dart';
 
 import '../../../core/universal_widgets/league_list_widget.dart';
 import '../../home/models/live_match_response_model.dart';
+import '../../ligue/views/ligue_match_list_screen.dart';
 import '../../match/views/match_details_screen.dart';
 import '../controllers/favourite_controller.dart';
 import '../controllers/widget_change_controller.dart';
@@ -97,9 +98,17 @@ class FavouriteIgueFootballTab extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
                         itemCount: leagues.length,
                         itemBuilder: (context, index) {
-                          return FavouriteLeagueCard(
-                            league: leagues[index],
-                            onRemove: () => controller.removeLeagueFavourite(leagues[index].id),
+                          return GestureDetector(
+                            onTap:() {
+                              Get.to(() => LigueMatchListScreen(),arguments: {
+                                'leagueId': leagues[index].id,
+                                'leagueName': leagues[index].leagueName,
+                              });
+                            },
+                            child: FavouriteLeagueCard(
+                              league: leagues[index],
+                              onRemove: () => controller.removeLeagueFavourite(leagues[index].id),
+                            ),
                           );
                         },
                       ),

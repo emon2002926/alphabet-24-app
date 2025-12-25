@@ -21,51 +21,111 @@ class MatchDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: SColor.bodyColor,
-      appBar: PreferredSize(
-        preferredSize: const Size(double.infinity, 270),
-        child: MatchHeader(matchId: id.toString()),
-      ),
-      body: DefaultTabController(
-        length: 4,
-        child: Column(
-          children: [
-            TabBar(
-              labelColor: SColor.primary,
-              indicatorColor: SColor.primary,
-              dividerColor: Colors.transparent,
-              indicatorSize: TabBarIndicatorSize.tab,
-              padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
-              labelStyle: STextTheme.headLine().copyWith(fontSize: 12),
-              tabs: const [
-                Tab(text: 'SUMMARY'),
-                Tab(text: 'LINEUP'),
-                Tab(text: 'H2H'),
-                Tab(text: 'STATS'),
+      body: SafeArea(
+        child: DefaultTabController(
+          length: 4,
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                // Collapsible Match Header with curved bottom
+                SliverAppBar(
+                  expandedHeight: 300,
+                  floating: false,
+                  pinned: false,
+                  stretch: true,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.transparent,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(24),
+                          bottomRight: Radius.circular(24),
+                        ),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: MatchHeader(matchId: id.toString()),
+                    ),
+                    collapseMode: CollapseMode.parallax,
+                  ),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                      bottomRight: Radius.circular(24),
+                    ),
+                  ),
+                ),
+                // Pinned TabBar
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SliverAppBarDelegate(
+                    TabBar(
+                      labelColor: SColor.primary,
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: SColor.primary,
+                      indicatorWeight: 3,
+                      dividerColor: Colors.transparent,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      labelStyle: STextTheme.headLine().copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      unselectedLabelStyle: STextTheme.headLine().copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      tabs: const [
+                        Tab(text: 'SUMMARY'),
+                        Tab(text: 'LINEUP'),
+                        Tab(text: 'H2H'),
+                        Tab(text: 'STATS'),
+                      ],
+                    ),
+                  ),
+                ),
+              ];
+            },
+            body: TabBarView(
+              children: [
+                const SummaryTabWidgets(),
+                LineUp(fixtureId: id),
+                H2H(fixtureId: id),
+                StatsTabWidgets(id: id),
               ],
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  const SummaryTabWidgets(),
-                  LineUp(
-                    fixtureId: id,
-                  ), // dynamically pass data if required
-                  H2H(
-                    fixtureId: id,
-                  ),
-                  StatsTabWidgets(
-                    id: id,
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
+// Custom delegate for pinned TabBar
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+  final TabBar _tabBar;
 
+  @override
+  double get minExtent => _tabBar.preferredSize.height + 16;
 
+  @override
+  double get maxExtent => _tabBar.preferredSize.height + 16;
 
+  @override
+  Widget build(
+      BuildContext context,
+      double shrinkOffset,
+      bool overlapsContent,
+      ) {
+    return Container(
+      color: SColor.bodyColor,
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
+  }
+}

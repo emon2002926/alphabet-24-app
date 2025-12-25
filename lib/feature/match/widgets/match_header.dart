@@ -31,7 +31,7 @@ class _MatchHeaderState extends State<MatchHeader> {
         return Container(
           height: appBarHeight,
           alignment: Alignment.center,
-          child: CircularProgressIndicator(),
+          child: const CircularProgressIndicator(color: Colors.white),
         );
       }
 
@@ -43,7 +43,7 @@ class _MatchHeaderState extends State<MatchHeader> {
           alignment: Alignment.center,
           child: const Text(
             "No summary available",
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         );
       }
@@ -53,115 +53,226 @@ class _MatchHeaderState extends State<MatchHeader> {
       final away = data.summary.awayTeam;
       final score = data.summary.score.current;
 
-      return ClipRRect(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-        child: Stack(
-          children: [
-            Container(
-              height: appBarHeight,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(league.logo),
-                  fit: BoxFit.cover,
-                ),
+      return Stack(
+        children: [
+          // Background Image
+          Container(
+            height: appBarHeight,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(league.logo),
+                fit: BoxFit.contain,
               ),
             ),
+          ),
 
-            Container(
-              height: appBarHeight,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.black,
-                    Colors.transparent,
-                  ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
+          // Gradient Overlay
+          Container(
+            height: appBarHeight,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.black.withOpacity(0.8),
+                  Colors.black.withOpacity(0.3),
+                  Colors.transparent,
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                stops: const [0.0, 0.5, 1.0],
               ),
             ),
+          ),
 
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.black45,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.arrow_back, color: Colors.white),
+          // Top Bar with Back Button and Match Name
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.4),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 22,
                       ),
                     ),
+                  ),
 
-                    Row(
+                  // League name with flexible width
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.asset(IconPath.football, width: 16, color: Colors.white),
-                        const SizedBox(width: 6),
-                        Text(
-                          data.summary.name,
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        Image.asset(
+                          IconPath.football,
+                          width: 18,
+                          height: 18,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            data.summary.name,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
-
-                    const Icon(Icons.favorite, color: Colors.white),
-                  ],
-                ),
-              ),
-            ),
-
-            Positioned(
-              bottom: appBarHeight * 0.22,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Image.network(home.logo, width: 70, height: 70),
-                      const SizedBox(height: 6),
-                      Text(home.name, style: const TextStyle(color: Colors.white)),
-                    ],
                   ),
 
-                  Column(
-                    children: [
-                      Text(
-                        score.display ?? "${score.home}-${score.away}",
-                        style: const TextStyle(fontSize: 42, color: Colors.white),
+                  GestureDetector(
+                    onTap: () {
+                      // Add favorite functionality
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.4),
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        data.summary.status.shortName,
-                        style: const TextStyle(color: Colors.white70, fontSize: 16),
+                      child: const Icon(
+                        Icons.favorite_border,
+                        color: Colors.white,
+                        size: 22,
                       ),
-                    ],
-                  ),
-
-                  Column(
-                    children: [
-                      Image.network(away.logo, width: 70, height: 70),
-                      const SizedBox(height: 6),
-                      Text(away.name, style: const TextStyle(color: Colors.white)),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+
+          // Match Score and Teams (Fixed overflow issue)
+          Positioned(
+            bottom: appBarHeight * 0.18,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Home Team (with Expanded to prevent overflow)
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.network(
+                          home.logo,
+                          width: 70,
+                          height: 70,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.sports_soccer, size: 35),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          home.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Score and Status (fixed width)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          score.display ?? "${score.home} - ${score.away}",
+                          style: const TextStyle(
+                            fontSize: 42,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          data.summary.status.shortName,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Away Team (with Expanded to prevent overflow)
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.network(
+                          away.logo,
+                          width: 70,
+                          height: 70,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.sports_soccer, size: 35),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          away.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       );
     });
   }
 }
-

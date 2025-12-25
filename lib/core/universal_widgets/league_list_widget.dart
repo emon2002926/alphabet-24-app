@@ -36,8 +36,11 @@ class LeagueListWidget extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  // Navigate to league details
-                },
+                  Get.to(() => LigueMatchListScreen(),arguments: {
+                    'leagueId': league.id,
+                    'leagueName': league.name,
+                  });
+                  },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   child: Row(
