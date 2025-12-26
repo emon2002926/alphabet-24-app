@@ -4,7 +4,6 @@ import 'package:scaffassistant/core/theme/text_theme.dart';
 
 import '../const/size_const/dynamic_size.dart';
 import '../theme/SColor.dart';
-
 class STextField extends StatefulWidget {
   String? hintText;
   String? labelText;

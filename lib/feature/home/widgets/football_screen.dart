@@ -105,8 +105,7 @@ class _FootballScreenState extends State<FootballScreen> {
 
   SizedBox _ScoureCard(BuildContext context, bool isNew) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.28, // Reduced from 0.33
-
+      height: 210, // Fixed height to match ScoureCardWidget
       child: Obx(() {
         return ListView.separated(
           scrollDirection: Axis.horizontal,

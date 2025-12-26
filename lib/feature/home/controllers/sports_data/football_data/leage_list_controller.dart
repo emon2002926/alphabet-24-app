@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
 import 'package:scaffassistant/core/helper/api_request/get_request.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
@@ -14,28 +15,99 @@ class LeagueListController extends GetxController {
   RxBool isLoading = false.obs;
   RxString searchQuery = ''.obs;
 
+  // ===== DATE SELECTION =====
+  Rx<DateTime> selectedDate = DateTime.now().obs;
+  RxList<DateTime> dateRange = <DateTime>[].obs;
+  RxBool isDateFilterActive = false.obs;
+
   @override
   void onInit() {
     super.onInit();
+    generateDateRange();
     fetchLeagues();
+  }
+
+  // Generate 4 months of dates: 2 months before today + 2 months after today
+  void generateDateRange() {
+    dateRange.clear();
+    final today = DateTime.now();
+
+    // Generate 60 days BEFORE today (previous 2 months)
+    for (int i = 60; i > 0; i--) {
+      dateRange.add(today.subtract(Duration(days: i)));
+    }
+
+    // Add today
+    dateRange.add(today);
+
+    // Generate 60 days AFTER today (next 2 months)
+    for (int i = 1; i <= 60; i++) {
+      dateRange.add(today.add(Duration(days: i)));
+    }
+
+    print('📅 Generated ${dateRange.length} dates (2 months before + today + 2 months after)');
+  }
+
+  void selectDate(DateTime date) {
+    print('📅 selectDate called for: ${DateFormat('yyyy-MM-dd').format(date)}');
+
+    if (isDateFilterActive.value && _isSameDay(selectedDate.value, date)) {
+      isDateFilterActive.value = false;
+      print('🔓 Filter deactivated - showing all leagues');
+    } else {
+      selectedDate.value = date;
+      isDateFilterActive.value = true;
+      print('✅ Date selected: ${DateFormat('yyyy-MM-dd').format(date)}');
+    }
+
+    applyFilters();
+  }
+
+  bool _isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 
   void updateSearch(String query) {
     searchQuery.value = query;
-    if (query.isEmpty) {
-      filteredLeagues.value = leagues;
-    } else {
-      filteredLeagues.value = leagues.where((league) {
-        return league.name.toLowerCase().contains(query.toLowerCase()) ||
-            league.shortCode.toLowerCase().contains(query.toLowerCase()) ||
-            league.country.name.toLowerCase().contains(query.toLowerCase());
-      }).toList();
-    }
+    applyFilters();
   }
 
   void clearSearch() {
     searchQuery.value = '';
-    filteredLeagues.value = leagues;
+    applyFilters();
+  }
+
+  void applyFilters() {
+    var filtered = leagues.where((league) {
+      bool dateMatches = true;
+      if (isDateFilterActive.value) {
+        final leagueDate = DateTime(
+          league.lastPlayedAt.year,
+          league.lastPlayedAt.month,
+          league.lastPlayedAt.day,
+        );
+        final selected = DateTime(
+          selectedDate.value.year,
+          selectedDate.value.month,
+          selectedDate.value.day,
+        );
+        dateMatches = leagueDate.isAtSameMomentAs(selected);
+      }
+
+      bool searchMatches = true;
+      if (searchQuery.value.isNotEmpty) {
+        searchMatches = league.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+            league.shortCode.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+            league.country.name.toLowerCase().contains(searchQuery.value.toLowerCase());
+      }
+
+      return dateMatches && searchMatches;
+    }).toList();
+
+    filteredLeagues.value = filtered;
+    print('📊 Filtered leagues count: ${filteredLeagues.length}');
   }
 
   Future<void> fetchLeagues() async {
@@ -54,7 +126,7 @@ class LeagueListController extends GetxController {
       if (response.isNotEmpty) {
         final leagueResponse = LeagueResponse.fromJson(response);
         leagues.value = leagueResponse.leagues;
-        filteredLeagues.value = leagueResponse.leagues;
+        applyFilters();
         print('Leagues Updated: ${leagues.length}');
       } else {
         print('Failed to fetch league data');
@@ -71,11 +143,9 @@ class LeagueListController extends GetxController {
     final targetList = useFiltered ? filteredLeagues : leagues;
     final league = targetList[index];
 
-    // Optimistic UI update
     targetList[index].isFavorite = !league.isFavorite;
     targetList.refresh();
 
-    // Also update in main list if using filtered
     if (useFiltered) {
       final mainIndex = leagues.indexWhere((l) => l.id == league.id);
       if (mainIndex != -1) {
@@ -110,12 +180,10 @@ class LeagueListController extends GetxController {
           );
         }
       } else {
-        // Revert on failure
         _revertFavorite(index, useFiltered);
         SSnackbar.error('Failed to update favorite');
       }
     } catch (e) {
-      // Revert on error
       _revertFavorite(index, useFiltered);
       print('Error toggling favorite league: $e');
       SSnackbar.error('Something went wrong');

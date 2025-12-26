@@ -39,6 +39,9 @@ dependencies:
   webview_flutter_android: ^3.12.1
   webview_flutter_wkwebview: ^3.9.4
 
+  intl: ^0.18.1  # Add this for date formatting
+
+
 
 
 dev_dependencies:

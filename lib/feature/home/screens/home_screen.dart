@@ -13,112 +13,125 @@ import '../widgets/football_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
-            const HomeScreen({super.key});
+  const HomeScreen({super.key});
 
-            @override
-            State<HomeScreen> createState() => _HomeScreenState();
-          }
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-          class _HomeScreenState extends State<HomeScreen> {
-            final profileController = Get.put(UserController());
-            late final profile = profileController.userProfile.value;
-            @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                backgroundColor: SColor.bodyColor,
-                appBar: PreferredSize(
-                  preferredSize: Size(double.infinity, 80),
-                  child: AppBar(
-                    backgroundColor: SColor.bodyColor,
-                    automaticallyImplyLeading: false,
-                    centerTitle: true,
-                    title: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: SColor.primary,
-                          radius: 20,
-                          child: Image(image:
-                          profile!.profilePictureUrl.isNotEmpty ? NetworkImage(profile!.profilePictureUrl)
-                              : AssetImage(ImagePath.avater),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(width: DynamicSize.small(context),),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Welcome Back,', style: STextTheme.headLine().copyWith(fontSize: 14, fontWeight: FontWeight.w400),),
-                            Text(profile!.fullName, style: STextTheme.headLine().copyWith(fontSize: 14, fontWeight: FontWeight.bold),),
-                          ],
-                        )
-                      ],
-                    ),
-                    actions: [
-                      IconButton(
-                        icon: Icon(Icons.favorite_border, color: Colors.red,),
-                        onPressed: () {
-                          // Handle notification icon press
-                        },
-                      ),
-                      SizedBox(width: DynamicSize.small(context),),
-                    ],
-                    toolbarHeight: 80,
+class _HomeScreenState extends State<HomeScreen> {
+  final profileController = Get.put(UserController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: SColor.bodyColor,
+      appBar: PreferredSize(
+        preferredSize: Size(double.infinity, 80),
+        child: AppBar(
+          backgroundColor: SColor.bodyColor,
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: SColor.primary,
+                radius: 20,
+                child: Image(
+                  image: AssetImage(ImagePath.avater),
+                  fit: BoxFit.cover,
                 ),
-                ),
-                body: SafeArea(
-                  top: true,
-                  bottom: true,
-                  child: DefaultTabController(
-                    length: 3,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context), vertical: DynamicSize.medium(context)),
-                          child: Container(
-                            height: 35,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: SColor.primary, width: 1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: TabBar(
-                              dividerColor: Colors.transparent,
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              labelPadding: EdgeInsets.zero,
-                              indicator: BoxDecoration(
-                                color: SColor.primary,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              labelColor: Colors.white,
-                              unselectedLabelColor: SColor.primary,
-                              splashBorderRadius: BorderRadius.circular(12),
-                              tabs: const [
-                                Tab(text: 'Football'),
-                                Tab(text: 'Basketball'),
-                                Tab(text: 'Tennis'),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: TabBarView(
-                            children: [
-                              FootballScreen(),
-                              BasketballScreen(),
-                              DevelopmentPage(),
-                            ],
-                          ),
-                        ),
-                      ],
+              ),
+              SizedBox(width: DynamicSize.small(context)),
+              Obx(() => Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome Back,',
+                    style: STextTheme.headLine().copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
+                  Text(
+                    profileController.userProfile.value?.fullName ?? 'Guest',
+                    style: STextTheme.headLine().copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              )),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.favorite_border, color: Colors.red),
+              onPressed: () {
+                // Handle notification icon press
+              },
+            ),
+            SizedBox(width: DynamicSize.small(context)),
+          ],
+          toolbarHeight: 80,
+        ),
+      ),
+      body: SafeArea(
+        top: true,
+        bottom: true,
+        child: DefaultTabController(
+          length: 3,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: DynamicSize.medium(context),
+                  vertical: DynamicSize.medium(context),
                 ),
-              );
-            }
-          }
-
-// Demo Tab Screen Widget
+                child: Container(
+                  height: 35,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: SColor.primary, width: 1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: TabBar(
+                    dividerColor: Colors.transparent,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelPadding: EdgeInsets.zero,
+                    indicator: BoxDecoration(
+                      color: SColor.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    labelColor: Colors.white,
+                    unselectedLabelColor: SColor.primary,
+                    splashBorderRadius: BorderRadius.circular(12),
+                    tabs: const [
+                      Tab(text: 'Football'),
+                      Tab(text: 'Basketball'),
+                      Tab(text: 'Tennis'),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    FootballScreen(),
+                    BasketballScreen(),
+                    DevelopmentPage(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+// Demo Tab Screen Widget HomeScreen
 
 class DevelopmentPage extends StatelessWidget {
   const DevelopmentPage({super.key});

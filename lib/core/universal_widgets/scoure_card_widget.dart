@@ -64,7 +64,7 @@ class ScoureCardWidget extends StatelessWidget {
                 // ===== LEAGUE HEADER WITH FAVORITE BUTTON =====
                 Row(
                   children: [
-                    Image.network(match.league.logo, height: 18),
+                    Image.network(match.league.logo, height: 20),
                     const Spacer(),
                     Text(
                       hasPeriod ? "${periodMinutes}'" : "-",
@@ -166,7 +166,7 @@ class ScoureCardWidget extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.network(match.homeTeam.logo, height: 12),
+                        Image.network(match.homeTeam.logo, height: 14),
                         const SizedBox(width: 3),
                         Text("${homeProb.toStringAsFixed(0)}%",
                             style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
@@ -180,7 +180,7 @@ class ScoureCardWidget extends StatelessWidget {
                         Text("${awayProb.toStringAsFixed(0)}%",
                             style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
                         const SizedBox(width: 3),
-                        Image.network(match.awayTeam.logo, height: 12),
+                        Image.network(match.awayTeam.logo, height: 14),
                       ],
                     ),
                   ],
@@ -247,17 +247,17 @@ class ScoureCardWidget extends StatelessWidget {
                 // ===== GOAL PREDICTION TEXT =====
                 Row(
                   children: [
-                    Image.network(match.homeTeam.logo, height: 12),
+                    Image.network(match.homeTeam.logo, height: 14),
                     const Spacer(),
                     Text(
-                      "$topScore  •  ${topProbability.toStringAsFixed(1)}%",
+                      "$topScore",
                       style: STextTheme.subHeadLine().copyWith(
                         fontWeight: FontWeight.w600,
-                        fontSize: 11,
+                        fontSize: 14,
                       ),
                     ),
                     const Spacer(),
-                    Image.network(match.awayTeam.logo, height: 12),
+                    Image.network(match.awayTeam.logo, height: 14),
                   ],
                 ),
 
