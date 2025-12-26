@@ -7,6 +7,7 @@ import 'package:scaffassistant/feature/home/screens/home_screen.dart';
 import 'package:scaffassistant/feature/prediction/views/prediction_screen.dart';
 import 'package:scaffassistant/feature/settings/screens/settings_screen.dart';
 import 'package:scaffassistant/feature/settings/controllers/setting_controller.dart';
+import '../core/user_controller.dart';
 import 'ligue/views/ligue_screen.dart';
 
 class InitialScreen extends StatefulWidget {
@@ -27,6 +28,14 @@ class _InitialScreenState extends State<InitialScreen> {
     LigueScreen(),
     SettingsScreen(),
   ];
+
+  final UserController userController = Get.put(UserController());
+
+  @override
+  void initState() {
+    super.initState();
+    userController.fetchUserProfile();
+  }
 
   final List<NavItem> _navItems = const [
     NavItem(iconPath: IconPath.home, label: 'Home'),

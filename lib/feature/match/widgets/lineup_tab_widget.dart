@@ -5,6 +5,7 @@ import '../controllers/match_lineup_controller.dart';
 import '../models/match_lineup_model.dart';
 import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/text_theme.dart';
+import 'football_field_painter.dart';
 
 class LineUp extends StatelessWidget {
   final int fixtureId;
@@ -89,49 +90,61 @@ class LineUp extends StatelessWidget {
           children: [
             SizedBox(height: DynamicSize.medium(context)),
 
-            // Formation Display
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildTeamFormation(
-                      matchData.homeTeam.name,
-                      matchData.homeTeam.formation,
-                      matchData.homeTeam.logo,
-                      Colors.blue,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildTeamFormation(
-                      matchData.awayTeam.name,
-                      matchData.awayTeam.formation,
-                      matchData.awayTeam.logo,
-                      Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Todo Formation Display - Enhanced
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: _buildTeamFormation(
+            //           matchData.homeTeam.name,
+            //           matchData.homeTeam.formation,
+            //           matchData.homeTeam.logo,
+            //           Colors.blue,
+            //         ),
+            //       ),
+            //       const SizedBox(width: 12),
+            //       Expanded(
+            //         child: _buildTeamFormation(
+            //           matchData.awayTeam.name,
+            //           matchData.awayTeam.formation,
+            //           matchData.awayTeam.logo,
+            //           Colors.red,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
-            SizedBox(height: DynamicSize.medium(context)),
+            // SizedBox(height: DynamicSize.medium(context)),
 
-            // Field + Players
+            // Field + Players - Enhanced Layout
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: AspectRatio(
                 aspectRatio: 0.68,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
+                    // Group players by line for smart positioning
+                    final homePlayersByLine = _groupPlayersByLine(homeStarting);
+                    final awayPlayersByLine = _groupPlayersByLine(awayStarting);
+
                     return Stack(
                       children: [
-                        // Field background
-                        Image.asset(
-                          'assets/images/field.png',
-                          fit: BoxFit.fill,
+                        // Field background - Custom painted
+                        // FootballField(
+                        //   width: constraints.maxWidth,
+                        //   height: constraints.maxHeight,
+                        //   fieldColor: const Color(0xFF2D7A3E), // Dark green
+                        //   lineColor: Colors.white,
+                        //   grassStripeColor: const Color(0xFF258535), // Lighter green
+                        //   lineWidth: 2.0,
+                        //   showStripes: true,
+                        // ),
+                        FootballField(
                           width: constraints.maxWidth,
                           height: constraints.maxHeight,
+                          // That's it! Auto-detects theme!
                         ),
 
                         // Home team players (bottom half)
@@ -140,6 +153,7 @@ class LineUp extends StatelessWidget {
                               context,
                               player,
                               constraints,
+                              homePlayersByLine,
                               isHomeTeam: true,
                               teamColor: Colors.blue,
                             )),
@@ -150,6 +164,7 @@ class LineUp extends StatelessWidget {
                               context,
                               player,
                               constraints,
+                              awayPlayersByLine,
                               isHomeTeam: false,
                               teamColor: Colors.red,
                             )),
@@ -232,7 +247,7 @@ class LineUp extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  formation,
+                  formation ?? 'N/A',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -247,10 +262,24 @@ class LineUp extends StatelessWidget {
     );
   }
 
+  // Helper method to count players in each line
+  Map<int, List<Player>> _groupPlayersByLine(List<Player> players) {
+    final Map<int, List<Player>> grouped = {};
+    for (var player in players) {
+      if (player.gridPosition != null) {
+        final line = player.gridPosition!.line;
+        grouped[line] = grouped[line] ?? [];
+        grouped[line]!.add(player);
+      }
+    }
+    return grouped;
+  }
+
   Widget _buildPlayer(
       BuildContext context,
       Player player,
-      BoxConstraints constraints, {
+      BoxConstraints constraints,
+      Map<int, List<Player>> playersByLine, {
         required bool isHomeTeam,
         required Color teamColor,
       }) {
@@ -259,49 +288,68 @@ class LineUp extends StatelessWidget {
     final gridLine = player.gridPosition!.line;
     final gridPos = player.gridPosition!.position;
 
-    // Calculate vertical position
+    // Calculate vertical position with proper spacing
     double topPosition;
     if (isHomeTeam) {
       // Home team: bottom half
-      // line 1 = bottom (near home goal), line 5 = center
-      topPosition = constraints.maxHeight * (1.0 - ((gridLine - 1) / 8.0));
+      topPosition = constraints.maxHeight * (0.96 - ((gridLine - 1) * 0.16));
     } else {
       // Away team: top half
-      // line 1 = top (near away goal), line 5 = center
-      topPosition = constraints.maxHeight * ((gridLine - 1) / 8.0);
+      topPosition = constraints.maxHeight * (0.04 + ((gridLine - 1) * 0.16));
     }
 
-    // Calculate horizontal position
+    // Calculate horizontal position with smart distribution
     double leftPosition;
-    if (gridPos == 1) {
-      leftPosition = constraints.maxWidth * 0.15;
-    } else if (gridPos == 2) {
-      leftPosition = constraints.maxWidth * 0.38;
-    } else if (gridPos == 3) {
-      leftPosition = constraints.maxWidth * 0.62;
+
+    // Get all players in this line
+    final playersInLine = playersByLine[gridLine] ?? [];
+    final playerCount = playersInLine.length;
+
+    // Find the index of this player in the sorted line
+    final sortedPlayers = List<Player>.from(playersInLine)
+      ..sort((a, b) => (a.gridPosition?.position ?? 0).compareTo(b.gridPosition?.position ?? 0));
+    final playerIndex = sortedPlayers.indexWhere((p) => p.id == player.id);
+
+    // Dynamic positioning based on number of players in line
+    if (playerCount == 1) {
+      // Single player - center
+      leftPosition = constraints.maxWidth * 0.5;
+    } else if (playerCount == 2) {
+      // Two players - left and right
+      leftPosition = constraints.maxWidth * (playerIndex == 0 ? 0.33 : 0.67);
+    } else if (playerCount == 3) {
+      // Three players - left, center, right
+      final positions = [0.25, 0.5, 0.75];
+      leftPosition = constraints.maxWidth * positions[playerIndex];
+    } else if (playerCount == 4) {
+      // Four players - evenly distributed
+      final positions = [0.15, 0.38, 0.62, 0.85];
+      leftPosition = constraints.maxWidth * positions[playerIndex];
     } else {
-      leftPosition = constraints.maxWidth * 0.85;
+      // 5+ players - distribute evenly
+      final spacing = 1.0 / (playerCount + 1);
+      leftPosition = constraints.maxWidth * (spacing * (playerIndex + 1));
     }
 
     return Positioned(
       top: topPosition,
       left: leftPosition,
       child: Transform.translate(
-        offset: const Offset(-25, -40),
+        offset: const Offset(-20, -36),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Player Image
+            // Player Image with cleaner design
             Container(
-              width: 50,
-              height: 50,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: teamColor, width: 3),
+                border: Border.all(color: teamColor, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withOpacity(0.2),
                     blurRadius: 6,
                     offset: const Offset(0, 3),
                   ),
@@ -312,57 +360,73 @@ class LineUp extends StatelessWidget {
                   player.image ?? '',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.person, size: 32, color: teamColor);
+                    return Container(
+                      color: Colors.grey.shade100,
+                      child: Icon(
+                          Icons.person,
+                          size: 26,
+                          color: teamColor.withOpacity(0.6)
+                      ),
+                    );
                   },
                 ),
               ),
             ),
-            const SizedBox(height: 4),
-            // Jersey Number
+            const SizedBox(height: 3),
+            // Player Name Card - Cleaner design like Figma
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              constraints: const BoxConstraints(maxWidth: 65),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2.5),
               decoration: BoxDecoration(
-                color: teamColor,
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300, width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
                   ),
                 ],
               ),
-              child: Text(
-                '${player.jerseyNumber}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 3),
-            // Player Name
-            Container(
-              constraints: const BoxConstraints(maxWidth: 90),
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.95),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Text(
-                player.name,
-                style: STextTheme.headLine().copyWith(fontSize: 9),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Jersey Number
+                  Text(
+                    '${player.jerseyNumber}',
+                    style: STextTheme.headLine().copyWith(
+                      fontSize: 8.5,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 2.5),
+                  // Player Last Name
+                  Flexible(
+                    child: Text(
+                      _getLastName(player.name),
+                      style: STextTheme.headLine().copyWith(
+                        fontSize: 8.5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Helper method to extract last name
+  String _getLastName(String fullName) {
+    final parts = fullName.trim().split(' ');
+    return parts.length > 1 ? parts.last : fullName;
   }
 
   Widget _buildSubstituteSection(String teamName, List<Player> substitutes, Color teamColor) {

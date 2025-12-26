@@ -6,6 +6,7 @@ class APIEndpoint {
   static const String login = "${baseURL}authentication/login/";
   static const String signup = "${baseURL}authentication/send-registration-otp/";
   static const String verifyRegOTP = "${baseURL}authentication/verify-registration-otp/";
+  static const String userInfo = "${baseURL}authentication/profile/";
 
 
   static String footballLiveMatch ="${baseURL}sports-data/live-matches/";

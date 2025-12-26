@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -8,85 +10,53 @@ import 'package:scaffassistant/core/local_storage/user_info.dart';
 import 'package:scaffassistant/core/universal_widgets/s_snackbar.dart';
 import 'package:scaffassistant/feature/settings/models/account_model.dart';
 
-class AccountController extends GetxController {
-  RxBool isLoading = false.obs;
-  RxBool isEditing = false.obs;
-  Rx<AccountModel?> account = Rx<AccountModel?>(null);
+import '../../../core/user_controller.dart';
 
-  /// picked image holder
+class AccountController extends GetxController {
+  final RxBool isLoading = false.obs;
   final Rx<File?> picture = Rx<File?>(null);
+  final RxBool isEditEnabled = true.obs;
+
+  late TextEditingController nameController;
+  late TextEditingController phoneController;
 
   @override
   void onInit() {
-    fetchAccount();
     super.onInit();
+    nameController = TextEditingController();
+    phoneController = TextEditingController();
   }
 
-  //======================================
-  //      FETCH ACCOUNT API
-  //======================================
-  Future<void> fetchAccount() async {
-    try {
-      isLoading.value = true;
-
-      final token = UserInfo.getAccessToken();
-
-      final response = await http.get(
-        Uri.parse('${APIEndpoint.baseURL}authentication/profile/'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-
-      print("Fetch Status: ${response.statusCode}");
-
-      if (response.statusCode == 200) {
-        final decode = jsonDecode(response.body);
-        final data = decode["data"];
-        account.value = AccountModel.fromJson(data);
-      } else {
-        print("Fetch Failed: ${response.body}");
-      }
-    } catch (e) {
-      print("Fetch Error: $e");
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  //======================================
-  //        IMAGE PICKER
-  //======================================
-  Future<void> pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      picture.value = File(image.path);
-      print("Image Selected: ${image.path}");
-    }
-  }
-
-  //======================================
-  //        UPDATE ACCOUNT API
-  //======================================
   Future<void> updateAccount(String fullName, String phoneNumber) async {
     try {
       isLoading.value = true;
 
       final token = UserInfo.getAccessToken();
 
+      if (token == null || token.isEmpty) {
+        SSnackbar.error('No access token found',
+        );
+        isLoading.value = false;
+        return;
+      }
+
+      // Create multipart request for POST with form-data
       var request = http.MultipartRequest(
-        "PUT",
-        Uri.parse('${APIEndpoint.baseURL}authentication/profile/'),
+        'POST',
+        Uri.parse(APIEndpoint.userInfo),
       );
 
-      request.headers['Authorization'] = 'Bearer $token';
-      request.headers['Content-Type'] = 'multipart/form-data';
+      // Add headers
+      request.headers.addAll({
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      });
 
-      // Text fields
+      // Add fields
       request.fields['full_name'] = fullName;
       request.fields['phone_number'] = phoneNumber;
 
-      // Attach image only if selected
+      // Add profile picture if selected
       if (picture.value != null) {
         request.files.add(
           await http.MultipartFile.fromPath(
@@ -96,25 +66,87 @@ class AccountController extends GetxController {
         );
       }
 
-      final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
-
-      print("Update Status: ${response.statusCode}");
-      print("Update Response: $responseBody");
+      // Send request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
-        fetchAccount(); // refresh profile
-        picture.value = null; // clear selected image
-        SSnackbar.success("Profile updated successfully.");
-      }else if(response.statusCode == 413 || response.statusCode == 400){
-        SSnackbar.info("Image size is too large or invalid data provided.");
+        final jsonResponse = json.decode(response.body);
+
+        SSnackbar.success(
+           jsonResponse['message'] ?? 'Profile updated successfully',
+        );
+
+        // Clear selected picture
+        picture.value = null;
+
+        // Disable edit mode
+        isEditEnabled.value = false;
+      } else if (response.statusCode == 401) {
+        SSnackbar.error(
+         'Unauthorized: Invalid or expired token',
+        );
       } else {
-        print("Update Failed: $responseBody");
+        try {
+          final jsonResponse = json.decode(response.body);
+          SSnackbar.error(
+             jsonResponse['message'] ?? 'Failed to update profile',
+          );
+        } catch (e) {
+          SSnackbar.error(
+           'Failed to update profile: ${response.statusCode}',
+          );
+        }
       }
     } catch (e) {
-      print("Update Error: $e");
+      SSnackbar.error(
+       'An error occurred: $e',
+
+      );
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> pickImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        picture.value = File(image.path);
+      }
+    } catch (e) {
+      SSnackbar.error(
+'Failed to pick image: $e',
+      );
+    }
+  }
+
+  void toggleEditMode() {
+    if (isEditEnabled.value) {
+      // Canceling edit - restore original values from UserController
+      final userController = Get.find<UserController>();
+      final user = userController.userProfile.value;
+
+      if (user != null) {
+        nameController.text = user.fullName;
+        phoneController.text = user.phoneNumber;
+      }
+      picture.value = null;
+    }
+    isEditEnabled.value = !isEditEnabled.value;
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    phoneController.dispose();
+    super.onClose();
   }
 }

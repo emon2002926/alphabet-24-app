@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
           import 'package:get/get.dart';
 import 'package:scaffassistant/feature/home/widgets/basketball_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
-          import '../../home/controllers/sports_data/football_data/football_live_match_controller.dart';
+          import '../../../core/user_controller.dart';
+import '../../home/controllers/sports_data/football_data/football_live_match_controller.dart';
 
           import '../../../core/const/size_const/dynamic_size.dart';
           import '../../../core/theme/text_theme.dart';
@@ -19,6 +20,8 @@ class HomeScreen extends StatefulWidget {
           }
 
           class _HomeScreenState extends State<HomeScreen> {
+            final profileController = Get.put(UserController());
+            late final profile = profileController.userProfile.value;
             @override
             Widget build(BuildContext context) {
               return Scaffold(
@@ -34,7 +37,11 @@ class HomeScreen extends StatefulWidget {
                         CircleAvatar(
                           backgroundColor: SColor.primary,
                           radius: 20,
-                          child: Image(image: AssetImage(ImagePath.avater), fit: BoxFit.cover,),
+                          child: Image(image:
+                          profile!.profilePictureUrl.isNotEmpty ? NetworkImage(profile!.profilePictureUrl)
+                              : AssetImage(ImagePath.avater),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                         SizedBox(width: DynamicSize.small(context),),
                         Column(
@@ -42,7 +49,7 @@ class HomeScreen extends StatefulWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Welcome Back,', style: STextTheme.headLine().copyWith(fontSize: 14, fontWeight: FontWeight.w400),),
-                            Text('John Doe', style: STextTheme.headLine().copyWith(fontSize: 14, fontWeight: FontWeight.bold),),
+                            Text(profile!.fullName, style: STextTheme.headLine().copyWith(fontSize: 14, fontWeight: FontWeight.bold),),
                           ],
                         )
                       ],

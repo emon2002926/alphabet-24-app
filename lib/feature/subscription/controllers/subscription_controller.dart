@@ -21,7 +21,7 @@ class SubscriptionController extends GetxController {
   // Base URL - Replace with your actual base URL
   final String baseUrl = "https://alfabets.dsrt321.online/api";
   // Auth token - Replace with your actual token retrieval logic
-  String? get authToken => UserInfo.getAccessToken(); // TODO: Get from secure storage
+  String? get authToken => UserInfo.getAccessToken();
 
   @override
   void onInit() {
@@ -85,6 +85,7 @@ class SubscriptionController extends GetxController {
   }
 
   // Create checkout session and get payment URL
+// Create checkout session and get payment URL
   Future<CheckoutResponse?> createCheckoutSession(String planId) async {
     try {
       print('🔄 Creating checkout session for plan: $planId');
@@ -113,9 +114,11 @@ class SubscriptionController extends GetxController {
             checkoutUrl: data['checkout_url'],
           );
         } else {
+          // Show the exact error message from backend
+          final errorMsg = data['error'] ?? 'Failed to create checkout session';
           Get.snackbar(
             'Error',
-            'Failed to create checkout session',
+            errorMsg,
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Get.theme.colorScheme.error.withOpacity(0.1),
           );
@@ -129,11 +132,23 @@ class SubscriptionController extends GetxController {
         );
         return null;
       } else {
-        Get.snackbar(
-          'Error',
-          'Server error: ${response.statusCode}',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        // Parse error message from non-200 responses too
+        try {
+          final data = json.decode(response.body);
+          final errorMsg = data['error'] ?? 'Server error: ${response.statusCode}';
+          Get.snackbar(
+            'Error',
+            errorMsg,
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        } catch (e) {
+          // If JSON parsing fails, show status code
+          Get.snackbar(
+            'Error',
+            'Server error: ${response.statusCode}',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
         return null;
       }
     } catch (e) {
@@ -146,7 +161,6 @@ class SubscriptionController extends GetxController {
       return null;
     }
   }
-
   // Subscribe to selected plan - Opens WebView for payment
   Future<void> subscribeToPlan() async {
     if (selectedPlan == null) {

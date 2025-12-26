@@ -10,6 +10,7 @@ import 'package:scaffassistant/feature/settings/controllers/setting_controller.d
 import 'package:scaffassistant/routing/route_name.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/user_controller.dart';
 import '../../auth/screens/password_change_screen.dart';
 import '../../subscription/views/subscription_screen.dart';
 import 'account_screen.dart';
@@ -24,8 +25,10 @@ class SettingsScreen extends StatelessWidget {
     const privacyPolicyUrl = 'https://www.example.com/privacy';
     const helpSupportUrl = 'https://www.example.com/support';
     const termsConditionsUrl = 'https://www.example.com/terms';
+    final profileController = Get.put(UserController());
+    final profile = profileController.userProfile.value;
+    profileController.fetchUserProfile();
 
-    // Make entire screen reactive to theme changes
     return Obx(
           () {
         final isDark = controller.isDarkMode.value;
@@ -49,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProfileHeader(context, textColor),
+                _buildProfileHeader(context, textColor, profile?.fullName, profile?.phoneNumber),
                 SizedBox(height: DynamicSize.large(context)),
 
                 Text(
@@ -131,7 +134,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, Color textColor) {
+  Widget _buildProfileHeader(BuildContext context, Color textColor,
+      String? profileName, String? profileEmail,) {
     return Row(
       children: [
         CircleAvatar(
@@ -144,11 +148,11 @@ class SettingsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Chester Bennington',
+                profileName!,
                 style: STextTheme.headLine().copyWith(fontSize: 18, color: textColor),
               ),
               Text(
-                'Chester@gmail.com',
+                profileEmail!,
                 style: STextTheme.subHeadLine().copyWith(color: textColor),
               ),
             ],
