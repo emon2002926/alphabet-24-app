@@ -4,6 +4,7 @@ import '../../../core/universal_widgets/s_label.dart';
 import '../widgets/h2h_tabWidget.dart';
 import '../widgets/lineup_tab_widget.dart';
 import '../widgets/match_header.dart';
+import '../widgets/predictions_tab_widgets.dart';
 import '../widgets/stats_tab_widgets.dart';
 import '../widgets/summary_tab_widgets.dart';
 import '../../../core/const/string_const/icon_path.dart';
@@ -23,11 +24,10 @@ class MatchDetailsScreen extends StatelessWidget {
       backgroundColor: SColor.bodyColor,
       body: SafeArea(
         child: DefaultTabController(
-          length: 4,
+          length: 5, // Changed from 4 to 5
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
-                // Collapsible Match Header with curved bottom
                 SliverAppBar(
                   expandedHeight: 300,
                   floating: false,
@@ -60,6 +60,7 @@ class MatchDetailsScreen extends StatelessWidget {
                   pinned: true,
                   delegate: _SliverAppBarDelegate(
                     TabBar(
+                      isScrollable: true, // Added to handle 5 tabs nicely
                       labelColor: SColor.primary,
                       unselectedLabelColor: Colors.grey,
                       indicatorColor: SColor.primary,
@@ -79,6 +80,7 @@ class MatchDetailsScreen extends StatelessWidget {
                         Tab(text: 'LINEUP'),
                         Tab(text: 'H2H'),
                         Tab(text: 'STATS'),
+                        Tab(text: 'PREDICTION'), // Add your new tab name here
                       ],
                     ),
                   ),
@@ -87,10 +89,11 @@ class MatchDetailsScreen extends StatelessWidget {
             },
             body: TabBarView(
               children: [
-                const SummaryTabWidgets(),
+                SummaryTabWidgets(id: id),
                 LineUp(fixtureId: id),
                 H2H(fixtureId: id),
                 StatsTabWidgets(id: id),
+                PredictionsTabWidgets(id: id), // Add your new tab widget here
               ],
             ),
           ),
@@ -103,6 +106,7 @@ class MatchDetailsScreen extends StatelessWidget {
 // Custom delegate for pinned TabBar
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
+
   final TabBar _tabBar;
 
   @override

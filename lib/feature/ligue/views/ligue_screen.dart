@@ -10,10 +10,6 @@ import 'package:scaffassistant/feature/home/screens/home_screen.dart';
 import '../../home/controllers/sports_data/football_data/leage_list_controller.dart';
 import '../widgets/ligue_basketball_tab.dart';
 import '../widgets/ligue_football_tab.dart';
-import '../../home/widgets/football_screen.dart';
-import '../../prediction/widgets/predicted_football_tab.dart';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LigueScreen extends StatelessWidget {
@@ -82,14 +78,6 @@ class LigueScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
 
 class DateSelectorWidget extends StatefulWidget {
   const DateSelectorWidget({super.key});

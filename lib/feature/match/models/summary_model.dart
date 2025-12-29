@@ -256,16 +256,73 @@ class ScoreItem {
 class Predictions {
   final FullTimeResult fulltimeResult;
   final CorrectScores correctScores;
+  final BothTeamsToScore bothTeamsToScore;
+  final OverUnder25 overUnder25;
+  final DoubleChance doubleChance;
 
   Predictions({
     required this.fulltimeResult,
     required this.correctScores,
+    required this.bothTeamsToScore,
+    required this.overUnder25,
+    required this.doubleChance,
   });
 
   factory Predictions.fromJson(Map<String, dynamic> json) {
     return Predictions(
       fulltimeResult: FullTimeResult.fromJson(json["fulltime_result"]),
       correctScores: CorrectScores.fromJson(json["correct_scores"]),
+      bothTeamsToScore: BothTeamsToScore.fromJson(json["both_teams_to_score"]),
+      overUnder25: OverUnder25.fromJson(json["over_under_2_5"]),
+      doubleChance: DoubleChance.fromJson(json["double_chance"]),
+    );
+  }
+}
+
+class BothTeamsToScore {
+  final double yes;
+  final double no;
+
+  BothTeamsToScore({required this.yes, required this.no});
+
+  factory BothTeamsToScore.fromJson(Map<String, dynamic> json) {
+    return BothTeamsToScore(
+      yes: (json["yes"] as num).toDouble(),
+      no: (json["no"] as num).toDouble(),
+    );
+  }
+}
+
+class OverUnder25 {
+  final double over;
+  final double under;
+
+  OverUnder25({required this.over, required this.under});
+
+  factory OverUnder25.fromJson(Map<String, dynamic> json) {
+    return OverUnder25(
+      over: (json["over"] as num).toDouble(),
+      under: (json["under"] as num).toDouble(),
+    );
+  }
+}
+
+class DoubleChance {
+  final double homeOrDraw;
+  final double awayOrDraw;
+  final double homeOrAway;
+
+  DoubleChance({
+    required this.homeOrDraw,
+    required this.awayOrDraw,
+    required this.homeOrAway,
+  });
+
+  factory DoubleChance.fromJson(Map<String, dynamic> json) {
+    return DoubleChance(
+      homeOrDraw: (json["home_or_draw"] as num).toDouble(),
+      awayOrDraw: (json["away_or_draw"] as num).toDouble(),
+      homeOrAway: (json["home_or_away"] as num).toDouble(),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/theme/text_theme.dart';
 import '../../../core/universal_widgets/s_label.dart';
 import '../../../core/universal_widgets/s_progress_widget.dart';
 import '../../../core/const/size_const/dynamic_size.dart';
@@ -13,38 +14,63 @@ class StatsTabWidgets extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(StatsController());
     controller.loadStats(id);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Obx(() {
       if (controller.isLoading.value) {
-        return Center(child: CircularProgressIndicator());
+        return Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).primaryColor,
+          ),
+        );
       }
 
       if (controller.errorMessage.isNotEmpty) {
-        return Center(child: Text(controller.errorMessage.value));
+        return Center(
+          child: Text(
+            controller.errorMessage.value,
+            style: STextTheme.subHeadLine(),
+          ),
+        );
       }
 
-      final data = controller.statsData.value;
-      if (data == null) {
-        return Center(child: Text("No data available"));
+      if (controller.statsList.isEmpty) {
+        return Center(
+          child: Text(
+            "No data available",
+            style: STextTheme.subHeadLine(),
+          ),
+        );
       }
-
-      final topStats = data.predictions.correctScores.top10;
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: DynamicSize.medium(context)),
-          SLabel(title: 'Top Stats'),
-          // Expanded for ListView
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Top Stats',
+              style: STextTheme.headLine(),
+            ),
+          ),
+          SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              itemCount: topStats.length,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              itemCount: controller.statsList.length,
               itemBuilder: (context, index) {
-                final stat = topStats[index];
-                return SProgressWidget(
-                  label: stat.score,
-                  value: stat.probability / 100,
+                final stat = controller.statsList[index];
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: SProgressWidget(
+                    label: stat.name,
+                    homeValue: stat.homeValue,
+                    awayValue: stat.awayValue,
+                    homePercentage: stat.homePercentage,
+                    awayPercentage: stat.awayPercentage,
+                    isDark: isDark,
+                  ),
                 );
               },
             ),

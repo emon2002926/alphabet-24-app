@@ -6,83 +6,82 @@ StatsResponse statsResponseFromJson(String str) =>
 class StatsResponse {
   final String status;
   final int fixtureId;
-  final FixtureData fixture;
-  final Predictions predictions;
-  final ValueBets valueBets;
-  final Odds odds;
+  final String fixtureName;
+  final StatsData data;
+  final String timestamp;
 
   StatsResponse({
     required this.status,
     required this.fixtureId,
-    required this.fixture,
-    required this.predictions,
-    required this.valueBets,
-    required this.odds,
+    required this.fixtureName,
+    required this.data,
+    required this.timestamp,
   });
 
   factory StatsResponse.fromJson(Map<String, dynamic> json) {
     return StatsResponse(
-      status: json["status"],
-      fixtureId: json["fixture_id"],
-      fixture: FixtureData.fromJson(json["fixture"]),
-      predictions: Predictions.fromJson(json["predictions"]),
-      valueBets: ValueBets.fromJson(json["value_bets"]),
-      odds: Odds.fromJson(json["odds"]),
+      status: json["status"] ?? "",
+      fixtureId: json["fixture_id"] ?? 0,
+      fixtureName: json["fixture_name"] ?? "",
+      data: StatsData.fromJson(json["data"] ?? {}),
+      timestamp: json["timestamp"] ?? "",
     );
   }
 }
 
-class FixtureData {
+class StatsData {
+  final Fixture fixture;
+  final League league;
+  final StateInfo state;
+  final TeamStats homeTeam;
+  final TeamStats awayTeam;
+  final Map<String, ComparisonItem> comparison;
+
+  StatsData({
+    required this.fixture,
+    required this.league,
+    required this.state,
+    required this.homeTeam,
+    required this.awayTeam,
+    required this.comparison,
+  });
+
+  factory StatsData.fromJson(Map<String, dynamic> json) {
+    // Parse comparison data
+    Map<String, ComparisonItem> comparisonMap = {};
+    if (json["comparison"] != null) {
+      (json["comparison"] as Map<String, dynamic>).forEach((key, value) {
+        comparisonMap[key] = ComparisonItem.fromJson(value);
+      });
+    }
+
+    return StatsData(
+      fixture: Fixture.fromJson(json["fixture"] ?? {}),
+      league: League.fromJson(json["league"] ?? {}),
+      state: StateInfo.fromJson(json["state"] ?? {}),
+      homeTeam: TeamStats.fromJson(json["home_team"] ?? {}),
+      awayTeam: TeamStats.fromJson(json["away_team"] ?? {}),
+      comparison: comparisonMap,
+    );
+  }
+}
+
+class Fixture {
   final int id;
   final String name;
   final String startingAt;
-  final StateInfo state;
-  final League league;
-  final Team homeTeam;
-  final Team awayTeam;
 
-  FixtureData({
+  Fixture({
     required this.id,
     required this.name,
     required this.startingAt,
-    required this.state,
-    required this.league,
-    required this.homeTeam,
-    required this.awayTeam,
   });
 
-  factory FixtureData.fromJson(Map<String, dynamic> json) {
-    return FixtureData(
-      id: json["id"],
-      name: json["name"],
-      startingAt: json["starting_at"],
-      state: StateInfo.fromJson(json["state"]),
-      league: League.fromJson(json["league"]),
-      homeTeam: Team.fromJson(json["home_team"]),
-      awayTeam: Team.fromJson(json["away_team"]),
-    );
-  }
-}
-
-class StateInfo {
-  final int id;
-  final String name;
-  final String shortName;
-  final bool isLive;
-
-  StateInfo({
-    required this.id,
-    required this.name,
-    required this.shortName,
-    required this.isLive,
-  });
-
-  factory StateInfo.fromJson(Map<String, dynamic> json) {
-    return StateInfo(
-      id: json["id"],
-      name: json["name"],
-      shortName: json["short_name"],
-      isLive: json["is_live"],
+  factory Fixture.fromJson(Map<String, dynamic> json) {
+    return Fixture(
+      id: json["id"] ?? 0,
+      name: json["name"] ?? "",
+      startingAt: json["starting_at"] ?? "",
     );
   }
 }
@@ -92,190 +91,119 @@ class League {
   final String name;
   final String logo;
 
-  League({required this.id, required this.name, required this.logo});
+  League({
+    required this.id,
+    required this.name,
+    required this.logo,
+  });
 
   factory League.fromJson(Map<String, dynamic> json) {
     return League(
-      id: json["id"],
-      name: json["name"],
-      logo: json["logo"],
+      id: json["id"] ?? 0,
+      name: json["name"] ?? "",
+      logo: json["logo"] ?? "",
     );
   }
 }
 
-class Team {
+class StateInfo {
+  final int id;
+  final String name;
+  final String shortName;
+
+  StateInfo({
+    required this.id,
+    required this.name,
+    required this.shortName,
+  });
+
+  factory StateInfo.fromJson(Map<String, dynamic> json) {
+    return StateInfo(
+      id: json["id"] ?? 0,
+      name: json["name"] ?? "",
+      shortName: json["short_name"] ?? "",
+    );
+  }
+}
+
+class TeamStats {
   final int id;
   final String name;
   final String? shortCode;
   final String logo;
-  final int score;
+  final String location;
+  final Map<String, StatItem> statistics;
 
-  Team({
+  TeamStats({
     required this.id,
     required this.name,
     this.shortCode,
     required this.logo,
-    required this.score,
+    required this.location,
+    required this.statistics,
   });
 
-  factory Team.fromJson(Map<String, dynamic> json) {
-    return Team(
-      id: json["id"],
-      name: json["name"],
+  factory TeamStats.fromJson(Map<String, dynamic> json) {
+    Map<String, StatItem> statsMap = {};
+    if (json["statistics"] != null) {
+      (json["statistics"] as Map<String, dynamic>).forEach((key, value) {
+        statsMap[key] = StatItem.fromJson(value);
+      });
+    }
+
+    return TeamStats(
+      id: json["id"] ?? 0,
+      name: json["name"] ?? "",
       shortCode: json["short_code"],
-      logo: json["logo"],
-      score: json["score"] ?? 0,
+      logo: json["logo"] ?? "",
+      location: json["location"] ?? "",
+      statistics: statsMap,
     );
   }
 }
 
-// ---------------- Predictions ----------------
+class StatItem {
+  final dynamic value;
+  final String name;
+  final String code;
 
-class Predictions {
-  final FullTimeResult fulltimeResult;
-  final Map<String, double> bothTeamsToScore;
-  final Map<String, double> overUnder25;
-  final Map<String, double> doubleChance;
-  final CorrectScores correctScores;
-
-  Predictions({
-    required this.fulltimeResult,
-    required this.bothTeamsToScore,
-    required this.overUnder25,
-    required this.doubleChance,
-    required this.correctScores,
+  StatItem({
+    required this.value,
+    required this.name,
+    required this.code,
   });
 
-  factory Predictions.fromJson(Map<String, dynamic> json) {
-    return Predictions(
-      fulltimeResult: FullTimeResult.fromJson(json["fulltime_result"]),
-      bothTeamsToScore: Map<String, double>.from(json["both_teams_to_score"]),
-      overUnder25: Map<String, double>.from(json["over_under_2_5"]),
-      doubleChance: Map<String, double>.from(json["double_chance"]),
-      correctScores: CorrectScores.fromJson(json["correct_scores"]),
+  factory StatItem.fromJson(Map<String, dynamic> json) {
+    return StatItem(
+      value: json["value"],
+      name: json["name"] ?? "",
+      code: json["code"] ?? "",
     );
   }
 }
 
-class FullTimeResult {
-  final double homeWin;
-  final double draw;
-  final double awayWin;
+class ComparisonItem {
+  final double homeValue;
+  final double awayValue;
+  final double homePercentage;
+  final double awayPercentage;
+  final String name;
 
-  FullTimeResult({
-    required this.homeWin,
-    required this.draw,
-    required this.awayWin,
+  ComparisonItem({
+    required this.homeValue,
+    required this.awayValue,
+    required this.homePercentage,
+    required this.awayPercentage,
+    required this.name,
   });
 
-  factory FullTimeResult.fromJson(Map<String, dynamic> json) {
-    return FullTimeResult(
-      homeWin: (json["home_win"] as num).toDouble(),
-      draw: (json["draw"] as num).toDouble(),
-      awayWin: (json["away_win"] as num).toDouble(),
-    );
-  }
-}
-
-class CorrectScores {
-  final List<TopScore> top10;
-
-  CorrectScores({required this.top10});
-
-  factory CorrectScores.fromJson(Map<String, dynamic> json) {
-    return CorrectScores(
-      top10: (json["top_10"] as List)
-          .map((e) => TopScore.fromJson(e))
-          .toList(),
-    );
-  }
-}
-
-class TopScore {
-  final String score;
-  final double probability;
-
-  TopScore({required this.score, required this.probability});
-
-  factory TopScore.fromJson(Map<String, dynamic> json) {
-    return TopScore(
-      score: json["score"],
-      probability: (json["probability"] as num).toDouble(),
-    );
-  }
-}
-
-// ---------------- Value Bets ----------------
-
-class ValueBets {
-  final bool available;
-  final int count;
-  final List<ValueBet> bets;
-
-  ValueBets({
-    required this.available,
-    required this.count,
-    required this.bets,
-  });
-
-  factory ValueBets.fromJson(Map<String, dynamic> json) {
-    return ValueBets(
-      available: json["available"],
-      count: json["count"],
-      bets: (json["bets"] as List)
-          .map((e) => ValueBet.fromJson(e))
-          .toList(),
-    );
-  }
-}
-
-class ValueBet {
-  final int id;
-  final int fixtureId;
-
-  ValueBet({required this.id, required this.fixtureId});
-
-  factory ValueBet.fromJson(Map<String, dynamic> json) {
-    return ValueBet(
-      id: json["id"],
-      fixtureId: json["fixture_id"],
-    );
-  }
-}
-
-// ---------------- Odds ----------------
-
-class Odds {
-  final PreMatch preMatch;
-
-  Odds({required this.preMatch});
-
-  factory Odds.fromJson(Map<String, dynamic> json) {
-    return Odds(
-      preMatch: PreMatch.fromJson(json["pre_match"]),
-    );
-  }
-}
-
-class PreMatch {
-  final bool available;
-  final int bookmakerId;
-  final String bookmakerName;
-  final int totalMarkets;
-
-  PreMatch({
-    required this.available,
-    required this.bookmakerId,
-    required this.bookmakerName,
-    required this.totalMarkets,
-  });
-
-  factory PreMatch.fromJson(Map<String, dynamic> json) {
-    return PreMatch(
-      available: json["available"],
-      bookmakerId: json["bookmaker_id"],
-      bookmakerName: json["bookmaker_name"],
-      totalMarkets: json["total_markets"],
+  factory ComparisonItem.fromJson(Map<String, dynamic> json) {
+    return ComparisonItem(
+      homeValue: (json["home_value"] ?? 0).toDouble(),
+      awayValue: (json["away_value"] ?? 0).toDouble(),
+      homePercentage: (json["home_percentage"] ?? 0).toDouble(),
+      awayPercentage: (json["away_percentage"] ?? 0).toDouble(),
+      name: json["name"] ?? "",
     );
   }
 }

@@ -33,6 +33,7 @@ class LeagueDetailController extends GetxController {
         liveMatches.value = leagueResponse.liveMatches.matches;
         todayFixtures.value = leagueResponse.todayFixtures.matches;
         print('Live matches: ${liveMatches.length}');
+        print('lig ditels : ${leagueResponse.league.name}');
         print('Today fixtures: ${todayFixtures.length}');
       }
     } catch (e) {

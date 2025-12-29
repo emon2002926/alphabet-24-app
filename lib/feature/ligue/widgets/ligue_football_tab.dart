@@ -10,6 +10,7 @@ import 'package:scaffassistant/feature/home/controllers/sports_data/football_dat
 
 import '../../../core/universal_widgets/league_list_widget.dart';
 import '../controllers/widget_change_controller.dart';
+import '../views/ligue_match_list_screen.dart';
 
 class LigueFootballTab extends StatelessWidget {
   const LigueFootballTab({super.key});
@@ -121,10 +122,20 @@ class LigueFootballTab extends StatelessWidget {
                     children: [
                       SizedBox(height: DynamicSize.small(context)),
                       LeagueListWidget(
-                        leagueListController: leagueListController,
+                        leagues: leagueListController.filteredLeagues,
                         showDivider: true,
-                        itemCount: leagueListController.filteredLeagues.length,
-                        useFilteredList: true, // Add this parameter
+                        onToggleFavorite: (index, league) {
+                          leagueListController.toggleFavoriteLeague(
+                            index,
+                            useFiltered: true,
+                          );
+                        },
+                        onLeagueTap: (league) {
+                          Get.to(() => LigueMatchListScreen(), arguments: {
+                            'leagueId': league.id,
+                            'leagueName': league.name,
+                          });
+                        },
                       ),
                     ],
                   ),
@@ -137,6 +148,5 @@ class LigueFootballTab extends StatelessWidget {
     );
   }
 }
-
 
 

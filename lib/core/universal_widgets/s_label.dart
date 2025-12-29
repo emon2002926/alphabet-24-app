@@ -15,21 +15,22 @@ class SLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
-      color: SColor.borderColor, // use your theme color if available
+      color: isDark ? Color(0xFF1E1E1E) : Color(0xFFF5F5F5),
       padding: EdgeInsets.symmetric(
         horizontal: DynamicSize.medium(context),
-        vertical: DynamicSize.small(context) * 0.6,
+        vertical: DynamicSize.small(context) * 0.8,
       ),
       child: Row(
         children: [
           Text(
             title,
             style: STextTheme.headLine().copyWith(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: SColor.textPrimary, // match your theme
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const Spacer(),
@@ -37,9 +38,8 @@ class SLabel extends StatelessWidget {
             Text(
               score!,
               style: STextTheme.headLine().copyWith(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: SColor.textSecondary, // theme match
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
               ),
             ),
         ],

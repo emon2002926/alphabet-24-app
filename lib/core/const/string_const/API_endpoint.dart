@@ -13,7 +13,7 @@ class APIEndpoint {
   static String leagueList ="${baseURL}sports-data/leagues/";
   static String leagueDetail ="${baseURL}sports-data/leagues";
 
-  static String newsList ="${baseURL}sports-data/news/personalized/";
+  static String newsList ="${baseURL}sports-data/news/";
   static String addToFavorite ="${baseURL}sports-data/user/favorites/";
   static  String userFavorites = "${baseURL}sports-data/user/favorites/";
 
