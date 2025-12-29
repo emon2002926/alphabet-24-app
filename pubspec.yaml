@@ -41,6 +41,9 @@ dependencies:
 
   intl: ^0.18.1  # Add this for date formatting
 
+  cached_network_image: ^3.3.1
+
+
 
 
 

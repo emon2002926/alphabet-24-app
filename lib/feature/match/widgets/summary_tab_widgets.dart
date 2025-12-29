@@ -53,16 +53,21 @@ class SummaryTabWidgets extends StatelessWidget {
           .toList();
 
       // Get halftime and fulltime scores
-      final firstHalfScore = summaryData.summary.score.halftime?.display ?? '0-0';
-      final secondHalfScore = summaryData.summary.score.current.display ?? '0-0';
-      final predictionScore = summaryData.summary.score.current.display ?? '0-0';
+      final firstHalfScore =
+          summaryData.summary.score.halftime?.display ?? '0-0';
+      final secondHalfScore =
+          summaryData.summary.score.current.display ?? '0-0';
 
       // Combine and sort events by minute
-      final allFirstHalfEvents = [...firstHalfHomeEvents, ...firstHalfAwayEvents]
-        ..sort((a, b) => a.minute.compareTo(b.minute));
+      final allFirstHalfEvents = [
+        ...firstHalfHomeEvents,
+        ...firstHalfAwayEvents
+      ]..sort((a, b) => a.minute.compareTo(b.minute));
 
-      final allSecondHalfEvents = [...secondHalfHomeEvents, ...secondHalfAwayEvents]
-        ..sort((a, b) => a.minute.compareTo(b.minute));
+      final allSecondHalfEvents = [
+        ...secondHalfHomeEvents,
+        ...secondHalfAwayEvents
+      ]..sort((a, b) => a.minute.compareTo(b.minute));
 
       return SingleChildScrollView(
         child: Column(
@@ -70,30 +75,28 @@ class SummaryTabWidgets extends StatelessWidget {
           children: [
             SizedBox(height: DynamicSize.medium(context)),
 
-            // 1st Half
-            SLabel(title: '1st Half', score: firstHalfScore),
-            if (allFirstHalfEvents.isEmpty)
-              Padding(
-                padding: EdgeInsets.all(DynamicSize.medium(context)),
-                child: Center(
-                  child: Text(
-                    'No events in first half',
-                    style: STextTheme.subHeadLine(),
+            // 2nd Half (shown first, reverse order)
+            Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isDark ? Color(0xFF1E1E1E) : Color(0xFF1a1a2e),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '2ND-HALF',
+                  style: STextTheme.headLine().copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
                   ),
                 ),
-              )
-            else
-              ...allFirstHalfEvents.map((event) {
-                final isHomeTeam = event.team == 'home';
-                return isHomeTeam
-                    ? RightAlignSectionWidget(event, isDark)
-                    : LeftAlignSectionWidget(event, isDark);
-              }),
+              ),
+            ),
 
             SizedBox(height: DynamicSize.medium(context)),
 
-            // 2nd Half
-            SLabel(title: '2nd Half', score: secondHalfScore),
             if (allSecondHalfEvents.isEmpty)
               Padding(
                 padding: EdgeInsets.all(DynamicSize.medium(context)),
@@ -105,17 +108,74 @@ class SummaryTabWidgets extends StatelessWidget {
                 ),
               )
             else
-              ...allSecondHalfEvents.map((event) {
+              ...allSecondHalfEvents.reversed.map((event) {
                 final isHomeTeam = event.team == 'home';
-                return isHomeTeam
-                    ? RightAlignSectionWidget(event, isDark)
-                    : LeftAlignSectionWidget(event, isDark);
+                return TimelineEventWidget(
+                  event: event,
+                  isHomeTeam: isHomeTeam,
+                  isDark: isDark,
+                );
               }),
+
+            SizedBox(height: DynamicSize.large(context)),
+
+            // 1st Half
+            Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isDark ? Color(0xFF1E1E1E) : Color(0xFF1a1a2e),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '1ST-HALF',
+                  style: STextTheme.headLine().copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
 
             SizedBox(height: DynamicSize.medium(context)),
 
+            if (allFirstHalfEvents.isEmpty)
+              Padding(
+                padding: EdgeInsets.all(DynamicSize.medium(context)),
+                child: Center(
+                  child: Text(
+                    'No events in first half',
+                    style: STextTheme.subHeadLine(),
+                  ),
+                ),
+              )
+            else
+              ...allFirstHalfEvents.reversed.map((event) {
+                final isHomeTeam = event.team == 'home';
+                return TimelineEventWidget(
+                  event: event,
+                  isHomeTeam: isHomeTeam,
+                  isDark: isDark,
+                );
+              }),
+
+            SizedBox(height: DynamicSize.large(context)),
+
             // Prediction Section
-            SLabel(title: 'Prediction', score: predictionScore),
+            Padding(
+              padding:
+              EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
+              child: Text(
+                'PREDICTION',
+                style: STextTheme.headLine().copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
             SizedBox(height: DynamicSize.small(context)),
 
             // Expected Goals
@@ -142,122 +202,216 @@ class SummaryTabWidgets extends StatelessWidget {
               ),
               child: SProgressWidget(
                 label: 'Winning Possibility',
-                homeValue: '${summaryData.predictions.fulltimeResult.homeWin.toInt()}%',
-                awayValue: '${summaryData.predictions.fulltimeResult.awayWin.toInt()}%',
+                homeValue:
+                '${summaryData.predictions.fulltimeResult.homeWin.toInt()}%',
+                awayValue:
+                '${summaryData.predictions.fulltimeResult.awayWin.toInt()}%',
                 homePercentage: summaryData.predictions.fulltimeResult.homeWin,
                 awayPercentage: summaryData.predictions.fulltimeResult.awayWin,
                 isDark: isDark,
               ),
             ),
 
-            SizedBox(height: DynamicSize.medium(context)),
+            SizedBox(height: DynamicSize.large(context)),
           ],
         ),
       );
     });
   }
+}
 
-  // Right-aligned events for Home team
-  Widget RightAlignSectionWidget(Event event, bool isDark) {
+// Timeline Event Widget
+class TimelineEventWidget extends StatelessWidget {
+  final Event event;
+  final bool isHomeTeam;
+  final bool isDark;
+
+  const TimelineEventWidget({
+    Key? key,
+    required this.event,
+    required this.isHomeTeam,
+    required this.isDark,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     final playerName = event.player?.name ?? "Unknown";
     final extraMinute = event.extraMinute != null ? '+${event.extraMinute}' : '';
 
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: DynamicSize.medium(Get.context!),
-        vertical: DynamicSize.small(Get.context!) * 0.5,
+        horizontal: DynamicSize.medium(context),
+        vertical: DynamicSize.small(context) * 0.3,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Flexible(
-            child: Text(
-              '($playerName) ',
-              style: STextTheme.subHeadLine().copyWith(fontSize: 13),
-              overflow: TextOverflow.ellipsis,
-            ),
+          // Left side (Home team)
+          Expanded(
+            child: isHomeTeam
+                ? _buildEventContent(playerName, true)
+                : SizedBox(),
           ),
-          Text(
-            event.type.name,
-            style: STextTheme.headLine().copyWith(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(width: 8),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: isDark ? Color(0xFF2C2C2C) : Color(0xFFEBEBEB),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              '${event.minute}\'$extraMinute',
-              style: STextTheme.headLine().copyWith(fontSize: 12),
-            ),
-          ),
-          SizedBox(width: 8),
-          _getEventIcon(event.type.code ?? '', isDark),
-        ],
-      ),
-    );
-  }
 
-  // Left-aligned events for Away team
-  Widget LeftAlignSectionWidget(Event event, bool isDark) {
-    final playerName = event.player?.name ?? "Unknown";
-    final extraMinute = event.extraMinute != null ? '+${event.extraMinute}' : '';
+          // Center timeline
+          SizedBox(
+            width: 80,
+            child: Column(
+              children: [
+                // Timeline line
+                Container(
+                  width: 2,
+                  height: 20,
+                  color: isHomeTeam
+                      ? (isDark ? Color(0xFF0ea5e9) : Color(0xFF0ea5e9))
+                      : (isDark ? Color(0xFFec4899) : Color(0xFFec4899)),
+                ),
+                // Time badge
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: isHomeTeam
+                          ? (isDark ? Color(0xFF0ea5e9) : Color(0xFF0ea5e9))
+                          : (isDark ? Color(0xFFec4899) : Color(0xFFec4899)),
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+                  ),
+                  child: Text(
+                    '${event.minute}\'$extraMinute',
+                    style: STextTheme.headLine().copyWith(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: isHomeTeam
+                          ? (isDark ? Color(0xFF0ea5e9) : Color(0xFF0ea5e9))
+                          : (isDark ? Color(0xFFec4899) : Color(0xFFec4899)),
+                    ),
+                  ),
+                ),
+                // Timeline line
+                Container(
+                  width: 2,
+                  height: 20,
+                  color: isHomeTeam
+                      ? (isDark ? Color(0xFF0ea5e9) : Color(0xFF0ea5e9))
+                      : (isDark ? Color(0xFFec4899) : Color(0xFFec4899)),
+                ),
+              ],
+            ),
+          ),
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: DynamicSize.medium(Get.context!),
-        vertical: DynamicSize.small(Get.context!) * 0.5,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          _getEventIcon(event.type.code ?? '', isDark),
-          SizedBox(width: 8),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: isDark ? Color(0xFF2C2C2C) : Color(0xFFEBEBEB),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              '${event.minute}\'$extraMinute',
-              style: STextTheme.headLine().copyWith(fontSize: 12),
-            ),
-          ),
-          SizedBox(width: 8),
-          Text(
-            event.type.name,
-            style: STextTheme.headLine().copyWith(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(width: 4),
-          Flexible(
-            child: Text(
-              '($playerName)',
-              style: STextTheme.subHeadLine().copyWith(fontSize: 13),
-              overflow: TextOverflow.ellipsis,
-            ),
+          // Right side (Away team)
+          Expanded(
+            child: !isHomeTeam
+                ? _buildEventContent(playerName, false)
+                : SizedBox(),
           ),
         ],
       ),
     );
   }
 
-  Widget _getEventIcon(String code, bool isDark) {
+  Widget _buildEventContent(String playerName, bool isLeft) {
+    return Row(
+      mainAxisAlignment:
+      isLeft ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+        if (!isLeft) SizedBox(width: 8),
+
+        // Player image placeholder
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: isDark ? Color(0xFF2C2C2C) : Color(0xFFE0E0E0),
+            shape: BoxShape.circle,
+          ),
+          child: _getEventIcon(event.type.code ?? ''),
+        ),
+
+        SizedBox(width: 8),
+
+        Flexible(
+          child: Column(
+            crossAxisAlignment:
+            isLeft ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (!isLeft) _getEventTypeIcon(event.type.code ?? ''),
+                  if (!isLeft) SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      playerName,
+                      style: STextTheme.headLine().copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: isLeft ? TextAlign.right : TextAlign.left,
+                    ),
+                  ),
+                  if (isLeft) SizedBox(width: 4),
+                  if (isLeft) _getEventTypeIcon(event.type.code ?? ''),
+                ],
+              ),
+              SizedBox(height: 2),
+              Text(
+                event.type.name,
+                style: STextTheme.subHeadLine().copyWith(
+                  fontSize: 11,
+                ),
+                textAlign: isLeft ? TextAlign.right : TextAlign.left,
+              ),
+            ],
+          ),
+        ),
+
+        if (isLeft) SizedBox(width: 8),
+      ],
+    );
+  }
+
+  Widget _getEventIcon(String code) {
+    IconData icon;
+
+    switch (code) {
+      case 'goal':
+        icon = Icons.sports_soccer;
+        break;
+      case 'yellowcard':
+        icon = Icons.square;
+        break;
+      case 'redcard':
+        icon = Icons.square;
+        break;
+      case 'substitution':
+        icon = Icons.swap_horiz;
+        break;
+      case 'var':
+        icon = Icons.videocam;
+        break;
+      default:
+        icon = Icons.person;
+    }
+
+    return Icon(
+      icon,
+      size: 16,
+      color: isDark ? Colors.white70 : Colors.black54,
+    );
+  }
+
+  Widget _getEventTypeIcon(String code) {
     IconData icon;
     Color? color;
 
     switch (code) {
       case 'goal':
         icon = Icons.sports_soccer;
-        color = Colors.black;
+        color = Colors.green;
         break;
       case 'yellowcard':
         icon = Icons.square;
@@ -280,6 +434,6 @@ class SummaryTabWidgets extends StatelessWidget {
         color = isDark ? Colors.white70 : Colors.black87;
     }
 
-    return Icon(icon, size: 20, color: color);
+    return Icon(icon, size: 14, color: color);
   }
 }
