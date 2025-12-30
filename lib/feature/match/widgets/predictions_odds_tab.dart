@@ -386,7 +386,7 @@ class PredictionsOddsTab extends StatelessWidget {
               ),
             ),
           );
-        }).toList(),
+        }),
 
         SizedBox(height: DynamicSize.large(context)),
       ],

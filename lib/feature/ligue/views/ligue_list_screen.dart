@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:scaffassistant/core/universal_widgets/appbar.dart';
-import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
 import 'package:scaffassistant/feature/ligue/views/ligue_match_list_screen.dart';
 import '../../home/controllers/sports_data/football_data/leage_list_controller.dart';
 import '../../home/models/leage_list_model.dart';
-import '../widgets/ligue_football_tab.dart';
-import '../../home/widgets/football_screen.dart';
-import '../../prediction/widgets/predicted_football_tab.dart';
 
 class LigueListScreen extends StatelessWidget {
   final LeagueListController leagueListController;

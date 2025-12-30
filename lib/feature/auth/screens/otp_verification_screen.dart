@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/const/string_const/image_path.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/feature/auth/controllers/forget_password_controller.dart';
 import 'package:scaffassistant/feature/auth/controllers/signup_controller.dart';
-import 'package:scaffassistant/feature/auth/widgets/s_otp_field.dart';
-import 'package:scaffassistant/routing/route_name.dart';
 
-import '../../../core/local_storage/user_status.dart';
 import '../../../core/theme/text_theme.dart';
 import '../widgets/s_full_btn.dart';
 import '../../../core/universal_widgets/s_text_field.dart';
-import '../widgets/social_button.dart';
 
 class OtpVerificationScreen extends StatelessWidget {
   const OtpVerificationScreen({super.key});

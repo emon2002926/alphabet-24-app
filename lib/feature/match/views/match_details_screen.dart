@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/universal_widgets/s_label.dart';
 import '../widgets/h2h_tabWidget.dart';
 import '../widgets/lineup_tab_widget.dart';
 import '../widgets/match_header.dart';
@@ -8,8 +7,6 @@ import '../widgets/predictions_odds_tab.dart';
 import '../widgets/predictions_tab_widgets.dart';
 import '../widgets/stats_tab_widgets.dart';
 import '../widgets/summary_tab_widgets.dart';
-import '../../../core/const/string_const/icon_path.dart';
-import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/SColor.dart';
 import '../../../core/theme/text_theme.dart';
 

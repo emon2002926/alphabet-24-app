@@ -67,7 +67,7 @@ class SettingsScreen extends StatelessWidget {
                   title: 'Dark Mode',
                   trailing: Switch(
                     value: isDark,
-                    activeColor: SColor.primary,
+                    activeThumbColor: SColor.primary,
                     onChanged: controller.toggleDarkMode,
                   ),
                   isDarkMode: isDark,

@@ -7,13 +7,10 @@ import 'package:scaffassistant/core/universal_widgets/basketball/basketball_leag
 import 'package:scaffassistant/core/universal_widgets/scoure_card_widget.dart';
 import 'package:scaffassistant/feature/home/controllers/sports_data/basketball/basketball_leagues_controller.dart';
 import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/football_live_match_controller.dart';
-import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/leage_list_controller.dart';
 import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/news_list_controller.dart';
-import 'package:scaffassistant/core/universal_widgets/league_list_widget.dart';
 import 'package:scaffassistant/feature/ligue/views/basketball/basketball_ligue_list_screen.dart';
 import 'package:scaffassistant/feature/news/views/news_screen.dart';
 import '../../../core/universal_widgets/news_card_widget.dart';
-import '../../ligue/views/ligue_list_screen.dart';
 
 class BasketballScreen extends StatefulWidget {
   const BasketballScreen({super.key});

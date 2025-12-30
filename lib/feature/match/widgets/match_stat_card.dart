@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
-import 'package:scaffassistant/core/theme/SColor.dart';
 
 class MatchStatCard extends StatelessWidget {
   final String title;

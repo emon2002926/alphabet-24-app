@@ -7,9 +7,6 @@ import '../../../core/local_storage/user_info.dart';
 import '../../../core/universal_widgets/s_snackbar.dart';
 import '../../home/models/live_match_response_model.dart';
 
-import 'dart:convert';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class FavouriteController extends GetxController {
   RxList<FavouriteFixture> favouriteFixtures = <FavouriteFixture>[].obs;
@@ -94,7 +91,7 @@ class FavouriteController extends GetxController {
   Future<void> removeFixtureFavourite(int id) async {
     try {
       final response = await http.delete(
-        Uri.parse('${APIEndpoint.userFavorites}'),
+        Uri.parse(APIEndpoint.userFavorites),
         headers: {
           'Authorization': 'Bearer ${UserInfo.getAccessToken()}',
           'Content-Type': 'application/json',

@@ -38,7 +38,7 @@ class LigueMatchListScreen extends StatelessWidget {
               SizedBox(height: DynamicSize.small(context)),
               ...controller.liveMatches
                   .map((match) => _buildMatchRow(match, context))
-                  .toList(),
+                  ,
               SizedBox(height: DynamicSize.medium(context)),
             ],
             if (controller.todayFixtures.isNotEmpty) ...[
@@ -47,7 +47,7 @@ class LigueMatchListScreen extends StatelessWidget {
               SizedBox(height: DynamicSize.small(context)),
               ...controller.todayFixtures
                   .map((match) => _buildMatchRow(match, context))
-                  .toList(),
+                  ,
             ],
           ],
         );

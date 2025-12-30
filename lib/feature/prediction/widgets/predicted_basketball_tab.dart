@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
-import 'package:scaffassistant/core/theme/text_theme.dart';
 import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/football_live_match_controller.dart';
 
-import '../../../core/universal_widgets/news_card_widget.dart';
 import '../../../core/universal_widgets/scoure_card_widget.dart';
 
 class PredictedBasketballTab extends StatefulWidget {

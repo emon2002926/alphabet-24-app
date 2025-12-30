@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scaffassistant/core/const/string_const/image_path.dart';
-    import 'package:scaffassistant/core/theme/SColor.dart';
-    import 'package:scaffassistant/core/theme/text_theme.dart';
 import 'package:get/get.dart';
 import 'package:scaffassistant/feature/settings/controllers/account_controller.dart';
 
-import '../../../core/universal_widgets/appbar.dart';
-import '../../../core/universal_widgets/s_text_field.dart';
 import '../../../core/user_controller.dart';
 
 class AccountScreen extends StatelessWidget {

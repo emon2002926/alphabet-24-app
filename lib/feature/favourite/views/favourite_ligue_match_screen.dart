@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:scaffassistant/core/universal_widgets/appbar.dart';
-import 'package:scaffassistant/feature/prediction/widgets/predicted_football_tab.dart';
 
 import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/SColor.dart';
 import '../../../core/theme/text_theme.dart';
-import '../../home/widgets/football_screen.dart';
 import '../widgets/favourite_igue_football_tab.dart';
 
 class FavouriteLigueMatchScreen extends StatelessWidget {
@@ -71,7 +69,7 @@ class FavouriteLigueMatchScreen extends StatelessWidget {
                     final date = (1.10 + index * 0.01).toStringAsFixed(2);
                     return Padding(
                       padding: EdgeInsets.only(right: DynamicSize.medium(context)),
-                      child: Container(
+                      child: SizedBox(
                         width: 60,
                         child: Center(
                           child: Column(

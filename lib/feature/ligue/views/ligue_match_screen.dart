@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:scaffassistant/core/universal_widgets/appbar.dart';
-import 'package:scaffassistant/feature/prediction/widgets/predicted_football_tab.dart';
 
 import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/SColor.dart';
-import '../../home/widgets/football_screen.dart';
-import '../widgets/ligue_football_tab.dart';
 
 class LigueMatchScreen extends StatelessWidget {
   const LigueMatchScreen({super.key});

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/football_live_match_controller.dart';
 import 'package:scaffassistant/feature/match/views/match_details_screen.dart';
 import '../theme/SColor.dart';
@@ -15,7 +17,15 @@ class ScoureCardWidget extends StatelessWidget {
     final liveMatchController = Get.find<FootballLiveMatchController>();
 
     return Obx(() {
-      final match = liveMatchController.liveMatches[index];
+      // Use displayMatches instead of liveMatches directly
+      final matches = liveMatchController.displayMatches;
+
+      // Safety check for index
+      if (index >= matches.length) {
+        return const SizedBox.shrink();
+      }
+
+      final match = matches[index];
 
       // ===== SAFE PERIOD CHECK =====
       final hasPeriod = match.periods.isNotEmpty;
@@ -49,7 +59,7 @@ class ScoureCardWidget extends StatelessWidget {
         child: Card(
           color: Get.theme.brightness == Brightness.dark
               ? const Color(0xFF3E3E3E)
-              : const Color(0xFFFFFFFF),
+              : const Color(0xFFEAEAEA),
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -64,16 +74,77 @@ class ScoureCardWidget extends StatelessWidget {
                 // ===== LEAGUE HEADER WITH FAVORITE BUTTON =====
                 Row(
                   children: [
-                    Image.network(match.league.logo, height: 20),
-                    const Spacer(),
-                    Text(
-                      hasPeriod ? "${periodMinutes}'" : "-",
-                      style: STextTheme.headLine().copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                    Image.network(
+                      match.league.logo,
+                      height: 20,
+                      errorBuilder: (_, __, ___) => Icon(
+                        Icons.sports_soccer,
+                        size: 20,
+                        color: Colors.grey,
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        match.league.name,
+                        style: STextTheme.headLine().copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    // CLIENT FEEDBACK: Show minute if live, start time if upcoming
+                    if (match.status.isLive && hasPeriod)
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.red, width: 1),
+                        ),
+                        child: Text(
+                          "$periodMinutes'",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                            color: Colors.red,
+                          ),
+                        ),
+                      )
+                    else if (!match.status.isLive)
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: SColor.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: SColor.primary.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.schedule,
+                              size: 12,
+                              color: SColor.primary,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              DateFormat('HH:mm').format(match.startingAt),
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: SColor.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     const SizedBox(width: 10),
+                    // CLIENT FEEDBACK: Favorite button - removes match from favorites
                     GestureDetector(
                       onTap: () => liveMatchController.toggleFavorite(index),
                       child: Icon(
@@ -96,7 +167,15 @@ class ScoureCardWidget extends StatelessWidget {
                     Expanded(
                       child: Column(
                         children: [
-                          Image.network(match.homeTeam.logo, height: 28),
+                          Image.network(
+                            match.homeTeam.logo,
+                            height: 28,
+                            errorBuilder: (_, __, ___) => Icon(
+                              Icons.sports_soccer,
+                              size: 28,
+                              color: Colors.grey,
+                            ),
+                          ),
                           const SizedBox(height: 2),
                           Text(
                             match.homeTeam.name,
@@ -114,14 +193,20 @@ class ScoureCardWidget extends StatelessWidget {
                         children: [
                           Text(
                             match.score.display,
-                            style: STextTheme.headLine().copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: match.status.isLive ? Colors.red : null,
                             ),
                           ),
                           Text(
-                            periodDescription,
-                            style: STextTheme.subHeadLine().copyWith(fontSize: 10),
+                            match.status.isLive
+                                ? periodDescription
+                                : match.status.stateShort,
+                            style: STextTheme.subHeadLine().copyWith(
+                              fontSize: 10,
+                              color: match.status.isLive ? Colors.red : null,
+                            ),
                           ),
                         ],
                       ),
@@ -129,7 +214,15 @@ class ScoureCardWidget extends StatelessWidget {
                     Expanded(
                       child: Column(
                         children: [
-                          Image.network(match.awayTeam.logo, height: 28),
+                          Image.network(
+                            match.awayTeam.logo,
+                            height: 28,
+                            errorBuilder: (_, __, ___) => Icon(
+                              Icons.sports_soccer,
+                              size: 28,
+                              color: Colors.grey,
+                            ),
+                          ),
                           const SizedBox(height: 2),
                           Text(
                             match.awayTeam.name,
@@ -166,7 +259,11 @@ class ScoureCardWidget extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.network(match.homeTeam.logo, height: 14),
+                        Image.network(
+                          match.homeTeam.logo,
+                          height: 14,
+                          errorBuilder: (_, __, ___) => SizedBox.shrink(),
+                        ),
                         const SizedBox(width: 3),
                         Text("${homeProb.toStringAsFixed(0)}%",
                             style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
@@ -180,7 +277,11 @@ class ScoureCardWidget extends StatelessWidget {
                         Text("${awayProb.toStringAsFixed(0)}%",
                             style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
                         const SizedBox(width: 3),
-                        Image.network(match.awayTeam.logo, height: 14),
+                        Image.network(
+                          match.awayTeam.logo,
+                          height: 14,
+                          errorBuilder: (_, __, ___) => SizedBox.shrink(),
+                        ),
                       ],
                     ),
                   ],
@@ -247,17 +348,25 @@ class ScoureCardWidget extends StatelessWidget {
                 // ===== GOAL PREDICTION TEXT =====
                 Row(
                   children: [
-                    Image.network(match.homeTeam.logo, height: 14),
+                    Image.network(
+                      match.homeTeam.logo,
+                      height: 14,
+                      errorBuilder: (_, __, ___) => SizedBox.shrink(),
+                    ),
                     const Spacer(),
                     Text(
-                      "$topScore",
+                      topScore,
                       style: STextTheme.subHeadLine().copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                       ),
                     ),
                     const Spacer(),
-                    Image.network(match.awayTeam.logo, height: 14),
+                    Image.network(
+                      match.awayTeam.logo,
+                      height: 14,
+                      errorBuilder: (_, __, ___) => SizedBox.shrink(),
+                    ),
                   ],
                 ),
 

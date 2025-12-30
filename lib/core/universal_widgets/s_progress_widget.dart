@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/const/size_const/dynamic_size.dart';
-import '../../../core/theme/SColor.dart';
 import '../../../core/theme/text_theme.dart';
 
 class SProgressWidget extends StatelessWidget {
@@ -12,14 +10,14 @@ class SProgressWidget extends StatelessWidget {
   final bool isDark;
 
   const SProgressWidget({
-    Key? key,
+    super.key,
     required this.label,
     required this.homeValue,
     required this.awayValue,
     required this.homePercentage,
     required this.awayPercentage,
     required this.isDark,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

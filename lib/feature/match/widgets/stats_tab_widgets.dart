@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/text_theme.dart';
-import '../../../core/universal_widgets/s_label.dart';
 import '../../../core/universal_widgets/s_progress_widget.dart';
 import '../../../core/const/size_const/dynamic_size.dart';
 import '../controllers/stats_controller.dart';
 
 class StatsTabWidgets extends StatelessWidget {
   final int id;
-  StatsTabWidgets({super.key, required this.id});
+  const StatsTabWidgets({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {

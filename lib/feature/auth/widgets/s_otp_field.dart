@@ -6,11 +6,11 @@ import '../../../core/theme/SColor.dart';
               final int length;
               final TextEditingController controller;
 
-              SOTPField({
-                Key? key,
+              const SOTPField({
+                super.key,
                 required this.length,
                 required this.controller,
-              }) : super(key: key);
+              });
 
               @override
               State<SOTPField> createState() => _SOTPFieldState();

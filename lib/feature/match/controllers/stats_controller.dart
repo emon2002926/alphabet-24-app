@@ -56,8 +56,8 @@ class StatsController extends GetxController {
         name: 'Expected Goals (xG)',
         homeValue: homeValue.toString(),
         awayValue: awayValue.toString(),
-        homePercentage: total > 0 ? ((homeValue as num).toDouble() / total * 100) : 50,
-        awayPercentage: total > 0 ? ((awayValue as num).toDouble() / total * 100) : 50,
+        homePercentage: total > 0 ? ((homeValue).toDouble() / total * 100) : 50,
+        awayPercentage: total > 0 ? ((awayValue).toDouble() / total * 100) : 50,
       ));
     }
 
@@ -107,8 +107,8 @@ class StatsController extends GetxController {
         name: 'Big chances',
         homeValue: homeValue.toString(),
         awayValue: awayValue.toString(),
-        homePercentage: total > 0 ? ((homeValue as num).toDouble() / total * 100) : 50,
-        awayPercentage: total > 0 ? ((awayValue as num).toDouble() / total * 100) : 50,
+        homePercentage: total > 0 ? ((homeValue).toDouble() / total * 100) : 50,
+        awayPercentage: total > 0 ? ((awayValue).toDouble() / total * 100) : 50,
       ));
     }
 
@@ -131,8 +131,8 @@ class StatsController extends GetxController {
 
       statsList.add(StatData(
         name: 'Passes',
-        homeValue: '${homeValue}%',
-        awayValue: '${awayValue}%',
+        homeValue: '$homeValue%',
+        awayValue: '$awayValue%',
         homePercentage: (homeValue as num).toDouble(),
         awayPercentage: (awayValue as num).toDouble(),
       ));
@@ -148,8 +148,8 @@ class StatsController extends GetxController {
         name: 'Yellow Cards',
         homeValue: homeValue.toString(),
         awayValue: awayValue.toString(),
-        homePercentage: total > 0 ? ((homeValue as num).toDouble() / total * 100) : 50,
-        awayPercentage: total > 0 ? ((awayValue as num).toDouble() / total * 100) : 50,
+        homePercentage: total > 0 ? ((homeValue).toDouble() / total * 100) : 50,
+        awayPercentage: total > 0 ? ((awayValue).toDouble() / total * 100) : 50,
       ));
     }
   }

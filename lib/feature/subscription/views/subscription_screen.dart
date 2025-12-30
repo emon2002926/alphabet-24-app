@@ -4,15 +4,11 @@ import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../controllers/subscription_controller.dart';
 // Import your controller file
 // import 'subscription_controller.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({super.key});

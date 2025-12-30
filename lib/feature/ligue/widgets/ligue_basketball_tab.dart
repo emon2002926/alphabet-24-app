@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
 import 'package:scaffassistant/core/universal_widgets/basketball/basketball_league_list_widget.dart';
-import 'package:scaffassistant/core/universal_widgets/s_label.dart';
 import 'package:scaffassistant/core/universal_widgets/s_text_field.dart';
 import 'package:scaffassistant/feature/home/controllers/sports_data/basketball/basketball_leagues_controller.dart';
-import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/leage_list_controller.dart';
-import 'package:scaffassistant/feature/ligue/views/basketball/basketball_ligue_list_screen.dart';
 
-import '../../../core/universal_widgets/league_list_widget.dart';
-import '../controllers/widget_change_controller.dart';
 
 class LigueBasketballTab extends StatefulWidget {
   const LigueBasketballTab({super.key});

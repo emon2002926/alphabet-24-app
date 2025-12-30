@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 class LeagueResponse {
   String status;
@@ -37,9 +36,12 @@ class League {
   String type;
   String subType;
   int category;
-  DateTime lastPlayedAt;
+  DateTime? lastPlayedAt; // Made optional
   Country country;
-  bool isFavorite; // ADD THIS
+  bool isFavorite;
+  int? matchCount; // NEW: for date-based API
+  List<dynamic>? matches; // NEW: for date-based API
+  Map<String, dynamic>? groupedMatches; // NEW: for date-based API
 
   League({
     required this.id,
@@ -50,9 +52,12 @@ class League {
     required this.type,
     required this.subType,
     required this.category,
-    required this.lastPlayedAt,
+    this.lastPlayedAt,
     required this.country,
-    this.isFavorite = false, // ADD THIS
+    this.isFavorite = false,
+    this.matchCount,
+    this.matches,
+    this.groupedMatches,
   });
 
   factory League.fromJson(Map<String, dynamic> json) {
@@ -65,9 +70,16 @@ class League {
       type: json['type'] ?? '',
       subType: json['sub_type'] ?? '',
       category: json['category'] ?? 0,
-      lastPlayedAt: DateTime.parse(json['last_played_at']),
-      country: Country.fromJson(json['country']),
-      isFavorite: json['is_favorite'] ?? false, // ADD THIS
+      // Handle optional lastPlayedAt (exists in old API, not in date-based API)
+      lastPlayedAt: json['last_played_at'] != null
+          ? DateTime.tryParse(json['last_played_at'])
+          : null,
+      country: Country.fromJson(json['country'] ?? {}),
+      isFavorite: json['is_favorite'] ?? false,
+      // NEW fields from date-based API
+      matchCount: json['match_count'],
+      matches: json['matches'],
+      groupedMatches: json['grouped_matches'],
     );
   }
 
@@ -80,11 +92,15 @@ class League {
     'type': type,
     'sub_type': subType,
     'category': category,
-    'last_played_at': lastPlayedAt.toIso8601String(),
+    'last_played_at': lastPlayedAt?.toIso8601String(),
     'country': country.toJson(),
     'is_favorite': isFavorite,
+    'match_count': matchCount,
+    'matches': matches,
+    'grouped_matches': groupedMatches,
   };
 }
+
 class Country {
   int id;
   String name;
@@ -100,8 +116,8 @@ class Country {
 
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
-      id: json['id'],
-      name: json['name'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
       code: json['code'] ?? '',
       flag: json['flag'] ?? '',
     );

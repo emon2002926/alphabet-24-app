@@ -26,7 +26,7 @@ class HeadToHeadController extends GetxController {
       errorMessage('');
 
       // Fetch access token (await if async)
-      final token = await UserInfo.getAccessToken();
+      final token = UserInfo.getAccessToken();
 
       // Make API call
       final res = await _dio.get(
@@ -40,7 +40,7 @@ class HeadToHeadController extends GetxController {
 
       // Parse response into model
       h2hData.value = HeadToHeadModel.fromJson(res.data);
-    } on DioError catch (dioError) {
+    } on DioException catch (dioError) {
       // Dio-specific error
       if (dioError.response != null) {
         errorMessage(

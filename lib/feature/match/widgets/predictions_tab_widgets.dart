@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scaffassistant/core/const/string_const/icon_path.dart';
-import 'package:scaffassistant/core/universal_widgets/s_label.dart';
 import 'package:scaffassistant/feature/match/controllers/summary_controller.dart';
 import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/SColor.dart';

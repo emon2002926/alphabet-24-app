@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:scaffassistant/feature/auth/screens/password_change_screen.dart';
 import 'package:scaffassistant/feature/auth/screens/update_password.dart';
 
 import '../../../core/const/string_const/API_endpoint.dart';

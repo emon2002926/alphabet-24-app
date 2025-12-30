@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
 import 'package:scaffassistant/core/universal_widgets/s_snackbar.dart';
-import 'package:scaffassistant/feature/settings/models/account_model.dart';
 
 import '../../../core/user_controller.dart';
 

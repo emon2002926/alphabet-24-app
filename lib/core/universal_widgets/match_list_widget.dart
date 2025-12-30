@@ -34,7 +34,7 @@ class MatchListWidget extends StatelessWidget {
             child: Row(
               children: [
                 // Logo
-                Container(
+                SizedBox(
                   width: 30,
                   child: Padding(
                     padding: const EdgeInsets.all(6.0),

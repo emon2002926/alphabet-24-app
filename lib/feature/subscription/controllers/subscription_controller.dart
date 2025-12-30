@@ -2,11 +2,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../../../core/const/string_const/API_endpoint.dart';
 
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import '../../../core/local_storage/user_info.dart';
 import '../views/checkout_webView.dart';

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
-import 'package:scaffassistant/core/const/string_const/icon_path.dart';
-import 'package:scaffassistant/core/theme/text_theme.dart';
 import 'package:scaffassistant/feature/match/controllers/summary_controller.dart';
 
 class MatchHeader extends StatefulWidget {
@@ -193,7 +190,7 @@ class _MatchHeaderState extends State<MatchHeader> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               // Team Logo - larger and cleaner
-                              Container(
+                              SizedBox(
                                 width: 70,
                                 height: 70,
                                 child: Image.network(
@@ -282,7 +279,7 @@ class _MatchHeaderState extends State<MatchHeader> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               // Team Logo - larger and cleaner
-                              Container(
+                              SizedBox(
                                 width: 70,
                                 height: 70,
                                 child: Image.network(

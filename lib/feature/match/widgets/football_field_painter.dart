@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
 
 class FootballFieldPainter extends CustomPainter {
   final Color fieldColor;
@@ -279,7 +278,7 @@ class FootballField extends StatelessWidget {
   final bool showStripes;
 
   const FootballField({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     this.fieldColor,
@@ -287,7 +286,7 @@ class FootballField extends StatelessWidget {
     this.grassStripeColor,
     this.lineWidth = 2.0,
     this.showStripes = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

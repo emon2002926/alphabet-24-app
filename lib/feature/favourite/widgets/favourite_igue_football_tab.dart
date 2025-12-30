@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
 import 'package:scaffassistant/core/universal_widgets/s_label.dart';
 import 'package:scaffassistant/core/universal_widgets/s_text_field.dart';
 
-import '../../../core/universal_widgets/league_list_widget.dart';
 import '../../home/models/live_match_response_model.dart';
 import '../../ligue/views/ligue_match_list_screen.dart';
 import '../../match/views/match_details_screen.dart';
 import '../controllers/favourite_controller.dart';
-import '../controllers/widget_change_controller.dart';
 
 class FavouriteIgueFootballTab extends StatelessWidget {
   const FavouriteIgueFootballTab({super.key});

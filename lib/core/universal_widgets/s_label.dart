@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/text_theme.dart';
-import '../../../core/theme/SColor.dart';
 
 class SLabel extends StatelessWidget {
   final String title;
