@@ -259,11 +259,11 @@ class ScoureCardWidget extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.network(
-                          match.homeTeam.logo,
-                          height: 14,
-                          errorBuilder: (_, __, ___) => SizedBox.shrink(),
-                        ),
+                        // Image.network(
+                        //   match.homeTeam.logo,
+                        //   height: 14,
+                        //   errorBuilder: (_, __, ___) => SizedBox.shrink(),
+                        // ),
                         const SizedBox(width: 3),
                         Text("${homeProb.toStringAsFixed(0)}%",
                             style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
@@ -277,11 +277,11 @@ class ScoureCardWidget extends StatelessWidget {
                         Text("${awayProb.toStringAsFixed(0)}%",
                             style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
                         const SizedBox(width: 3),
-                        Image.network(
-                          match.awayTeam.logo,
-                          height: 14,
-                          errorBuilder: (_, __, ___) => SizedBox.shrink(),
-                        ),
+                        // Image.network(
+                        //   match.awayTeam.logo,
+                        //   height: 14,
+                        //   errorBuilder: (_, __, ___) => SizedBox.shrink(),
+                        // ),
                       ],
                     ),
                   ],
@@ -348,11 +348,11 @@ class ScoureCardWidget extends StatelessWidget {
                 // ===== GOAL PREDICTION TEXT =====
                 Row(
                   children: [
-                    Image.network(
-                      match.homeTeam.logo,
-                      height: 14,
-                      errorBuilder: (_, __, ___) => SizedBox.shrink(),
-                    ),
+                    // Image.network(
+                    //   match.homeTeam.logo,
+                    //   height: 14,
+                    //   errorBuilder: (_, __, ___) => SizedBox.shrink(),
+                    // ),
                     const Spacer(),
                     Text(
                       topScore,
@@ -362,11 +362,11 @@ class ScoureCardWidget extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    Image.network(
-                      match.awayTeam.logo,
-                      height: 14,
-                      errorBuilder: (_, __, ___) => SizedBox.shrink(),
-                    ),
+                    // Image.network(
+                    //   match.awayTeam.logo,
+                    //   height: 14,
+                    //   errorBuilder: (_, __, ___) => SizedBox.shrink(),
+                    // ),
                   ],
                 ),
 

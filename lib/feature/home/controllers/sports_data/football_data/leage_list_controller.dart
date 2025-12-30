@@ -17,13 +17,14 @@ class LeagueListController extends GetxController {
   // ===== DATE SELECTION =====
   Rx<DateTime> selectedDate = DateTime.now().obs;
   RxList<DateTime> dateRange = <DateTime>[].obs;
-  RxBool isDateFilterActive = false.obs;
+  RxBool isDateFilterActive = true.obs; // ✅ Changed to true - start with date filter active
 
   @override
   void onInit() {
     super.onInit();
     generateDateRange();
-    fetchLeagues(); // Fetch all leagues initially
+    // ✅ Fetch today's leagues by date on first load
+    fetchLeaguesByDate(DateTime.now());
   }
 
   // Generate 4 months of dates: 2 months before today + 2 months after today
@@ -50,18 +51,11 @@ class LeagueListController extends GetxController {
   void selectDate(DateTime date) {
     print('📅 selectDate called for: ${DateFormat('yyyy-MM-dd').format(date)}');
 
-    if (isDateFilterActive.value && _isSameDay(selectedDate.value, date)) {
-      // Deactivate filter - fetch all leagues
-      isDateFilterActive.value = false;
-      fetchLeagues();
-      print('🔓 Filter deactivated - fetching all leagues');
-    } else {
-      // Activate filter - fetch leagues by date
-      selectedDate.value = date;
-      isDateFilterActive.value = true;
-      fetchLeaguesByDate(date);
-      print('✅ Date selected: ${DateFormat('yyyy-MM-dd').format(date)}');
-    }
+    // Always use date-based API, just update the selected date
+    selectedDate.value = date;
+    isDateFilterActive.value = true;
+    fetchLeaguesByDate(date);
+    print('✅ Date selected: ${DateFormat('yyyy-MM-dd').format(date)}');
   }
 
   bool _isSameDay(DateTime date1, DateTime date2) {
@@ -110,7 +104,10 @@ class LeagueListController extends GetxController {
 
       if (response.isNotEmpty) {
         final leagueResponse = LeagueResponse.fromJson(response);
-        leagues.value = leagueResponse.leagues;
+        // ✅ Filter out leagues with no matches
+        leagues.value = leagueResponse.leagues
+            .where((league) => league.matchCount == null || league.matchCount! > 0)
+            .toList();
         applySearchFilter();
         print('✅ All Leagues Loaded: ${leagues.length}');
       } else {
@@ -132,7 +129,6 @@ class LeagueListController extends GetxController {
       final url = '${APIEndpoint.baseURL}sports-data/leagues/date/$formattedDate/';
       print('📅 Fetching leagues for date: $url');
 
-
       GetAPIRequest getAPIRequest = GetAPIRequest(
         url: url,
         headers: {
@@ -145,13 +141,24 @@ class LeagueListController extends GetxController {
       if (response.isNotEmpty && response['leagues'] != null) {
         final leaguesList = (response['leagues'] as List)
             .map((e) => League.fromJson(e))
+            .where((league) {
+          // ✅ Check if matches array exists and has items
+          if (league.matches != null && league.matches!.isNotEmpty) {
+            return true;
+          }
+          // ✅ Fallback to matchCount if matches array not available
+          if (league.matchCount != null && league.matchCount! > 0) {
+            return true;
+          }
+          return false;
+        })
             .toList();
 
         leagues.value = leaguesList;
         applySearchFilter();
 
         final totalMatches = response['total_matches'] ?? 0;
-        print('✅ Leagues by Date Loaded: ${leagues.length} leagues, $totalMatches matches');
+        print('✅ Leagues by Date Loaded: ${leagues.length} leagues with matches, $totalMatches total matches');
       } else {
         leagues.clear();
         filteredLeagues.clear();

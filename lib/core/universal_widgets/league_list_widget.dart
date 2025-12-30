@@ -6,16 +6,18 @@ import '../../feature/ligue/views/ligue_match_list_screen.dart';
 import '../theme/SColor.dart';
 
 class LeagueListWidget extends StatelessWidget {
+  int? totalLig;
   final List<League> leagues;
   final bool showDivider;
   final Function(int index, League league) onToggleFavorite;
   final Function(League league)? onLeagueTap;
 
-  const LeagueListWidget({
+   LeagueListWidget({
     required this.leagues,
     required this.onToggleFavorite,
     this.showDivider = false,
     this.onLeagueTap,
+    this.totalLig,
     super.key,
   });
 
@@ -26,7 +28,7 @@ class LeagueListWidget extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: leagues.length,
+      itemCount: totalLig ?? leagues.length,
       itemBuilder: (context, index) {
         final league = leagues[index];
         final hasMatchCount = league.matchCount != null && league.matchCount! > 0;

@@ -69,6 +69,7 @@ class _FootballScreenState extends State<FootballScreen> {
                     LabelWidget('Leagues', true),
                     SizedBox(height: DynamicSize.small(context)),
                     LeagueListWidget(
+                      totalLig: 5,
                       leagues: leagueListController.filteredLeagues,
                       showDivider: true,
                       onToggleFavorite: (index, league) {
