@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/const/string_const/icon_path.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
@@ -24,12 +25,20 @@ class _MatchHeaderState extends State<MatchHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final appBarHeight = DynamicSize.screenHeight(context) * 0.35;
+    // Reduced height for compact design
+    final appBarHeight = 200.0;
 
     return Obx(() {
       if (summaryController.isLoading.value) {
         return Container(
           height: appBarHeight,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF0A1929), Color(0xFF0D2847)],
+            ),
+          ),
           alignment: Alignment.center,
           child: const CircularProgressIndicator(color: Colors.white),
         );
@@ -40,6 +49,13 @@ class _MatchHeaderState extends State<MatchHeader> {
       if (data == null) {
         return Container(
           height: appBarHeight,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF0A1929), Color(0xFF0D2847)],
+            ),
+          ),
           alignment: Alignment.center,
           child: const Text(
             "No summary available",
@@ -53,225 +69,261 @@ class _MatchHeaderState extends State<MatchHeader> {
       final away = data.summary.awayTeam;
       final score = data.summary.score.current;
 
-      return Stack(
-        children: [
-          // Background Image
-          Container(
-            height: appBarHeight,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(league.logo),
-                fit: BoxFit.contain,
+      return Container(
+        height: appBarHeight,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF0A1929), Color(0xFF0D2847)],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Subtle background overlay
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.05,
+                child: Image.network(
+                  league.logo,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
 
-          // Gradient Overlay
-          Container(
-            height: appBarHeight,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.black.withOpacity(0.8),
-                  Colors.black.withOpacity(0.3),
-                  Colors.transparent,
-                ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                stops: const [0.0, 0.5, 1.0],
-              ),
-            ),
-          ),
-
-          // Top Bar with Back Button and Match Name
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            SafeArea(
+              child: Column(
                 children: [
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.4),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 22,
-                      ),
-                    ),
-                  ),
-
-                  // League name with flexible width
-                  Flexible(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          IconPath.football,
-                          width: 18,
-                          height: 18,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            data.summary.name,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  GestureDetector(
-                    onTap: () {
-                      // Add favorite functionality
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.4),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.favorite_border,
-                        color: Colors.white,
-                        size: 22,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Match Score and Teams (Fixed overflow issue)
-          Positioned(
-            bottom: appBarHeight * 0.18,
-            left: 0,
-            right: 0,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Home Team (with Expanded to prevent overflow)
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.network(
-                          home.logo,
-                          width: 70,
-                          height: 70,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.sports_soccer, size: 35),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          home.name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Score and Status (fixed width)
+                  // Top Bar - More compact
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          score.display ?? "${score.home} - ${score.away}",
-                          style: const TextStyle(
-                            fontSize: 42,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
+                        // Back Button - smaller
+                        GestureDetector(
+                          onTap: () => Get.back(),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          data.summary.status.shortName,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+
+                        // League info - centered
+                        Flexible(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: const EdgeInsets.all(3),
+                                child: Image.network(
+                                  league.logo,
+                                  errorBuilder: (_, __, ___) => Icon(
+                                    Icons.sports_soccer,
+                                    size: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: Text(
+                                  data.summary.name,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Favorite Button - smaller
+                        GestureDetector(
+                          onTap: () {
+                            // Add favorite functionality
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.favorite_border,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  // Away Team (with Expanded to prevent overflow)
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                  const Spacer(),
+
+                  // Match Display - Compact and Bold
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.network(
-                          away.logo,
-                          width: 70,
-                          height: 70,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                shape: BoxShape.circle,
+                        // Home Team
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Team Logo - larger and cleaner
+                              Container(
+                                width: 70,
+                                height: 70,
+                                child: Image.network(
+                                  home.logo,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(
+                                      Icons.sports_soccer,
+                                      size: 40,
+                                      color: Colors.white.withOpacity(0.5),
+                                    );
+                                  },
+                                ),
                               ),
-                              child: const Icon(Icons.sports_soccer, size: 35),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          away.name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                              const SizedBox(height: 10),
+                              // Team Name - bold
+                              Text(
+                                home.name,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                  height: 1.2,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        ),
+
+                        // Score and Status
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Score - bigger and bolder
+                              Text(
+                                score.display ?? "${score.home} - ${score.away}",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 44,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1,
+                                  letterSpacing: -1,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Status - smaller badge
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: data.summary.status.isLive
+                                      ? Colors.red.withOpacity(0.2)
+                                      : Colors.white.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: data.summary.status.isLive
+                                        ? Colors.red
+                                        : Colors.white.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  data.summary.status.shortName,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Away Team
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Team Logo - larger and cleaner
+                              Container(
+                                width: 70,
+                                height: 70,
+                                child: Image.network(
+                                  away.logo,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(
+                                      Icons.sports_soccer,
+                                      size: 40,
+                                      color: Colors.white.withOpacity(0.5),
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              // Team Name - bold
+                              Text(
+                                away.name,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                  height: 1.2,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     });
   }

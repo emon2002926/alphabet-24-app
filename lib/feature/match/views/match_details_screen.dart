@@ -4,6 +4,7 @@ import '../../../core/universal_widgets/s_label.dart';
 import '../widgets/h2h_tabWidget.dart';
 import '../widgets/lineup_tab_widget.dart';
 import '../widgets/match_header.dart';
+import '../widgets/predictions_odds_tab.dart';
 import '../widgets/predictions_tab_widgets.dart';
 import '../widgets/stats_tab_widgets.dart';
 import '../widgets/summary_tab_widgets.dart';
@@ -24,12 +25,12 @@ class MatchDetailsScreen extends StatelessWidget {
       backgroundColor: SColor.bodyColor,
       body: SafeArea(
         child: DefaultTabController(
-          length: 5, // Changed from 4 to 5
+          length: 6,
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 SliverAppBar(
-                  expandedHeight: 300,
+                  expandedHeight: 220, // Reduced from 300 to 220 for compact design
                   floating: false,
                   pinned: false,
                   stretch: true,
@@ -60,7 +61,7 @@ class MatchDetailsScreen extends StatelessWidget {
                   pinned: true,
                   delegate: _SliverAppBarDelegate(
                     TabBar(
-                      isScrollable: true, // Added to handle 5 tabs nicely
+                      isScrollable: true,
                       labelColor: SColor.primary,
                       unselectedLabelColor: Colors.grey,
                       indicatorColor: SColor.primary,
@@ -80,7 +81,8 @@ class MatchDetailsScreen extends StatelessWidget {
                         Tab(text: 'LINEUP'),
                         Tab(text: 'H2H'),
                         Tab(text: 'STATS'),
-                        Tab(text: 'PREDICTION'), // Add your new tab name here
+                        Tab(text: 'PREDICTIONS'),
+                        Tab(text: '2nd PREDICTIONS SCREEN'),
                       ],
                     ),
                   ),
@@ -93,7 +95,8 @@ class MatchDetailsScreen extends StatelessWidget {
                 LineUp(fixtureId: id),
                 H2H(fixtureId: id),
                 StatsTabWidgets(id: id),
-                PredictionsTabWidgets(id: id), // Add your new tab widget here
+                PredictionsTabWidgets(id: id),
+                PredictionsOddsTab(fixtureId: id),
               ],
             ),
           ),
