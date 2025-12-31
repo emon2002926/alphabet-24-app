@@ -43,14 +43,6 @@ class ScoureCardWidget extends StatelessWidget {
       final drawFlex = ((drawProb / fullTotal) * 100).round().clamp(1, 100);
       final awayFlex = ((awayProb / fullTotal) * 100).round().clamp(1, 100);
 
-      // ===== SAFE TOP SCORE CHECK =====
-      final hasTopScore = match.predictions.correctScores.top5.isNotEmpty;
-      final topScore = hasTopScore ? match.predictions.correctScores.top5[0].score : "0-0";
-      final topProbability = hasTopScore ? match.predictions.correctScores.top5[0].probability.toDouble() : 0;
-
-      final goalHomeFlex = topProbability.round().clamp(1, 100);
-      final goalAwayFlex = (100 - goalHomeFlex).clamp(1, 100);
-
       return GestureDetector(
         onTap: () => Get.to(
           MatchDetailsScreen(),
@@ -88,13 +80,13 @@ class ScoureCardWidget extends StatelessWidget {
                       child: Text(
                         match.league.name,
                         style: STextTheme.headLine().copyWith(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    // CLIENT FEEDBACK: Show minute if live, start time if upcoming
+                    // Show minute if live, start time if upcoming
                     if (match.status.isLive && hasPeriod)
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -144,7 +136,7 @@ class ScoureCardWidget extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(width: 10),
-                    // CLIENT FEEDBACK: Favorite button - removes match from favorites
+                    // Favorite button
                     GestureDetector(
                       onTap: () => liveMatchController.toggleFavorite(index),
                       child: Icon(
@@ -179,7 +171,7 @@ class ScoureCardWidget extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             match.homeTeam.name,
-                            style: STextTheme.scoureText().copyWith(fontSize: 11),
+                            style: STextTheme.scoureTextNormal().copyWith(fontSize: 11),
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -226,7 +218,7 @@ class ScoureCardWidget extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             match.awayTeam.name,
-                            style: STextTheme.scoureText().copyWith(fontSize: 11),
+                            style: STextTheme.scoureTextNormal().copyWith(fontSize: 11),
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -243,7 +235,7 @@ class ScoureCardWidget extends StatelessWidget {
                 Center(
                   child: Text(
                     'Winning Possibility',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.scoureTextNormal().copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -259,29 +251,19 @@ class ScoureCardWidget extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Image.network(
-                        //   match.homeTeam.logo,
-                        //   height: 14,
-                        //   errorBuilder: (_, __, ___) => SizedBox.shrink(),
-                        // ),
                         const SizedBox(width: 3),
                         Text("${homeProb.toStringAsFixed(0)}%",
-                            style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
+                            style: STextTheme.subHeadLine().copyWith(fontSize: 14)),
                       ],
                     ),
                     Text("Draw ${drawProb.toStringAsFixed(0)}%",
-                        style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
+                        style: STextTheme.subHeadLine().copyWith(fontSize: 14)),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text("${awayProb.toStringAsFixed(0)}%",
-                            style: STextTheme.subHeadLine().copyWith(fontSize: 11)),
+                            style: STextTheme.subHeadLine().copyWith(fontSize: 14)),
                         const SizedBox(width: 3),
-                        // Image.network(
-                        //   match.awayTeam.logo,
-                        //   height: 14,
-                        //   errorBuilder: (_, __, ___) => SizedBox.shrink(),
-                        // ),
                       ],
                     ),
                   ],
@@ -332,11 +314,11 @@ class ScoureCardWidget extends StatelessWidget {
 
                 const SizedBox(height: 6),
 
-                // ===== GOAL PREDICTION =====
+                // ===== OVER/UNDER 2.5 PREDICTION =====
                 Center(
                   child: Text(
-                    'Goal Prediction (Top Pick)',
-                    style: STextTheme.headLine().copyWith(
+                    'Over/Under 2.5',
+                    style: STextTheme.scoureTextNormal().copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -345,34 +327,24 @@ class ScoureCardWidget extends StatelessWidget {
 
                 const SizedBox(height: 3),
 
-                // ===== GOAL PREDICTION TEXT =====
+                // ===== OVER/UNDER TEXT =====
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Image.network(
-                    //   match.homeTeam.logo,
-                    //   height: 14,
-                    //   errorBuilder: (_, __, ___) => SizedBox.shrink(),
-                    // ),
-                    const Spacer(),
                     Text(
-                      topScore,
-                      style: STextTheme.subHeadLine().copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+                      "Over ${match.predictions.overUnder25.over.toStringAsFixed(0)}%",
+                      style: STextTheme.subHeadLine().copyWith(fontSize: 14),
                     ),
-                    const Spacer(),
-                    // Image.network(
-                    //   match.awayTeam.logo,
-                    //   height: 14,
-                    //   errorBuilder: (_, __, ___) => SizedBox.shrink(),
-                    // ),
+                    Text(
+                      "Under ${match.predictions.overUnder25.under.toStringAsFixed(0)}%",
+                      style: STextTheme.subHeadLine().copyWith(fontSize: 14),
+                    ),
                   ],
                 ),
 
                 const SizedBox(height: 3),
 
-                // ===== GOAL PREDICTION BAR =====
+                // ===== OVER/UNDER BAR =====
                 Container(
                   height: 4,
                   decoration: BoxDecoration(
@@ -382,7 +354,7 @@ class ScoureCardWidget extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        flex: goalHomeFlex,
+                        flex: match.predictions.overUnder25.over.round().clamp(1, 100),
                         child: Container(
                           decoration: BoxDecoration(
                             color: SColor.progressIndicator1,
@@ -394,7 +366,7 @@ class ScoureCardWidget extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        flex: goalAwayFlex,
+                        flex: match.predictions.overUnder25.under.round().clamp(1, 100),
                         child: Container(
                           decoration: BoxDecoration(
                             color: SColor.progressIndicator3,

@@ -19,6 +19,9 @@ class LigueMatchListScreen extends StatelessWidget {
     final int leagueId = Get.arguments['leagueId'] as int;
     controller = Get.put(LeagueDetailController(leagueId: leagueId));
 
+    // ✅ Detect theme
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: SColor.bodyColor,
       appBar: SAppBar(title: 'Ligue Matches'),
@@ -28,23 +31,42 @@ class LigueMatchListScreen extends StatelessWidget {
         }
 
         if (controller.liveMatches.isEmpty && controller.todayFixtures.isEmpty) {
-          return const Center(child: Text('No matches today'));
+          return Center(
+            child: Text(
+              'No matches today',
+              style: GoogleFonts.poppins(
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+          );
         }
 
         return ListView(
           padding: EdgeInsets.all(DynamicSize.medium(context)),
           children: [
             if (controller.liveMatches.isNotEmpty) ...[
-              const Text('Live Matches',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                'Live Matches',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
               SizedBox(height: DynamicSize.small(context)),
               ...controller.liveMatches
                   .map((match) => _buildMatchRow(match, context, isLive: true)),
               SizedBox(height: DynamicSize.medium(context)),
             ],
             if (controller.todayFixtures.isNotEmpty) ...[
-              const Text('Today\'s Fixtures',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                'Today\'s Fixtures',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
               SizedBox(height: DynamicSize.small(context)),
               ...controller.todayFixtures
                   .map((match) => _buildMatchRow(match, context, isLive: false)),
@@ -57,6 +79,7 @@ class LigueMatchListScreen extends StatelessWidget {
 
   Widget _buildMatchRow(LeagueMatch match, BuildContext context, {required bool isLive}) {
     final bool hasScore = match.homeTeam.score != null && match.awayTeam.score != null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () {
@@ -68,11 +91,15 @@ class LigueMatchListScreen extends StatelessWidget {
         margin: EdgeInsets.only(bottom: DynamicSize.medium(context)),
         padding: EdgeInsets.all(DynamicSize.medium(context)),
         decoration: BoxDecoration(
-          color: Colors.white,
+          // ✅ Theme-aware background
+          color: isDark ? Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(12),
+          // ✅ Theme-aware shadow
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade200,
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.shade200,
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -108,10 +135,14 @@ class LigueMatchListScreen extends StatelessWidget {
                             width: 24,
                             height: 24,
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
+                              color: isDark ? Colors.grey[800] : Colors.grey[300],
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: Icon(Icons.sports_soccer, size: 14, color: Colors.grey[600]),
+                            child: Icon(
+                              Icons.sports_soccer,
+                              size: 14,
+                              color: isDark ? Colors.grey[600] : Colors.grey[600],
+                            ),
                           ),
                         ),
                       ),
@@ -125,6 +156,7 @@ class LigueMatchListScreen extends StatelessWidget {
                           style: GoogleFonts.poppins(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -136,7 +168,8 @@ class LigueMatchListScreen extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.grey[100],
+                            // ✅ Theme-aware score background
+                            color: isDark ? Colors.grey[800] : Colors.grey[100],
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -144,7 +177,7 @@ class LigueMatchListScreen extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),
@@ -167,10 +200,14 @@ class LigueMatchListScreen extends StatelessWidget {
                             width: 24,
                             height: 24,
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
+                              color: isDark ? Colors.grey[800] : Colors.grey[300],
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: Icon(Icons.sports_soccer, size: 14, color: Colors.grey[600]),
+                            child: Icon(
+                              Icons.sports_soccer,
+                              size: 14,
+                              color: isDark ? Colors.grey[600] : Colors.grey[600],
+                            ),
                           ),
                         ),
                       ),
@@ -184,6 +221,7 @@ class LigueMatchListScreen extends StatelessWidget {
                           style: GoogleFonts.poppins(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -195,7 +233,7 @@ class LigueMatchListScreen extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.grey[100],
+                            color: isDark ? Colors.grey[800] : Colors.grey[100],
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -203,7 +241,7 @@ class LigueMatchListScreen extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),
@@ -225,7 +263,7 @@ class LigueMatchListScreen extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey[600],
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
                   ),
                 ),
 

@@ -145,7 +145,7 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
             final monthName = DateFormat('MMM').format(date); // Dec, Jan
 
             return Padding(
-              padding: EdgeInsets.only(right: DynamicSize.medium(context)),
+              padding: EdgeInsets.only(right: DynamicSize.small(context)),
               child: GestureDetector(
                 onTap: () {
                   controller.selectDate(date);

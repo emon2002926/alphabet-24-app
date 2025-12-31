@@ -20,8 +20,8 @@ class SColor {
 
   static Color get textSecondary =>
       Get.theme.brightness == Brightness.dark
-          ? const Color(0xFFB0B0B0)
-          : const Color(0xFF9C9C9C);
+          ? const Color(0xFFB8B8B8) // a little lighter than B0B0B0
+          : const Color(0xFF8F8F8F); // a little darker than 9C9C9C
 
   // === Border Colors === //
   static Color get borderColor =>

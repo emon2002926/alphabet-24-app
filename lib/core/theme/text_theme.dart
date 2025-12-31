@@ -4,33 +4,37 @@ import 'package:flutter/src/painting/text_style.dart';
 
 import 'SColor.dart';
 
-class STextTheme{
+import 'package:google_fonts/google_fonts.dart';
 
+class STextTheme {
   static TextStyle headLine() {
-    return TextStyle(
-      fontFamily: 'sfPro',
+    return GoogleFonts.poppins(
       color: SColor.textPrimary,
       fontSize: 16,
-      fontWeight: FontWeight.w900,
+      fontWeight: FontWeight.w800,
     );
   }
 
   static TextStyle scoureText() {
-    return TextStyle(
-      fontFamily: 'sfPro',
+    return GoogleFonts.poppins(
       color: SColor.textPrimary,
       fontSize: 12,
       fontWeight: FontWeight.w900,
     );
   }
+  static TextStyle scoureTextNormal() {
+    return GoogleFonts.poppins(
+      color: SColor.textPrimary,
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+    );
+  }
 
   static TextStyle subHeadLine() {
-    return TextStyle(
-      fontFamily: 'sfPro',
+    return GoogleFonts.poppins(
       color: SColor.textSecondary,
       fontSize: 14,
       fontWeight: FontWeight.w400,
     );
   }
-
 }
