@@ -8,6 +8,7 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 
           import '../../../core/const/size_const/dynamic_size.dart';
           import '../../../core/theme/text_theme.dart';
+import '../../match/views/match_search_screen.dart';
 import '../widgets/football_screen.dart';
 
 
@@ -66,9 +67,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.favorite_border, color: Colors.red),
+              icon: Icon(Icons.search, color: SColor.iconColor),
               onPressed: () {
                 // Handle notification icon press
+                Get.to(() =>
+                    MatchSearchScreen());
               },
             ),
             SizedBox(width: DynamicSize.small(context)),
@@ -118,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: TabBarView(
                   children: [
                     FootballScreen(),
-                    BasketballScreen(),
+                    DevelopmentPage(),
                     DevelopmentPage(),
                   ],
                 ),

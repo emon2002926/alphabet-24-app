@@ -8,6 +8,11 @@ class SColor {
           ? const Color(0xFF121212)
           : const Color(0xFFFFFFFF);
 
+  static Color get iconColor =>
+      Get.theme.brightness == Brightness.dark
+          ? const Color(0xFFFFFFFF)
+          : const Color(0xFF202020);
+
   // === Primary Colors === //
   static const Color primary = Color(0xFF005440);
   static const Color secondary = Color(0xFF28F4AF);

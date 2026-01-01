@@ -12,6 +12,8 @@ import 'package:scaffassistant/feature/news/views/news_screen.dart';
 import '../../../core/universal_widgets/news_card_widget.dart';
 import '../../ligue/views/ligue_list_screen.dart';
 import '../../ligue/views/ligue_match_list_screen.dart';
+import '../../ligue/widgets/date_selector_widget.dart';
+import '../../ligue/widgets/ligue_football_tab.dart';
 
 class FootballScreen extends StatefulWidget {
   const FootballScreen({super.key});
@@ -57,6 +59,7 @@ class _FootballScreenState extends State<FootballScreen> {
               }
             }),
             SizedBox(height: DynamicSize.medium(context)),
+            DateSelectorWidget(),
 
             // Leagues
             Obx(() {
@@ -68,6 +71,7 @@ class _FootballScreenState extends State<FootballScreen> {
                   children: [
                     LabelWidget('Leagues', true),
                     SizedBox(height: DynamicSize.small(context)),
+
                     LeagueListWidget(
                       totalLig: 5,
                       leagues: leagueListController.filteredLeagues,
@@ -91,6 +95,7 @@ class _FootballScreenState extends State<FootballScreen> {
                 return const SizedBox.shrink();
               }
             }),
+
             SizedBox(height: DynamicSize.medium(context)),
 
             // Top Stories
@@ -118,7 +123,7 @@ class _FootballScreenState extends State<FootballScreen> {
 
   SizedBox _ScoureCard(BuildContext context, bool isNew) {
     return SizedBox(
-      height: 210, // Fixed height to match ScoureCardWidget
+      height: MediaQuery.of(context).size.height * 0.185, // Fixed height to match ScoureCardWidget
       child: Obx(() {
         return ListView.separated(
           scrollDirection: Axis.horizontal,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
@@ -8,9 +10,12 @@ import 'package:scaffassistant/feature/home/controllers/sports_data/football_dat
 
 import '../../../core/universal_widgets/league_list_widget.dart';
 import '../views/ligue_match_list_screen.dart';
+import 'date_selector_widget.dart';
 
-class LigueFootballTab extends StatelessWidget {
-  const LigueFootballTab({super.key});
+class LeaguesFootballTab extends StatelessWidget {
+  final bool isShowSearch;
+  final int? totalLig;
+  const LeaguesFootballTab({super.key, required this.isShowSearch, this.totalLig});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +28,9 @@ class LigueFootballTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Search Field
-          Padding(
+          DateSelectorWidget(),
+          isShowSearch
+            ?Padding(
             padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
             child: SizedBox(
               height: 60,
@@ -48,10 +55,11 @@ class LigueFootballTab extends StatelessWidget {
                 )),
               ),
             ),
-          ),
+          ):SizedBox.shrink(),
 
           // Filter Row
-          Padding(
+          isShowSearch
+          ? Padding(
             padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
             child: SizedBox(
               height: 40,
@@ -80,7 +88,7 @@ class LigueFootballTab extends StatelessWidget {
                 ],
               ),
             ),
-          ),
+          ):SizedBox.shrink(),
 
           // League List
           Expanded(
@@ -121,6 +129,7 @@ class LigueFootballTab extends StatelessWidget {
                       LeagueListWidget(
                         leagues: leagueListController.filteredLeagues,
                         showDivider: true,
+                        totalLig: totalLig,
                         onToggleFavorite: (index, league) {
                           leagueListController.toggleFavoriteLeague(
                             index,

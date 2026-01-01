@@ -7,6 +7,28 @@ import 'package:scaffassistant/feature/match/views/match_details_screen.dart';
 import '../theme/SColor.dart';
 import '../theme/text_theme.dart';
 
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+
+// Note: Update these imports to match your project structure
+// import 'package:your_app/controllers/football_live_match_controller.dart';
+// import 'package:your_app/screens/match_details_screen.dart';
+// import 'package:your_app/theme/s_text_theme.dart';
+// import 'package:your_app/theme/s_color.dart';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+
+// Note: Update these imports to match your project structure
+// import 'package:your_app/controllers/football_live_match_controller.dart';
+// import 'package:your_app/screens/match_details_screen.dart';
+// import 'package:your_app/theme/s_text_theme.dart';
+// import 'package:your_app/theme/s_color.dart';
+
 class ScoureCardWidget extends StatelessWidget {
   final int index;
 
@@ -17,10 +39,8 @@ class ScoureCardWidget extends StatelessWidget {
     final liveMatchController = Get.find<FootballLiveMatchController>();
 
     return Obx(() {
-      // Use displayMatches instead of liveMatches directly
       final matches = liveMatchController.displayMatches;
 
-      // Safety check for index
       if (index >= matches.length) {
         return const SizedBox.shrink();
       }
@@ -30,121 +50,68 @@ class ScoureCardWidget extends StatelessWidget {
       // ===== SAFE PERIOD CHECK =====
       final hasPeriod = match.periods.isNotEmpty;
       final periodMinutes = hasPeriod ? match.periods[0].minutes : 0;
-      final periodDescription = hasPeriod ? match.periods[0].description : "-";
 
-      // ===== SAFE PREDICTION CHECK =====
+      // ===== PREDICTION VALUES =====
       final full = match.predictions.fulltimeResult;
       final homeProb = full.homeWin.toDouble();
       final drawProb = full.draw.toDouble();
       final awayProb = full.awayWin.toDouble();
 
-      final fullTotal = (homeProb + drawProb + awayProb).clamp(1, 300);
-      final homeFlex = ((homeProb / fullTotal) * 100).round().clamp(1, 100);
-      final drawFlex = ((drawProb / fullTotal) * 100).round().clamp(1, 100);
-      final awayFlex = ((awayProb / fullTotal) * 100).round().clamp(1, 100);
+      final overProb = match.predictions.overUnder25.over;
+      final underProb = match.predictions.overUnder25.under;
 
       return GestureDetector(
         onTap: () => Get.to(
           MatchDetailsScreen(),
           arguments: {'matchId': match.id},
         ),
-        child: Card(
-          color: Get.theme.brightness == Brightness.dark
-              ? const Color(0xFF3E3E3E)
-              : const Color(0xFFEAEAEA),
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          decoration: BoxDecoration(
+            color: Get.theme.brightness == Brightness.dark
+                ? const Color(0xFF3E3E3E)
+                : const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ===== LEAGUE HEADER WITH FAVORITE BUTTON =====
+                // ===== TOP ROW: MINUTE/TIME & FAVORITE =====
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.network(
-                      match.league.logo,
-                      height: 20,
-                      errorBuilder: (_, __, ___) => Icon(
-                        Icons.sports_soccer,
-                        size: 20,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        match.league.name,
-                        style: STextTheme.headLine().copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    // Show minute if live, start time if upcoming
+                    // Live minute or start time
                     if (match.status.isLive && hasPeriod)
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: Colors.red, width: 1),
-                        ),
-                        child: Text(
-                          "$periodMinutes'",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            color: Colors.red,
-                          ),
+                      Text(
+                        "$periodMinutes'",
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.green,
                         ),
                       )
-                    else if (!match.status.isLive)
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: SColor.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: SColor.primary.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.schedule,
-                              size: 12,
-                              color: SColor.primary,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              DateFormat('HH:mm').format(match.startingAt),
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: SColor.primary,
-                              ),
-                            ),
-                          ],
+                    else
+                      Text(
+                        DateFormat('HH:mm').format(match.startingAt),
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: SColor.primary,
                         ),
                       ),
-                    const SizedBox(width: 10),
                     // Favorite button
                     GestureDetector(
                       onTap: () => liveMatchController.toggleFavorite(index),
                       child: Icon(
                         match.isFavoriteMatch
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color: match.isFavoriteMatch ? Colors.red : Colors.grey,
-                        size: 20,
+                            ? Icons.star
+                            : Icons.star_border,
+                        color: match.isFavoriteMatch
+                            ? Colors.amber
+                            : Colors.grey[400],
+                        size: 22,
                       ),
                     ),
                   ],
@@ -152,160 +119,60 @@ class ScoureCardWidget extends StatelessWidget {
 
                 const SizedBox(height: 6),
 
-                // ===== SCORE ROW =====
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Image.network(
-                            match.homeTeam.logo,
-                            height: 28,
-                            errorBuilder: (_, __, ___) => Icon(
-                              Icons.sports_soccer,
-                              size: 28,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            match.homeTeam.name,
-                            style: STextTheme.scoureTextNormal().copyWith(fontSize: 11),
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      child: Column(
-                        children: [
-                          Text(
-                            match.score.display,
-                            style: GoogleFonts.poppins(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                              color: match.status.isLive ? Colors.red : null,
-                            ),
-                          ),
-                          Text(
-                            match.status.isLive
-                                ? periodDescription
-                                : match.status.stateShort,
-                            style: STextTheme.subHeadLine().copyWith(
-                              fontSize: 10,
-                              color: match.status.isLive ? Colors.red : null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Image.network(
-                            match.awayTeam.logo,
-                            height: 28,
-                            errorBuilder: (_, __, ___) => Icon(
-                              Icons.sports_soccer,
-                              size: 28,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            match.awayTeam.name,
-                            style: STextTheme.scoureTextNormal().copyWith(fontSize: 11),
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                // ===== HOME TEAM ROW =====
+                _buildTeamRow(
+                  logo: match.homeTeam.logo,
+                  name: match.homeTeam.name,
+                  score: match.homeTeam.score,
+                  isLive: match.status.isLive,
                 ),
 
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
 
-                // ===== WINNING POSSIBILITY =====
-                Center(
-                  child: Text(
-                    'Winning Possibility',
-                    style: STextTheme.scoureTextNormal().copyWith(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                // ===== AWAY TEAM ROW =====
+                _buildTeamRow(
+                  logo: match.awayTeam.logo,
+                  name: match.awayTeam.name,
+                  score: match.awayTeam.score,
+                  isLive: match.status.isLive,
                 ),
 
-                const SizedBox(height: 3),
+                const SizedBox(height: 8),
 
-                // ===== FULLTIME RESULT TEXT =====
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(width: 3),
-                        Text("${homeProb.toStringAsFixed(0)}%",
-                            style: STextTheme.subHeadLine().copyWith(fontSize: 14)),
-                      ],
-                    ),
-                    Text("Draw ${drawProb.toStringAsFixed(0)}%",
-                        style: STextTheme.subHeadLine().copyWith(fontSize: 14)),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text("${awayProb.toStringAsFixed(0)}%",
-                            style: STextTheme.subHeadLine().copyWith(fontSize: 14)),
-                        const SizedBox(width: 3),
-                      ],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 3),
-
-                // ===== FULLTIME RESULT BAR =====
-                Container(
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                // ===== PREDICTION BOXES (1, X, 2) =====
+                SizedBox(
+                  height: 28,
                   child: Row(
                     children: [
+                      // Home Win (1)
                       Expanded(
-                        flex: homeFlex,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: SColor.progressIndicator1,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(4),
-                              bottomLeft: Radius.circular(4),
-                            ),
-                          ),
+                        flex: homeProb.round().clamp(1, 100),
+                        child: _buildPredictionBox(
+                          label: '1',
+                          percentage: homeProb,
+                          color: const Color(0xFF00A9E0),
                         ),
                       ),
+                      const SizedBox(width: 3),
+                      // Draw (X)
                       Expanded(
-                        flex: drawFlex,
-                        child: Container(color: SColor.progressIndicator2),
+                        flex: drawProb.round().clamp(1, 100),
+                        child: _buildPredictionBox(
+                          label: 'X',
+                          percentage: drawProb,
+                          color: const Color(0xFFCFD8DC),
+                          textColor: Colors.black87,
+                          percentageColor: Colors.black87,
+                        ),
                       ),
+                      const SizedBox(width: 3),
+                      // Away Win (2)
                       Expanded(
-                        flex: awayFlex,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: SColor.progressIndicator3,
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(4),
-                              bottomRight: Radius.circular(4),
-                            ),
-                          ),
+                        flex: awayProb.round().clamp(1, 100),
+                        child: _buildPredictionBox(
+                          label: '2',
+                          percentage: awayProb,
+                          color: const Color(0xFF1A2530),
                         ),
                       ),
                     ],
@@ -314,67 +181,24 @@ class ScoureCardWidget extends StatelessWidget {
 
                 const SizedBox(height: 6),
 
-                // ===== OVER/UNDER 2.5 PREDICTION =====
-                Center(
-                  child: Text(
-                    'Over/Under 2.5',
-                    style: STextTheme.scoureTextNormal().copyWith(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 3),
-
-                // ===== OVER/UNDER TEXT =====
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Over ${match.predictions.overUnder25.over.toStringAsFixed(0)}%",
-                      style: STextTheme.subHeadLine().copyWith(fontSize: 14),
-                    ),
-                    Text(
-                      "Under ${match.predictions.overUnder25.under.toStringAsFixed(0)}%",
-                      style: STextTheme.subHeadLine().copyWith(fontSize: 14),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 3),
-
-                // ===== OVER/UNDER BAR =====
-                Container(
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                // ===== OVER/UNDER 2.5 BOXES =====
+                SizedBox(
+                  height: 28,
                   child: Row(
                     children: [
+                      // Over 2.5
                       Expanded(
-                        flex: match.predictions.overUnder25.over.round().clamp(1, 100),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: SColor.progressIndicator1,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(4),
-                              bottomLeft: Radius.circular(4),
-                            ),
-                          ),
+                        child: _buildOverUnderBox(
+                          label: 'Over 2.5',
+                          percentage: overProb,
                         ),
                       ),
+                      const SizedBox(width: 6),
+                      // Under 2.5
                       Expanded(
-                        flex: match.predictions.overUnder25.under.round().clamp(1, 100),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: SColor.progressIndicator3,
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(4),
-                              bottomRight: Radius.circular(4),
-                            ),
-                          ),
+                        child: _buildOverUnderBox(
+                          label: 'Under 2.5',
+                          percentage: underProb,
                         ),
                       ),
                     ],
@@ -386,5 +210,134 @@ class ScoureCardWidget extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Widget _buildTeamRow({
+    required String logo,
+    required String name,
+    required int score,
+    required bool isLive,
+  }) {
+    return Row(
+      children: [
+        // Team logo
+        Image.network(
+          logo,
+          height: 20,
+          width: 20,
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) => Icon(
+            Icons.sports_soccer,
+            size: 20,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(width: 8),
+        // Team name
+        Expanded(
+          child: Text(
+            name,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Get.theme.brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black87,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        // Score
+        Text(
+          isLive ? score.toString() : '-',
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Get.theme.brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPredictionBox({
+    required String label,
+    required double percentage,
+    required Color color,
+    Color textColor = Colors.white,
+    Color? percentageColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 4),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: textColor,
+            ),
+          ),
+          Text(
+            '${percentage.toStringAsFixed(0)}%',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: percentageColor ?? textColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverUnderBox({
+    required String label,
+    required double percentage,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+      decoration: BoxDecoration(
+        color: Get.theme.brightness == Brightness.dark
+            ? const Color(0xFF4A4A4A)
+            : Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.15),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Get.theme.brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black87,
+            ),
+          ),
+          Text(
+            '${percentage.toStringAsFixed(0)}%',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF00897B),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
