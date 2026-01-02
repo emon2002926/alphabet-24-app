@@ -35,6 +35,7 @@ class NewsListController extends GetxController {
 
         newsList.value =
             list.map<NewsItem>((item) => NewsItem.fromJson(item)).toList();
+        print("jsdfg:${newsList.value}");
       } else {
         print("Server Error Status: ${response.statusCode}");
       }

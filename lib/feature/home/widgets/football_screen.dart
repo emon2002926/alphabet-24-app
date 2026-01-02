@@ -29,10 +29,11 @@ class _FootballScreenState extends State<FootballScreen> {
   Get.put(LeagueListController());
   final NewsListController newsListController = Get.put(NewsListController());
 
+
   @override
   Widget build(BuildContext context) {
     final bool isNew = true;
-
+    newsListController.fetchNews();
     return Container(
       color: SColor.bodyColor,
       padding: EdgeInsets.all(DynamicSize.small(context)),
