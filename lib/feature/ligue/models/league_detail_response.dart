@@ -1,7 +1,9 @@
 // league_detail_response.dart
+import '../../home/models/leage_list_model.dart';
+
 class LeagueDetailResponse {
   final String status;
-  final League league;
+  final LeaguePrimary league;
   final LeagueMatchList liveMatches;
   final LeagueMatchList todayFixtures;
 
@@ -15,35 +17,35 @@ class LeagueDetailResponse {
   factory LeagueDetailResponse.fromJson(Map<String, dynamic> json) {
     return LeagueDetailResponse(
       status: json['status'] ?? '',
-      league: League.fromJson(json['league'] ?? {}),
+      league: LeaguePrimary.fromJson(json['league'] ?? {}),
       liveMatches: LeagueMatchList.fromJson(json['live_matches'] ?? {}),
       todayFixtures: LeagueMatchList.fromJson(json['today_fixtures'] ?? {}),
     );
   }
 }
 
-class League {
-  final int id;
-  final String name;
-  final String shortCode;
-  final String logo;
-
-  League({
-    required this.id,
-    required this.name,
-    required this.shortCode,
-    required this.logo,
-  });
-
-  factory League.fromJson(Map<String, dynamic> json) {
-    return League(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      shortCode: json['short_code'] ?? '',
-      logo: json['logo'] ?? '',
-    );
-  }
-}
+// class League {
+//   final int id;
+//   final String name;
+//   final String shortCode;
+//   final String logo;
+//
+//   League({
+//     required this.id,
+//     required this.name,
+//     required this.shortCode,
+//     required this.logo,
+//   });
+//
+//   factory League.fromJson(Map<String, dynamic> json) {
+//     return League(
+//       id: json['id'] ?? 0,
+//       name: json['name'] ?? '',
+//       shortCode: json['short_code'] ?? '',
+//       logo: json['logo'] ?? '',
+//     );
+//   }
+// }
 
 class LeagueMatchList {
   final int count;

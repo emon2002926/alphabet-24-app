@@ -140,6 +140,7 @@ class LeaguesFootballTab extends StatelessWidget {
                           Get.to(() => LigueMatchListScreen(), arguments: {
                             'leagueId': league.id,
                             'leagueName': league.name,
+                            'PrimaryLeagueList': league.matches
                           });
                         },
                       ),

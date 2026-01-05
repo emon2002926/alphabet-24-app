@@ -87,6 +87,7 @@ class _FootballScreenState extends State<FootballScreen> {
                         Get.to(() => LigueMatchListScreen(), arguments: {
                           'leagueId': league.id,
                           'leagueName': league.name,
+                          'PrimaryLeagueList': league.matches
                         });
                       },
                     ),

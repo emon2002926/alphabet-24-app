@@ -42,7 +42,7 @@ class LigueListScreen extends StatelessWidget {
                 ? const Divider(color: Colors.grey, height: 1)
                 : const SizedBox(height: 8),
             itemBuilder: (context, index) {
-              final League league = leagueListController.leagues[index];
+              final LeaguePrimary league = leagueListController.leagues[index];
               return GestureDetector(
                 onTap: () {
                   Get.to(() => LigueMatchListScreen(),arguments: {
@@ -89,7 +89,8 @@ class LigueListScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              league.shortCode,
+
+                              league.shortCode!,
                               style: STextTheme.headLine().copyWith(
                                 fontSize: 12,
                                 color: Colors.grey[600],
@@ -100,13 +101,13 @@ class LigueListScreen extends StatelessWidget {
                       ),
 
                       // Country flag section
-                      if (league.country.flag.isNotEmpty)
+                      if (league.country.flag!.isNotEmpty)
                         Container(
                           width: 30,
                           height: 20,
                           margin: const EdgeInsets.only(left: 8),
                           child: Image.network(
-                            league.country.flag,
+                            league.country.flag!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return const SizedBox();

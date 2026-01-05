@@ -500,6 +500,7 @@ class DoubleChance {
   }
 }
 
+
 class FavoritesCount {
   int teams;
   int leagues;
@@ -512,8 +513,6 @@ class FavoritesCount {
         leagues: json['leagues'] ?? 0,
       );
 }
-
-
 
 class FavouriteFixture {
   final int id;

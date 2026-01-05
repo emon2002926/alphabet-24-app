@@ -7,10 +7,10 @@ import '../theme/SColor.dart';
 
 class LeagueListWidget extends StatelessWidget {
   int? totalLig;
-  final List<League> leagues;
+  final List<LeaguePrimary> leagues;
   final bool showDivider;
-  final Function(int index, League league) onToggleFavorite;
-  final Function(League league)? onLeagueTap;
+  final Function(int index, LeaguePrimary league) onToggleFavorite;
+  final Function(LeaguePrimary league)? onLeagueTap;
 
    LeagueListWidget({
     required this.leagues,
@@ -43,6 +43,8 @@ class LeagueListWidget extends StatelessWidget {
                   Get.to(() => LigueMatchListScreen(), arguments: {
                     'leagueId': league.id,
                     'leagueName': league.name,
+                    'leagueList': leagues,
+
                   });
                 }
               },
@@ -115,15 +117,15 @@ class LeagueListWidget extends StatelessWidget {
                           const SizedBox(height: 3),
                           Row(
                             children: [
-                              if (league.country.flag.isNotEmpty)
+                              if (league.country.flag?.isNotEmpty == true) ...[
                                 Image.network(
-                                  league.country.flag,
+                                  league.country.flag!,
                                   width: 16,
                                   height: 12,
                                   errorBuilder: (_, __, ___) => SizedBox.shrink(),
                                 ),
-                              if (league.country.flag.isNotEmpty)
                                 const SizedBox(width: 6),
+                              ],
                               Expanded(
                                 child: Text(
                                   league.country.name,

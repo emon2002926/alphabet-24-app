@@ -9,8 +9,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class LeagueListController extends GetxController {
-  RxList<League> leagues = <League>[].obs;
-  RxList<League> filteredLeagues = <League>[].obs;
+  RxList<LeaguePrimary> leagues = <LeaguePrimary>[].obs;
+  RxList<LeaguePrimary> filteredLeagues = <LeaguePrimary>[].obs;
   RxBool isLoading = false.obs;
   RxString searchQuery = ''.obs;
 
@@ -80,7 +80,7 @@ class LeagueListController extends GetxController {
     } else {
       var filtered = leagues.where((league) {
         return league.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-            league.shortCode.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+            league.shortCode!.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
             league.country.name.toLowerCase().contains(searchQuery.value.toLowerCase());
       }).toList();
       filteredLeagues.value = filtered;
@@ -103,7 +103,7 @@ class LeagueListController extends GetxController {
       final response = await getAPIRequest.fetchData();
 
       if (response.isNotEmpty) {
-        final leagueResponse = LeagueResponse.fromJson(response);
+        final leagueResponse = LeagueByDateResponse.fromJson(response);
         // ✅ Filter out leagues with no matches
         leagues.value = leagueResponse.leagues
             .where((league) => league.matchCount == null || league.matchCount! > 0)
@@ -140,7 +140,7 @@ class LeagueListController extends GetxController {
 
       if (response.isNotEmpty && response['leagues'] != null) {
         final leaguesList = (response['leagues'] as List)
-            .map((e) => League.fromJson(e))
+            .map((e) => LeaguePrimary.fromJson(e))
             .where((league) {
           // ✅ Check if matches array exists and has items
           if (league.matches != null && league.matches!.isNotEmpty) {
