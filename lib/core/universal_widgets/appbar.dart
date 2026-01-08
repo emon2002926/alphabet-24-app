@@ -25,11 +25,11 @@ class SAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       leading: isHomeScreen ? null : Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Container(
           decoration: BoxDecoration(
             color: SColor.primary,
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(100),
           ),
           child: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),

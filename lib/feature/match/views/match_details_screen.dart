@@ -27,16 +27,34 @@ class MatchDetailsScreen extends StatelessWidget {
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 SliverAppBar(
-                  expandedHeight: 220, // Reduced from 300 to 220 for compact design
+                  expandedHeight: 220,
                   floating: false,
                   pinned: false,
                   stretch: true,
-                  automaticallyImplyLeading: false,
+                  automaticallyImplyLeading: false, // Keep this to use custom back button
                   backgroundColor: Colors.transparent,
+                  // Add custom back button
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () => Get.back(),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ),
                   flexibleSpace: FlexibleSpaceBar(
                     background: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(24),
                           bottomRight: Radius.circular(24),
                         ),
@@ -74,11 +92,11 @@ class MatchDetailsScreen extends StatelessWidget {
                         fontWeight: FontWeight.normal,
                       ),
                       tabs: const [
+                        Tab(text: 'PREDICTIONS'),
                         Tab(text: 'SUMMARY'),
                         Tab(text: 'LINEUP'),
                         Tab(text: 'H2H'),
                         Tab(text: 'STATS'),
-                        Tab(text: 'PREDICTIONS'),
                         Tab(text: '2nd PREDICTIONS SCREEN'),
                       ],
                     ),
@@ -88,11 +106,11 @@ class MatchDetailsScreen extends StatelessWidget {
             },
             body: TabBarView(
               children: [
+                PredictionsTabWidgets(id: id),
                 SummaryTabWidgets(id: id),
                 LineUp(fixtureId: id),
                 H2H(fixtureId: id),
                 StatsTabWidgets(id: id),
-                PredictionsTabWidgets(id: id),
                 PredictionsOddsTab(fixtureId: id),
               ],
             ),

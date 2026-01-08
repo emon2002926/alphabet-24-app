@@ -56,14 +56,14 @@ class _PredictionScreenState extends State<PredictionScreen> {
                         children: [
                           Text(
                             selectedSport,
-                            style: GoogleFonts.poppins(
-                              fontSize: 24,
+                            style: GoogleFonts.roboto(
+                              fontSize: 19,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white : Colors.black,
                               height: 1,
                             ),
                           ),
-                          SizedBox(width: 12),
+                          SizedBox(width: 1),
                           Icon(
                             Icons.arrow_drop_down,
                             size: 32,
@@ -82,7 +82,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
                               children: [
                                 Text(
                                   sport,
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.roboto(
                                     fontSize: 16,
                                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                     color: isSelected
@@ -116,7 +116,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
                     },
                     child: Icon(
                       Icons.search,
-                      size: 32,
+                      size: 24,
                       color: isDark ? Colors.white : Colors.black,
                     ),
                   ),

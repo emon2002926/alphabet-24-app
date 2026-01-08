@@ -85,7 +85,7 @@ class FavouriteIgueFootballTab extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SLabel(title: 'FAVOURITE LEAGUES'),
+                      // const SLabel(title: 'FAVOURITE LEAGUES'),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -138,7 +138,7 @@ class FavouriteIgueFootballTab extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SLabel(title: 'FAVOURITE MATCHES'),
+                      // const SLabel(title: 'FAVOURITE MATCHES'),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -331,6 +331,7 @@ class FavouriteMatchCard extends StatelessWidget {
     }
   }
 }
+
 class FavouriteLeagueCard extends StatelessWidget {
   final FavouriteLeague league;
   final VoidCallback onRemove;
@@ -352,18 +353,6 @@ class FavouriteLeagueCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Favorite Star Icon
-          GestureDetector(
-            onTap: onRemove,
-            child: const Icon(
-              Icons.star,
-              color: Colors.amber,
-              size: 24,
-            ),
-          ),
-
-          const SizedBox(width: 12),
-
           // League Logo
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -373,8 +362,8 @@ class FavouriteLeagueCard extends StatelessWidget {
               width: 32,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Container(
-                height: 32,
-                width: 32,
+                height: 28,
+                width: 28,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(4),
@@ -393,7 +382,7 @@ class FavouriteLeagueCard extends StatelessWidget {
               children: [
                 Text(
                   league.leagueName,
-                  style: STextTheme.headLine().copyWith(
+                  style: STextTheme.scoureTextNormal().copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -412,17 +401,21 @@ class FavouriteLeagueCard extends StatelessWidget {
             ),
           ),
 
-          // Arrow Icon
-          // Icon(
-          //   Icons.chevron_right,
-          //   color: Colors.grey[400],
-          //   size: 24,
-          // ),
+          const SizedBox(width: 12),
+
+          // Favorite Star Icon (moved to right)
+          GestureDetector(
+            onTap: onRemove,
+            child: const Icon(
+              Icons.star,
+              color: Colors.amber,
+              size: 24,
+            ),
+          ),
         ],
       ),
     );
   }
 }
-
 
 

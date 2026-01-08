@@ -32,7 +32,6 @@ import 'package:get/get.dart';
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: DynamicSize.medium(context),
-                    vertical: DynamicSize.small(context),
                   ),
                   child: Container(
                     height: 40,
@@ -54,7 +53,6 @@ import 'package:get/get.dart';
                       tabs: const [
                         Tab(text: 'Football'),
                         Tab(text: 'Basketball'),
-                        Tab(text: 'Tennis'),
                       ],
                     ),
                   ),
@@ -69,7 +67,7 @@ import 'package:get/get.dart';
                     children: const [
                       FavouriteIgueFootballTab(),
                       Center(child: Text("🏀 Basketball Coming Soon")),
-                      Center(child: Text("🎾 Tennis Coming Soon")),
+                      // Center(child: Text("🎾 Tennis Coming Soon")),
                     ],
                   ),
                 ),

@@ -26,8 +26,8 @@ class SProgressWidget extends StatelessWidget {
     final double awayWidth = awayPercentage;
 
     // Colors based on theme
-    final Color homeColor = isDark ? Color(0xFF2196F3) : Color(0xFF1E3A5F);
-    final Color awayColor = isDark ? Color(0xFFFF4081) : Color(0xFFE91E63);
+    final Color homeColor = isDark ? Color(0xFF0096C7) : Color(0xFF0096C7);
+    final Color awayColor = isDark ? Color(0xFF00002B) : Color(0xFF00002B);
     final Color backgroundColor = isDark ? Color(0xFF2C2C2C) : Color(0xFFF5F5F5);
 
     return Column(

@@ -14,6 +14,7 @@ import '../../ligue/views/ligue_list_screen.dart';
 import '../../ligue/views/ligue_match_list_screen.dart';
 import '../../ligue/widgets/date_selector_widget.dart';
 import '../../ligue/widgets/ligue_football_tab.dart';
+import '../../prediction/views/prediction_screen.dart';
 
 class FootballScreen extends StatefulWidget {
   const FootballScreen({super.key});
@@ -43,6 +44,7 @@ class _FootballScreenState extends State<FootballScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Live Now
+
             Obx(() {
               if (liveMatchController.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
@@ -50,7 +52,7 @@ class _FootballScreenState extends State<FootballScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LabelWidget('Live Now', false),
+                    LabelWidget('Live Now ', true),
                     SizedBox(height: DynamicSize.small(context)),
                     _ScoureCard(context, isNew),
                   ],
@@ -59,7 +61,11 @@ class _FootballScreenState extends State<FootballScreen> {
                 return const SizedBox.shrink();
               }
             }),
+
             SizedBox(height: DynamicSize.medium(context)),
+
+            LabelWidget('Leagues', true),
+
             DateSelectorWidget(),
 
             // Leagues
@@ -70,7 +76,6 @@ class _FootballScreenState extends State<FootballScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LabelWidget('Leagues', true),
                     SizedBox(height: DynamicSize.small(context)),
 
                     LeagueListWidget(
@@ -168,10 +173,14 @@ class _FootballScreenState extends State<FootballScreen> {
 
 
 
-  Row LabelWidget(String title , bool isSeeAllVisible) {
+  Row LabelWidget(String title , bool isSeeAllVisible ) {
     return Row(
       children: [
-        Text(title, style: STextTheme.headLine()),
+        Text(title,
+          style: STextTheme.scoureTextNormal().copyWith(
+
+          ),
+        ),
         const Spacer(),
         isSeeAllVisible ? GestureDetector(
           onTap: () {
@@ -188,14 +197,20 @@ class _FootballScreenState extends State<FootballScreen> {
                 ),
               );
             }
+            else if(title == "Live Now "
+            ){
+              Get.to(
+                  PredictionScreen()
+              );
+            }
           },
           child: Row(
             children: [
               Text(
                 'See All',
-                style: STextTheme.subHeadLine().copyWith(
+                style: STextTheme.scoureTextSmall().copyWith(
                   color: Colors.blue,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
               const SizedBox(width: 4),

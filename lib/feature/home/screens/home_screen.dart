@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: SColor.bodyColor,
       appBar: PreferredSize(
-        preferredSize: Size(double.infinity, 80),
+        preferredSize: Size(double.infinity, 60),
         child: AppBar(
           backgroundColor: SColor.bodyColor,
           automaticallyImplyLeading: false,
@@ -49,14 +49,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     'Welcome Back,',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.normalText().copyWith(
                       fontSize: 14,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.normal,
+
                     ),
                   ),
                   Text(
                     profileController.userProfile.value?.fullName ?? 'Guest',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.scoureTextNormal().copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -76,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(width: DynamicSize.small(context)),
           ],
-          toolbarHeight: 80,
+          toolbarHeight: 60,
         ),
       ),
       body: SafeArea(
@@ -90,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: DynamicSize.medium(context),
-                  vertical: DynamicSize.medium(context),
+                  vertical: DynamicSize.small(context),
                 ),
                 child: Container(
                   height: 35,
@@ -112,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     tabs: const [
                       Tab(text: 'Football'),
                       Tab(text: 'Basketball'),
-                      Tab(text: 'Tennis'),
+                      // Tab(text: 'Tennis'),
                     ],
                   ),
                 ),
@@ -122,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     FootballScreen(),
                     DevelopmentPage(),
-                    DevelopmentPage(),
+                    // DevelopmentPage(),
                   ],
                 ),
               ),

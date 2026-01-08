@@ -98,21 +98,21 @@ class _MatchHeaderState extends State<MatchHeader> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Back Button - smaller
-                        GestureDetector(
-                          onTap: () => Get.back(),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
+                        // GestureDetector(
+                        //   onTap: () => Get.back(),
+                        //   child: Container(
+                        //     padding: const EdgeInsets.all(8),
+                        //     decoration: BoxDecoration(
+                        //       color: Colors.white.withOpacity(0.15),
+                        //       borderRadius: BorderRadius.circular(8),
+                        //     ),
+                        //     child: const Icon(
+                        //       Icons.arrow_back,
+                        //       color: Colors.white,
+                        //       size: 20,
+                        //     ),
+                        //   ),
+                        // ),
 
                         // League info - centered
                         Flexible(
@@ -165,7 +165,7 @@ class _MatchHeaderState extends State<MatchHeader> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
-                              Icons.favorite_border,
+                              Icons.star_border,
                               color: Colors.white,
                               size: 20,
                             ),

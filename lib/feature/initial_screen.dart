@@ -32,7 +32,7 @@ class _InitialScreenState extends State<InitialScreen> {
     NavItem(iconPath: IconPath.home, label: 'Home'),
     NavItem(iconPath: IconPath.live, label: 'LIVE'),
     NavItem(iconPath: IconPath.favourite, label: 'Favourite'),
-    NavItem(iconPath: IconPath.ligue, label: 'Ligue'),
+    NavItem(iconPath: IconPath.ligue, label: 'Ligues'),
     NavItem(iconPath: IconPath.more, label: 'More'),
   ];
 

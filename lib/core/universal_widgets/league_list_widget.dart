@@ -107,8 +107,8 @@ class LeagueListWidget extends StatelessWidget {
                           Text(
                             league.name,
                             style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
                               color: isDark ? Colors.white : Colors.black87,
                             ),
                             maxLines: 1,
@@ -168,11 +168,7 @@ class LeagueListWidget extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.sports_soccer,
-                              size: 14,
-                              color: Colors.white,
-                            ),
+
                             SizedBox(width: 6),
                             Text(
                               '${league.matchCount}',

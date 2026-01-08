@@ -45,7 +45,7 @@ class PredictionsTabWidgets extends StatelessWidget {
             SizedBox(height: DynamicSize.medium(context)),
 
             // Match Result Section
-            _buildSectionHeader('MATCH RESULT', context),
+            _buildSectionHeader('FULL TIME MATCH RESULT', context),
             SizedBox(height: DynamicSize.small(context)),
 
             Padding(

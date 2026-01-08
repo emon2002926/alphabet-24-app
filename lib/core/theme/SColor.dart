@@ -14,8 +14,8 @@ class SColor {
           : const Color(0xFF202020);
 
   // === Primary Colors === //
-  static const Color primary = Color(0xFF005440);
-  static const Color secondary = Color(0xFF28F4AF);
+  static const Color primary = Color(0xFF0096C6);
+  static const Color secondary = Color(0xFF4FB3D8);
 
   // === Text Colors === //
   static Color get textPrimary =>
@@ -27,6 +27,11 @@ class SColor {
       Get.theme.brightness == Brightness.dark
           ? const Color(0xFFB8B8B8) // a little lighter than B0B0B0
           : const Color(0xFF8F8F8F); // a little darker than 9C9C9C
+
+  static Color get textNormal =>
+      Get.theme.brightness == Brightness.dark
+          ? const Color(0xFFEEEEEE)
+          : const Color(0xFF282828);
 
   // === Border Colors === //
   static Color get borderColor =>

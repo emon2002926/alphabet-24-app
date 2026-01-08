@@ -18,7 +18,7 @@ class LigueScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: SColor.bodyColor,
-      appBar: SAppBar(title: 'All Ligue', isHomeScreen: true),
+      appBar: SAppBar(title: 'All Ligues', isHomeScreen: true),
       body: SafeArea(
         child: DefaultTabController(
           length: 3,
@@ -29,7 +29,6 @@ class LigueScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: DynamicSize.medium(context),
-                  vertical: DynamicSize.small(context),
                 ),
                 child: Container(
                   height: 40,
@@ -51,7 +50,7 @@ class LigueScreen extends StatelessWidget {
                     tabs: const [
                       Tab(text: 'Football'),
                       Tab(text: 'Basketball'),
-                      Tab(text: 'Tennis'),
+                      // Tab(text: 'Tennis'),
                     ],
                   ),
                 ),
@@ -65,7 +64,7 @@ class LigueScreen extends StatelessWidget {
                   children: const [
                     LeaguesFootballTab(isShowSearch: true),
                     LigueBasketballTab(),
-                    DevelopmentPage(),
+                    // DevelopmentPage(),
                   ],
                 ),
               ),
