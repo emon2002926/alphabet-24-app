@@ -14,16 +14,18 @@ class LeagueListController extends GetxController {
   RxBool isLoading = false.obs;
   RxString searchQuery = ''.obs;
 
+  // ✅ NEW: Capture full LeagueByDateResponse
+  Rx<LeagueByDateResponse?> leagueByDateResponse = Rx<LeagueByDateResponse?>(null);
+
   // ===== DATE SELECTION =====
   Rx<DateTime> selectedDate = DateTime.now().obs;
   RxList<DateTime> dateRange = <DateTime>[].obs;
-  RxBool isDateFilterActive = true.obs; // ✅ Changed to true - start with date filter active
+  RxBool isDateFilterActive = true.obs;
 
   @override
   void onInit() {
     super.onInit();
     generateDateRange();
-    // ✅ Fetch today's leagues by date on first load
     fetchLeaguesByDate(DateTime.now());
   }
 
@@ -51,7 +53,6 @@ class LeagueListController extends GetxController {
   void selectDate(DateTime date) {
     print('📅 selectDate called for: ${DateFormat('yyyy-MM-dd').format(date)}');
 
-    // Always use date-based API, just update the selected date
     selectedDate.value = date;
     isDateFilterActive.value = true;
     fetchLeaguesByDate(date);
@@ -80,7 +81,7 @@ class LeagueListController extends GetxController {
     } else {
       var filtered = leagues.where((league) {
         return league.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-            league.shortCode!.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+            (league.shortCode?.toLowerCase().contains(searchQuery.value.toLowerCase()) ?? false) ||
             league.country.name.toLowerCase().contains(searchQuery.value.toLowerCase());
       }).toList();
       filteredLeagues.value = filtered;
@@ -104,7 +105,11 @@ class LeagueListController extends GetxController {
 
       if (response.isNotEmpty) {
         final leagueResponse = LeagueByDateResponse.fromJson(response);
-        // ✅ Filter out leagues with no matches
+
+        // ✅ Store full response
+        leagueByDateResponse.value = leagueResponse;
+
+        // Filter out leagues with no matches
         leagues.value = leagueResponse.leagues
             .where((league) => league.matchCount == null || league.matchCount! > 0)
             .toList();
@@ -120,7 +125,7 @@ class LeagueListController extends GetxController {
     }
   }
 
-  // NEW: Fetch leagues by date
+  // Fetch leagues by date
   Future<void> fetchLeaguesByDate(DateTime date) async {
     try {
       isLoading.value = true;
@@ -139,39 +144,52 @@ class LeagueListController extends GetxController {
       final response = await getAPIRequest.fetchData();
 
       if (response.isNotEmpty && response['leagues'] != null) {
-        final leaguesList = (response['leagues'] as List)
-            .map((e) => LeaguePrimary.fromJson(e))
-            .where((league) {
-          // ✅ Check if matches array exists and has items
+        // ✅ Parse and store full response
+        final fullResponse = LeagueByDateResponse.fromJson(response);
+        leagueByDateResponse.value = fullResponse;
+
+        print('✅ LeagueByDateResponse captured:');
+        print('   - Status: ${fullResponse.status}');
+        print('   - Date: ${fullResponse.date}');
+        print('   - Total Leagues: ${fullResponse.totalLeagues}');
+        print('   - Total Matches: ${fullResponse.totalMatches}');
+
+        // Filter leagues with matches
+        final leaguesList = fullResponse.leagues.where((league) {
           if (league.matches != null && league.matches!.isNotEmpty) {
             return true;
           }
-          // ✅ Fallback to matchCount if matches array not available
           if (league.matchCount != null && league.matchCount! > 0) {
             return true;
           }
           return false;
-        })
-            .toList();
+        }).toList();
 
         leagues.value = leaguesList;
         applySearchFilter();
 
-        final totalMatches = response['total_matches'] ?? 0;
-        print('✅ Leagues by Date Loaded: ${leagues.length} leagues with matches, $totalMatches total matches');
+        print('✅ Leagues by Date Loaded: ${leagues.length} leagues with matches');
       } else {
+        leagueByDateResponse.value = null;
         leagues.clear();
         filteredLeagues.clear();
         print('⚠️ No leagues available for $formattedDate');
       }
     } catch (e) {
       print('❌ Error fetching leagues by date: $e');
+      leagueByDateResponse.value = null;
       leagues.clear();
       filteredLeagues.clear();
     } finally {
       isLoading.value = false;
     }
   }
+
+  // ✅ NEW: Getter methods for easy access to response data
+  String get responseStatus => leagueByDateResponse.value?.status ?? '';
+  String get responseDate => leagueByDateResponse.value?.date ?? '';
+  int get totalLeagues => leagueByDateResponse.value?.totalLeagues ?? 0;
+  int get totalMatches => leagueByDateResponse.value?.totalMatches ?? 0;
 
   // ===== TOGGLE FAVORITE LEAGUE =====
   Future<void> toggleFavoriteLeague(int index, {bool useFiltered = false}) async {
@@ -245,5 +263,11 @@ class LeagueListController extends GetxController {
         leagues.refresh();
       }
     }
+  }
+
+  @override
+  void onClose() {
+    leagueByDateResponse.value = null;
+    super.onClose();
   }
 }

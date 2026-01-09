@@ -19,7 +19,12 @@ class LeaguesFootballTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LeagueListController leagueListController = Get.put(LeagueListController());
+    // ✅ FIX: Use Get.find() if controller already exists, or put with permanent
+    final LeagueListController leagueListController = Get.put(
+      LeagueListController(),
+      permanent: true, // ✅ Keeps controller alive across rebuilds
+    );
+
     final TextEditingController searchController = TextEditingController();
 
     return Scaffold(
@@ -30,7 +35,7 @@ class LeaguesFootballTab extends StatelessWidget {
           // Search Field
           DateSelectorWidget(),
           isShowSearch
-            ?Padding(
+              ? Padding(
             padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
             child: SizedBox(
               height: 60,
@@ -55,11 +60,11 @@ class LeaguesFootballTab extends StatelessWidget {
                 )),
               ),
             ),
-          ):SizedBox.shrink(),
+          ) : SizedBox.shrink(),
 
           // Filter Row
           isShowSearch
-          ? Padding(
+              ? Padding(
             padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
             child: SizedBox(
               height: 40,
@@ -78,7 +83,7 @@ class LeaguesFootballTab extends StatelessWidget {
                     ),
                   ),
                   Obx(() => Text(
-                    '${leagueListController.filteredLeagues.length}',
+                    '${leagueListController.leagueByDateResponse.value?.totalMatches}',
                     style: STextTheme.headLine().copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -88,7 +93,7 @@ class LeaguesFootballTab extends StatelessWidget {
                 ],
               ),
             ),
-          ):SizedBox.shrink(),
+          ) : SizedBox.shrink(),
 
           // League List
           Expanded(
@@ -119,7 +124,9 @@ class LeaguesFootballTab extends StatelessWidget {
               }
 
               return RefreshIndicator(
-                onRefresh: () => leagueListController.fetchLeagues(),
+                onRefresh: () => leagueListController.fetchLeaguesByDate(
+                  leagueListController.selectedDate.value,
+                ),
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
@@ -155,5 +162,4 @@ class LeaguesFootballTab extends StatelessWidget {
     );
   }
 }
-
 

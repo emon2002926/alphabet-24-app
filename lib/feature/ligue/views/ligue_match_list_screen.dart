@@ -192,7 +192,7 @@ class LigueMatchListScreen extends StatelessWidget {
               ),
             ),
             SizedBox(width: DynamicSize.medium(context)),
-            _matchInfo(match.startingAt, isLive, match.status.stateShort, _getStatusColor(match.status), isDark),
+            _matchInfo(match.startingAt, isLive, match.status.stateName, _getStatusColor(match.status), isDark),
           ],
         ),
       ),
@@ -389,10 +389,14 @@ class LigueMatchListScreen extends StatelessWidget {
     return Colors.grey;
   }
 
+
+
   Color _getStateColor(String state) {
-    if (state.contains('1H') || state.contains('2H') || state.toLowerCase().contains('live')) return Colors.red;
-    if (state.toLowerCase().contains('ft') || state.toLowerCase().contains('finished')) return Colors.green;
+    if (state.contains('1H') || state.contains('2H') || state.toLowerCase().contains('live')) return Color(0xFFFF6B6B);
+    if (state.toLowerCase().contains('ft') || state.toLowerCase().contains('finished')) return Color(0xFF4CAF50);
     if (state.toLowerCase().contains('ns') || state.toLowerCase().contains('not started')) return Colors.blue;
     return Colors.grey;
   }
+
+
 }

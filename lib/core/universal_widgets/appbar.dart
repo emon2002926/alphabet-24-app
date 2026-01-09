@@ -4,49 +4,45 @@ import '../theme/SColor.dart';
 import '../theme/text_theme.dart';
 
 class SAppBar extends StatelessWidget implements PreferredSizeWidget {
-  String title;
-  bool isHomeScreen = false;
-  SAppBar({
+  final String title;
+  final bool isHomeScreen;
+
+  const SAppBar({
     super.key,
     required this.title,
     this.isHomeScreen = false,
-    this.preferredSize = const Size.fromHeight(kToolbarHeight),
   });
 
   @override
-  final Size preferredSize;
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(
         title,
-        style: STextTheme.headLine().copyWith(fontSize: 20),
+        style: STextTheme.headLine().copyWith(fontSize: 18),
       ),
       centerTitle: true,
-      leading: isHomeScreen ? null : Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      backgroundColor: SColor.bodyColor,
+      elevation: 0,
+      leading: isHomeScreen
+          ? null
+          : GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
         child: Container(
+          margin: EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: SColor.primary,
-            borderRadius: BorderRadius.circular(100),
+            shape: BoxShape.circle,
           ),
-          child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+          child: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: 20,
           ),
         ),
       ),
-      // actions: isHomeScreen
-      //     ? null
-      //     : [
-      //   Padding(
-      //     padding: const EdgeInsets.only(right: 16.0),
-      //     child: Icon(Icons.favorite, color: SColor.textPrimary, size: 28),
-      //   )
-      // ]
     );
   }
 }

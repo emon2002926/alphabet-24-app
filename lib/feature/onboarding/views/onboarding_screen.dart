@@ -18,16 +18,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Timer? _autoScrollTimer;
 
   final List<OnboardingData> _onboardingPages = [
-    OnboardingData(
-      imageUrl: ImagePath.onboardingImg1,
-      title: 'WHERE AI MEETS THE GAME',
-      description: 'Experience real-time predictions, insightful analysis, and smarter insights for every match.',
-    ),
-    OnboardingData(
-      imageUrl: ImagePath.onboardingImg2,
-      title: 'WHERE AI MEETS THE GAME',
-      description: 'Experience real-time predictions, insightful analysis, and smarter insights for every match.',
-    ),
+    // OnboardingData(
+    //   imageUrl: ImagePath.onboardingImg1,
+    //   title: 'WHERE AI MEETS THE GAME',
+    //   description: 'Experience real-time predictions, insightful analysis, and smarter insights for every match.',
+    // ),
+    // OnboardingData(
+    //   imageUrl: ImagePath.onboardingImg2,
+    //   title: 'WHERE AI MEETS THE GAME',
+    //   description: 'Experience real-time predictions, insightful analysis, and smarter insights for every match.',
+    // ),
     OnboardingData(
       imageUrl: ImagePath.onboardingImg3,
       title: 'WHERE AI MEETS THE GAME',
