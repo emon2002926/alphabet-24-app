@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
           import 'package:scaffassistant/core/const/string_const/image_path.dart';
           import 'package:scaffassistant/core/theme/SColor.dart';
           import 'package:get/get.dart';
-import 'package:scaffassistant/feature/home/widgets/basketball_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
           import '../../../core/user_controller.dart';
 
@@ -37,9 +36,42 @@ class _HomeScreenState extends State<HomeScreen> {
               CircleAvatar(
                 backgroundColor: SColor.primary,
                 radius: 20,
-                child: Image(
-                  image: AssetImage(ImagePath.avater),
-                  fit: BoxFit.cover,
+                child: ClipOval(
+                  child: profileController.userProfile.value?.profilePictureUrl != null &&
+                      profileController.userProfile.value!.profilePictureUrl.isNotEmpty
+                      ? Image.network(
+                    profileController.userProfile.value!.profilePictureUrl,
+                    fit: BoxFit.cover,
+                    width: 40,
+                    height: 40,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                              : null,
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        ImagePath.avater,
+                        fit: BoxFit.cover,
+                        width: 40,
+                        height: 40,
+                      );
+                    },
+                  )
+                      : Image.asset(
+                    ImagePath.avater,
+                    fit: BoxFit.cover,
+                    width: 40,
+                    height: 40,
+                  ),
                 ),
               ),
               SizedBox(width: DynamicSize.small(context)),
@@ -52,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: STextTheme.normalText().copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
-
                     ),
                   ),
                   Text(
@@ -70,9 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: Icon(Icons.search, color: SColor.iconColor),
               onPressed: () {
-                // Handle notification icon press
-                Get.to(() =>
-                    MatchSearchScreen());
+                Get.to(() => MatchSearchScreen());
               },
             ),
             SizedBox(width: DynamicSize.small(context)),

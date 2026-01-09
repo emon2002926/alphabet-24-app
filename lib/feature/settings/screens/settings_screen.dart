@@ -52,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProfileHeader(context, textColor, profile?.fullName, profile?.phoneNumber),
+                _buildProfileHeader(context, textColor, profile?.fullName, profile?.phoneNumber,profile?.profilePictureUrl),
                 SizedBox(height: DynamicSize.large(context)),
 
                 Text(
@@ -135,12 +135,49 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildProfileHeader(BuildContext context, Color textColor,
-      String? profileName, String? profileEmail,) {
+      String? profileName, String? profileEmail,String? profilePictureUrl) {
     return Row(
       children: [
         CircleAvatar(
-          radius: 40,
-          backgroundImage: AssetImage(ImagePath.avater),
+          backgroundColor: SColor.primary,
+          radius: 20,
+          child: ClipOval(
+            child: profilePictureUrl != null &&
+              profilePictureUrl.isNotEmpty
+                ? Image.network(
+              profilePictureUrl,
+              fit: BoxFit.cover,
+              width: 40,
+              height: 40,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                        : null,
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  ImagePath.avater,
+                  fit: BoxFit.cover,
+                  width: 40,
+                  height: 40,
+                );
+              },
+            )
+                : Image.asset(
+              ImagePath.avater,
+              fit: BoxFit.cover,
+              width: 40,
+              height: 40,
+            ),
+          ),
         ),
         SizedBox(width: DynamicSize.medium(context)),
         Expanded(

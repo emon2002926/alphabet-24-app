@@ -13,7 +13,6 @@ import '../../../core/universal_widgets/news_card_widget.dart';
 import '../../ligue/views/ligue_list_screen.dart';
 import '../../ligue/views/ligue_match_list_screen.dart';
 import '../../ligue/widgets/date_selector_widget.dart';
-import '../../ligue/widgets/ligue_football_tab.dart';
 import '../../prediction/views/prediction_screen.dart';
 
 class FootballScreen extends StatefulWidget {
@@ -130,7 +129,7 @@ class _FootballScreenState extends State<FootballScreen> {
 
   SizedBox _ScoureCard(BuildContext context, bool isNew) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.185, // Fixed height to match ScoureCardWidget
+      height: MediaQuery.of(context).size.height * 0.2, // Fixed height to match ScoureCardWidget
       child: Obx(() {
         return ListView.separated(
           scrollDirection: Axis.horizontal,

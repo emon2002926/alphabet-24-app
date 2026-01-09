@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:scaffassistant/feature/match/views/match_details_screen.dart';
@@ -12,7 +11,7 @@ import '../controllers/league_detail_controller.dart';
 import '../models/league_detail_response.dart';
 
 class LigueMatchListScreen extends StatelessWidget {
-  LigueMatchListScreen({super.key});
+  const LigueMatchListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

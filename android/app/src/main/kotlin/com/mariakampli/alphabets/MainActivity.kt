@@ -1,4 +1,4 @@
-package com.example.scaffassistant
+package com.mariakampli.alphabets
 
 import io.flutter.embedding.android.FlutterActivity
 

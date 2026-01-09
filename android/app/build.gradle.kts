@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.scaffassistant"
+    namespace = "com.mariakampli.alphabets"
     compileSdk = flutter.compileSdkVersion
 
     // ✅ HARD-PIN NDK VERSION (do NOT use flutter.ndkVersion)
@@ -22,7 +22,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.scaffassistant"
+        applicationId = "com.mariakampli.alphabets"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

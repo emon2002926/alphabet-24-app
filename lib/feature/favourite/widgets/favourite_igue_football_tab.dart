@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
-import 'package:scaffassistant/core/universal_widgets/s_label.dart';
 import 'package:scaffassistant/core/universal_widgets/s_text_field.dart';
 
 import '../../home/models/live_match_response_model.dart';

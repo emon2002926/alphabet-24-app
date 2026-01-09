@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:scaffassistant/core/universal_widgets/appbar.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
-import 'package:scaffassistant/core/theme/text_theme.dart';
-import 'package:scaffassistant/feature/home/screens/home_screen.dart';
-import '../../home/controllers/sports_data/football_data/leage_list_controller.dart';
 import '../widgets/ligue_basketball_tab.dart';
 import '../widgets/ligue_football_tab.dart';
-import 'package:get/get.dart';
 
 class LigueScreen extends StatelessWidget {
   const LigueScreen({super.key});

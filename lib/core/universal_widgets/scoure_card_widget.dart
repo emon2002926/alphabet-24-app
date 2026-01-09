@@ -5,12 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/football_live_match_controller.dart';
 import 'package:scaffassistant/feature/match/views/match_details_screen.dart';
 import '../theme/SColor.dart';
-import '../theme/text_theme.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 // Note: Update these imports to match your project structure
 // import 'package:your_app/controllers/football_live_match_controller.dart';
@@ -18,10 +13,6 @@ import 'package:intl/intl.dart';
 // import 'package:your_app/theme/s_text_theme.dart';
 // import 'package:your_app/theme/s_color.dart';
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 
 class ScoureCardWidget extends StatelessWidget {
