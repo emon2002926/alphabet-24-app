@@ -156,7 +156,7 @@ class _BasketballScreenState extends State<BasketballScreen> {
   Row LabelWidget(String title , bool isSeeAllVisible) {
     return Row(
       children: [
-        Text(title, style: STextTheme.headLine()),
+        Text(title, style: STextTheme.headLineBold()),
         const Spacer(),
         isSeeAllVisible ? GestureDetector(
           onTap: () {

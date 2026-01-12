@@ -23,7 +23,7 @@ class _InitialScreenState extends State<InitialScreen> {
   final List<Widget> _screens = const [
     HomeScreen(),
     LiveGameScreen(),
-    FavouriteLigueMatchScreen(),
+    FavouriteScreen(),
     LigueScreen(),
     SettingsScreen(),
   ];
@@ -100,8 +100,8 @@ class _InitialScreenState extends State<InitialScreen> {
             children: [
               Image.asset(
                 item.iconPath,
-                height: 24,
-                width: 24,
+                height: 26,
+                width: 26,
                 color: isActive ? activeColor : inactiveColor,
               ),
               const SizedBox(height: 4),

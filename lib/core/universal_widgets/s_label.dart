@@ -27,7 +27,7 @@ class SLabel extends StatelessWidget {
         children: [
           Text(
             title,
-            style: STextTheme.headLine().copyWith(
+            style: STextTheme.headLineBold().copyWith(
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -36,7 +36,7 @@ class SLabel extends StatelessWidget {
           if (score != null)
             Text(
               score!,
-              style: STextTheme.headLine().copyWith(
+              style: STextTheme.headLineBold().copyWith(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),

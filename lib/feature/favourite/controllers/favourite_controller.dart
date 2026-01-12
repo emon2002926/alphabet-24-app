@@ -86,7 +86,7 @@ class FavouriteController extends GetxController {
   }
 
   void applyFilters() {
-    // Start with all fixtures
+    // ===== FILTER FIXTURES =====
     var tempFixtures = favouriteFixtures.toList();
 
     // Apply date filter if active
@@ -117,17 +117,66 @@ class FavouriteController extends GetxController {
 
     filteredFixtures.value = tempFixtures;
 
-    // Apply search filter to leagues (no date filter for leagues)
-    if (searchQuery.value.isNotEmpty) {
-      filteredLeagues.value = favouriteLeagues.where((league) {
-        return league.leagueName.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-            league.leagueCountry.toLowerCase().contains(searchQuery.value.toLowerCase());
-      }).toList();
-    } else {
-      filteredLeagues.value = favouriteLeagues;
+    // ===== FILTER LEAGUES =====
+    var tempLeagues = favouriteLeagues.toList();
+
+    // Apply date filter for league matches
+    if (isDateFilterActive.value) {
+      tempLeagues = tempLeagues.map((league) {
+        // Filter matches inside this league by date
+        final filteredMatches = league.matches.where((match) {
+          final matchStartingAt = DateTime.tryParse(match['starting_at'] ?? '');
+          if (matchStartingAt == null) return false;
+
+          final matchDate = DateTime(
+            matchStartingAt.year,
+            matchStartingAt.month,
+            matchStartingAt.day,
+          );
+          final selected = DateTime(
+            selectedDate.value.year,
+            selectedDate.value.month,
+            selectedDate.value.day,
+          );
+          return matchDate.isAtSameMomentAs(selected);
+        }).toList();
+
+        // Return league with filtered matches
+        return FavouriteLeague(
+          id: league.id,
+          leagueId: league.leagueId,
+          leagueName: league.leagueName,
+          leagueLogo: league.leagueLogo,
+          leagueCountry: league.leagueCountry,
+          leagueType: league.leagueType,
+          createdAt: league.createdAt,
+          hasMatchesToday: filteredMatches.isNotEmpty,
+          matchesTodayCount: filteredMatches.length,
+          matches: filteredMatches,
+        );
+      }).where((league) => league.matches.isNotEmpty).toList();
     }
 
+    // Apply search filter to leagues
+    if (searchQuery.value.isNotEmpty) {
+      tempLeagues = tempLeagues.where((league) {
+        final leagueMatch = league.leagueName.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+            league.leagueCountry.toLowerCase().contains(searchQuery.value.toLowerCase());
+
+        // Also search in match names
+        final matchMatch = league.matches.any((match) {
+          final matchName = match['name'] ?? '';
+          return matchName.toLowerCase().contains(searchQuery.value.toLowerCase());
+        });
+
+        return leagueMatch || matchMatch;
+      }).toList();
+    }
+
+    filteredLeagues.value = tempLeagues;
+
     print('📊 Filtered fixtures count: ${filteredFixtures.length}');
+    print('📊 Filtered leagues count: ${filteredLeagues.length}');
   }
 
   Future<void> fetchFavourites() async {
@@ -159,6 +208,7 @@ class FavouriteController extends GetxController {
 
           print('✅ Favourite Fixtures Loaded: ${favouriteFixtures.length}');
           print('✅ Favourite Leagues Loaded: ${favouriteLeagues.length}');
+          print('✅ Total League Matches: ${favouriteLeagues.fold(0, (sum, league) => sum + league.matches.length)}');
         }
       } else {
         print('❌ Failed to fetch favourites: ${response.statusCode}');
@@ -189,8 +239,13 @@ class FavouriteController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
-          // Remove from main list - use 'id' to match new model
+          // Remove from standalone fixtures
           favouriteFixtures.removeWhere((f) => f.id == fixtureId);
+
+          // Also remove from league matches if present
+          for (var league in favouriteLeagues) {
+            league.matches.removeWhere((match) => match['id'] == fixtureId);
+          }
 
           // Update total
           totalFavourites.value = favouriteFixtures.length + favouriteLeagues.length;

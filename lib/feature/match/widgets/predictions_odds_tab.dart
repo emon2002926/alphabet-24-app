@@ -38,7 +38,7 @@ class PredictionsOddsTab extends StatelessWidget {
             children: [
               Icon(Icons.info_outline, size: 60, color: Colors.grey[400]),
               SizedBox(height: 16),
-              Text("No predictions available", style: STextTheme.headLine()),
+              Text("No predictions available", style: STextTheme.headLineBold()),
             ],
           ),
         );

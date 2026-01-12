@@ -27,7 +27,7 @@ class SFullBtn extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: STextTheme.headLine().copyWith(color: Colors.white,)
+          style: STextTheme.headLineBold().copyWith(color: Colors.white,)
         ),
       ),
     );

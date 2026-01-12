@@ -48,7 +48,7 @@ class LoginScreen extends StatelessWidget {
               // === Login Form === //
               Text(
                 'Sign In',
-                style: STextTheme.headLine().copyWith(fontSize: 24),
+                style: STextTheme.headLineBold().copyWith(fontSize: 24),
               ),
               SizedBox(
                 height: DynamicSize.medium(context),
@@ -84,7 +84,7 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: Text(
                     'Forgot password?',
-                    style: STextTheme.headLine().copyWith(fontSize: 14),
+                    style: STextTheme.headLineBold().copyWith(fontSize: 14),
                   ),
                 ),
               ),
@@ -115,7 +115,7 @@ class LoginScreen extends StatelessWidget {
           children: [
             Text(
               'Don\'t have an account? ',
-              style: STextTheme.headLine().copyWith(fontSize: 12),
+              style: STextTheme.headLineBold().copyWith(fontSize: 12),
             ),
             GestureDetector(
               onTap: () {
@@ -123,7 +123,7 @@ class LoginScreen extends StatelessWidget {
               },
               child: Text(
                 'Sign Up',
-                style: STextTheme.headLine().copyWith(fontSize: 13),
+                style: STextTheme.headLineBold().copyWith(fontSize: 13),
               ),
             ),
           ],

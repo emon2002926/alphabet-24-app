@@ -36,7 +36,7 @@ class MatchProgressCard extends StatelessWidget {
         child: Column(
           children: [
             Center(
-              child: Text(title, style: STextTheme.headLine().copyWith(fontSize: 16, fontWeight: FontWeight.w600)),
+              child: Text(title, style: STextTheme.headLineBold().copyWith(fontSize: 16, fontWeight: FontWeight.w600)),
             ),
             const SizedBox(height: 12),
             Row(

@@ -62,7 +62,7 @@ class MatchListWidget extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         league['name'], // replace with subtitle if available
-                        style: STextTheme.headLine().copyWith(
+                        style: STextTheme.headLineBold().copyWith(
                           fontSize: 14,
                         ),
                       ),

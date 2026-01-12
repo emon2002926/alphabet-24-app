@@ -41,7 +41,7 @@ class MatchScreen extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             'Spain League', // example subtitle
-                            style: STextTheme.headLine().copyWith(
+                            style: STextTheme.headLineBold().copyWith(
                               fontSize: 14,
                             ),
                           ),
@@ -81,7 +81,7 @@ class MatchScreen extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Text(
                                     'PSG',
-                                    style: STextTheme.headLine().copyWith(fontSize: 14),
+                                    style: STextTheme.headLineBold().copyWith(fontSize: 14),
                                   ),
                                 ],
                               ),
@@ -92,7 +92,7 @@ class MatchScreen extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Text(
                                     'BFG',
-                                    style: STextTheme.headLine().copyWith(fontSize: 14),
+                                    style: STextTheme.headLineBold().copyWith(fontSize: 14),
                                   ),
                                 ],
                               ),

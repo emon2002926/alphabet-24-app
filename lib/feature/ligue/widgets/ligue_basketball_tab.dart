@@ -52,7 +52,7 @@ class _LigueBasketballTabState extends State<LigueBasketballTab> {
                    Expanded(
                      child: Text(
                        'All Games',
-                       style: STextTheme.headLine().copyWith(
+                       style: STextTheme.headLineBold().copyWith(
                          fontSize: 14,
                          fontWeight: FontWeight.w500,
                        ),
@@ -60,7 +60,7 @@ class _LigueBasketballTabState extends State<LigueBasketballTab> {
                    ),
                    Text(
                      '418',
-                     style: STextTheme.headLine().copyWith(
+                     style: STextTheme.headLineBold().copyWith(
                        fontSize: 14,
                        fontWeight: FontWeight.w500,
                        color: SColor.primary,

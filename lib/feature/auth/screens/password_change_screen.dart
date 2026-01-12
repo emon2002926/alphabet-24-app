@@ -35,7 +35,7 @@ import '../../../core/universal_widgets/s_text_field.dart';
 
                   Text(
                     'Enter your old password',
-                    style: STextTheme.headLine(),
+                    style: STextTheme.headLineBold(),
                   ),
                   SizedBox(height: DynamicSize.small(context)),
                   STextField(
@@ -51,7 +51,7 @@ import '../../../core/universal_widgets/s_text_field.dart';
 
                   Text(
                     'Enter New Password',
-                    style: STextTheme.headLine(),
+                    style: STextTheme.headLineBold(),
                   ),
                   SizedBox(height: DynamicSize.small(context)),
                   STextField(
@@ -67,7 +67,7 @@ import '../../../core/universal_widgets/s_text_field.dart';
 
                   Text(
                     'Re-Enter New Password',
-                    style: STextTheme.headLine(),
+                    style: STextTheme.headLineBold(),
                   ),
                   SizedBox(height: DynamicSize.small(context)),
                   STextField(
@@ -102,7 +102,7 @@ import '../../../core/universal_widgets/s_text_field.dart';
                               valueColor: AlwaysStoppedAnimation<Color>(SColor.primary),
                             ) : Text(
                               'Change Password',
-                              style: STextTheme.headLine()
+                              style: STextTheme.headLineBold()
                                   .copyWith(color: Colors.white, fontSize: 18),
                             ),
                           ),

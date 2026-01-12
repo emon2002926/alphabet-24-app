@@ -51,7 +51,7 @@ class UpdatePassword extends StatelessWidget {
               // === Login Form === //
               Text(
                 'Reset Your Password  ',
-                style: STextTheme.headLine().copyWith(fontSize: 24),
+                style: STextTheme.headLineBold().copyWith(fontSize: 24),
               ),
               SizedBox(
                 height: DynamicSize.medium(context),

@@ -116,7 +116,7 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
                         // Day Name (TODAY, THU, FRI)
                         Text(
                           dayName,
-                          style: STextTheme.headLine().copyWith(
+                          style: STextTheme.headLineBold().copyWith(
                             fontSize: isToday ? 8 : 9,
                             fontWeight: isSelected || isToday ? FontWeight.w600 : FontWeight.w500,
                             color: isSelected
@@ -131,7 +131,7 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
                         // Date Number (11, 12)
                         Text(
                           dayNumber,
-                          style: STextTheme.headLine().copyWith(
+                          style: STextTheme.headLineBold().copyWith(
                             fontSize: 16,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                             color: isSelected
@@ -146,7 +146,7 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
                         // Month Name (Dec, Jan)
                         Text(
                           monthName,
-                          style: STextTheme.headLine().copyWith(
+                          style: STextTheme.headLineBold().copyWith(
                             fontSize: 9,
                             fontWeight: FontWeight.w500,
                             color: isSelected

@@ -16,9 +16,9 @@ class SummaryCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            Text('Summary', style: STextTheme.headLine().copyWith(fontWeight: FontWeight.bold)),
+            Text('Summary', style: STextTheme.headLineBold().copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            Text(text, style: STextTheme.headLine().copyWith(fontSize: 12)),
+            Text(text, style: STextTheme.headLineBold().copyWith(fontSize: 12)),
           ],
         ),
       ),

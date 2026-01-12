@@ -69,7 +69,7 @@ class NewsCardWidget extends StatelessWidget {
                         SizedBox(height: DynamicSize.medium(context)),
                         Text(
                           headline,
-                          style: STextTheme.headLine()
+                          style: STextTheme.headLineBold()
                               .copyWith(color: SColor.textPrimary, fontSize: 20),
                         ),
                         SizedBox(height: DynamicSize.small(context)),
@@ -126,7 +126,7 @@ class NewsCardWidget extends StatelessWidget {
             SizedBox(height: DynamicSize.small(context)),
             Text(
               headline,
-              style: STextTheme.headLine().copyWith(color: SColor.textPrimary),
+              style: STextTheme.headLineBold().copyWith(color: SColor.textPrimary),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

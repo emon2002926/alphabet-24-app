@@ -6,20 +6,9 @@ import 'package:scaffassistant/feature/home/controllers/sports_data/football_dat
 import 'package:scaffassistant/feature/match/views/match_details_screen.dart';
 import '../theme/SColor.dart';
 
-
-// Note: Update these imports to match your project structure
-// import 'package:your_app/controllers/football_live_match_controller.dart';
-// import 'package:your_app/screens/match_details_screen.dart';
-// import 'package:your_app/theme/s_text_theme.dart';
-// import 'package:your_app/theme/s_color.dart';
-
-
-
 class ScoureCardWidget extends StatelessWidget {
   final int index;
-
   const ScoureCardWidget({required this.index, super.key});
-
   @override
   Widget build(BuildContext context) {
     final liveMatchController = Get.find<FootballLiveMatchController>();
@@ -132,19 +121,19 @@ class ScoureCardWidget extends StatelessWidget {
                     children: [
                       // Home Win (1)
                       Expanded(
-                        flex: homeProb.round().clamp(1, 100),
+                        flex: homeProb.round().clamp(15, 100),
                         child: _buildPredictionBox(
-                          label: '1',
-                          percentage: homeProb,
-                          color: const Color(0xFF0096C7),
-                          textColor:Color(0xFF01002B) ,
-                          percentageColor: Color(0xFF01002B)
+                            label: '1',
+                            percentage: homeProb,
+                            color: const Color(0xFF0096C7),
+                            textColor: Color(0xFF01002B),
+                            percentageColor: Color(0xFF01002B)
                         ),
                       ),
                       const SizedBox(width: 3),
                       // Draw (X)
                       Expanded(
-                        flex: drawProb.round().clamp(1, 100),
+                        flex: drawProb.round().clamp(15, 100),
                         child: _buildPredictionBox(
                           label: 'X',
                           percentage: drawProb,
@@ -156,13 +145,13 @@ class ScoureCardWidget extends StatelessWidget {
                       const SizedBox(width: 3),
                       // Away Win (2)
                       Expanded(
-                        flex: awayProb.round().clamp(1, 100),
+                        flex: awayProb.round().clamp(15, 100),
                         child: _buildPredictionBox(
-                          label: '2',
-                          percentage: awayProb,
-                          textColor: Colors.black,
-                          color: const Color(0xFF01002A),
-                          percentageColor: Color(0xFF015440)
+                            label: '2',
+                            percentage: awayProb,
+                            textColor: Colors.black,
+                            color: const Color(0xFF01002A),
+                            percentageColor: Color(0xFF0096C6)
                         ),
                       ),
                     ],
@@ -256,11 +245,11 @@ class ScoureCardWidget extends StatelessWidget {
     required String label,
     required double percentage,
     required Color color,
-    required Color textColor ,
+    required Color textColor,
     Color? percentageColor,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(6),
@@ -268,20 +257,27 @@ class ScoureCardWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.roboto(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color:  textColor?? Colors.black,
+          Flexible(
+            child: Text(
+              label,
+              style: GoogleFonts.roboto(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: textColor ?? Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          Text(
-            '${percentage.toStringAsFixed(0)}%',
-            style: GoogleFonts.roboto(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: percentageColor ?? textColor,
+          const SizedBox(width: 3),
+          Flexible(
+            child: Text(
+              '${percentage.toStringAsFixed(0)}%',
+              style: GoogleFonts.roboto(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: percentageColor ?? textColor,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -294,7 +290,7 @@ class ScoureCardWidget extends StatelessWidget {
     required double percentage,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Get.theme.brightness == Brightness.dark
             ? const Color(0xFF4A4A4A)

@@ -20,16 +20,16 @@ class MatchStatCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(title, style: STextTheme.headLine()),
+          Text(title, style: STextTheme.headLineBold()),
           const SizedBox(height: 8),
           ...rows.map((r) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text(r[0], style: STextTheme.headLine().copyWith(fontSize: 12)),
-                Text(r[1], style: STextTheme.headLine().copyWith(fontSize: 12)),
-                Text(r[2], style: STextTheme.headLine().copyWith(fontSize: 12)),
+                Text(r[0], style: STextTheme.headLineBold().copyWith(fontSize: 12)),
+                Text(r[1], style: STextTheme.headLineBold().copyWith(fontSize: 12)),
+                Text(r[2], style: STextTheme.headLineBold().copyWith(fontSize: 12)),
               ],
             ),
           )),
@@ -55,22 +55,22 @@ class MatchHeadToHeadCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text('Head to Head (5)', style: STextTheme.headLine()),
+          Text('Head to Head (5)', style: STextTheme.headLineBold()),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Image.asset('assets/images/UEL.png', width: 50),
               Column(children: [
-                Text('2', style: STextTheme.headLine().copyWith(fontSize: 20)),
+                Text('2', style: STextTheme.headLineBold().copyWith(fontSize: 20)),
                 const Text('WINS'),
               ]),
               Column(children: [
-                Text('1', style: STextTheme.headLine().copyWith(fontSize: 20)),
+                Text('1', style: STextTheme.headLineBold().copyWith(fontSize: 20)),
                 const Text('DRAWS'),
               ]),
               Column(children: [
-                Text('2', style: STextTheme.headLine().copyWith(fontSize: 20)),
+                Text('2', style: STextTheme.headLineBold().copyWith(fontSize: 20)),
                 const Text('LOSSES'),
               ]),
               Image.asset('assets/images/UEL.png', width: 50),

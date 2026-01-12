@@ -42,7 +42,7 @@ class SettingsScreen extends StatelessWidget {
             elevation: 0,
             title: Text(
               'Settings',
-              style: STextTheme.headLine().copyWith(color: textColor, fontSize: 20),
+              style: STextTheme.headLineBold().copyWith(color: textColor, fontSize: 20),
             ),
             centerTitle: true,
             iconTheme: IconThemeData(color: textColor),
@@ -57,7 +57,7 @@ class SettingsScreen extends StatelessWidget {
 
                 Text(
                   'Settings & Profile',
-                  style: STextTheme.headLine().copyWith(fontSize: 18, color: textColor),
+                  style: STextTheme.headLineBold().copyWith(fontSize: 18, color: textColor),
                 ),
                 SizedBox(height: DynamicSize.medium(context)),
 
@@ -186,7 +186,7 @@ class SettingsScreen extends StatelessWidget {
             children: [
               Text(
                 profileName!,
-                style: STextTheme.headLine().copyWith(fontSize: 18, color: textColor),
+                style: STextTheme.headLineBold().copyWith(fontSize: 18, color: textColor),
               ),
               Text(
                 profileEmail!,
@@ -197,7 +197,7 @@ class SettingsScreen extends StatelessWidget {
         ),
         TextButton(
           onPressed: () => Get.to(() => const SubscriptionScreen()),
-          child: Text('Upgrade', style: STextTheme.headLine().copyWith(color: SColor.primary)),
+          child: Text('Upgrade', style: STextTheme.headLineBold().copyWith(color: SColor.primary)),
         )
       ],
     );
@@ -228,7 +228,7 @@ class SettingTile extends StatelessWidget {
           leading: leading,
           title: Text(
             title,
-            style: STextTheme.headLine().copyWith(fontSize: 16, color: isDarkMode ? Colors.white : Colors.black),
+            style: STextTheme.headLineNormal().copyWith(fontSize: 16, color: isDarkMode ? Colors.white : Colors.black),
           ),
           trailing: trailing,
           onTap: onTap,

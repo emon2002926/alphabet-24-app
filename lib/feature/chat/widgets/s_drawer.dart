@@ -85,7 +85,7 @@ class SDrawer extends StatelessWidget {
                     const SizedBox(width: 15),
                     Text(
                       'New chat',
-                      style: STextTheme.headLine().copyWith(
+                      style: STextTheme.headLineBold().copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -157,7 +157,7 @@ class SDrawer extends StatelessWidget {
                   ),
                   child: Text(
                     'Sign out',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.headLineBold().copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),

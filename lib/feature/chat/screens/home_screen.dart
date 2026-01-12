@@ -76,7 +76,7 @@ class _ChatScrenState extends State<ChatScren> {
                 backgroundColor: SColor.textPrimary,
                 child: Text(
                   UserStatus.userName[0],
-                  style: STextTheme.headLine().copyWith(
+                  style: STextTheme.headLineBold().copyWith(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: SColor.primary,
@@ -98,7 +98,7 @@ class _ChatScrenState extends State<ChatScren> {
             ),
             child: Text(
               'Sign up',
-              style: STextTheme.headLine().copyWith(
+              style: STextTheme.headLineBold().copyWith(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),

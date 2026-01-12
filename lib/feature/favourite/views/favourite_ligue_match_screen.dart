@@ -11,8 +11,8 @@ import '../controllers/favourite_controller.dart';
 import '../widgets/favourite_igue_football_tab.dart';
 import 'package:get/get.dart';
 
-  class FavouriteLigueMatchScreen extends StatelessWidget {
-    const FavouriteLigueMatchScreen({super.key});
+class FavouriteScreen extends StatelessWidget {
+    const FavouriteScreen({super.key});
 
     @override
     Widget build(BuildContext context) {
@@ -107,8 +107,6 @@ import 'package:get/get.dart';
       );
     }
   }
-
-
 class FavouriteDateSelectorWidget extends StatefulWidget {
   const FavouriteDateSelectorWidget({super.key});
 
@@ -218,7 +216,7 @@ class _FavouriteDateSelectorWidgetState extends State<FavouriteDateSelectorWidge
                         // Day Name (THU, FRI)
                         Text(
                           dayName,
-                          style: STextTheme.headLine().copyWith(
+                          style: STextTheme.headLineBold().copyWith(
                             fontSize: 9,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: isSelected
@@ -233,7 +231,7 @@ class _FavouriteDateSelectorWidgetState extends State<FavouriteDateSelectorWidge
                         // Date Number (11, 12)
                         Text(
                           dayNumber,
-                          style: STextTheme.headLine().copyWith(
+                          style: STextTheme.headLineBold().copyWith(
                             fontSize: 16,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                             color: isSelected
@@ -248,7 +246,7 @@ class _FavouriteDateSelectorWidgetState extends State<FavouriteDateSelectorWidge
                         // Month Name (Dec, Jan)
                         Text(
                           monthName,
-                          style: STextTheme.headLine().copyWith(
+                          style: STextTheme.headLineBold().copyWith(
                             fontSize: 9,
                             fontWeight: FontWeight.w500,
                             color: isSelected

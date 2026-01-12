@@ -46,7 +46,7 @@ class SignupScreen extends StatelessWidget {
               // === Login Form === //
               Text(
                 'Sign Up',
-                style: STextTheme.headLine().copyWith(fontSize: 24),
+                style: STextTheme.headLineBold().copyWith(fontSize: 24),
               ),
               SizedBox(
                 height: DynamicSize.medium(context),
@@ -104,7 +104,7 @@ class SignupScreen extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'By clicking the “sign up” button, you accept the terms of the Privacy Policy.',
-                  style: STextTheme.headLine().copyWith(fontSize: 12),
+                  style: STextTheme.headLineBold().copyWith(fontSize: 12),
                 ),
               ),
 
@@ -123,7 +123,7 @@ class SignupScreen extends StatelessWidget {
           children: [
             Text(
               'Already have an account? ',
-              style: STextTheme.headLine().copyWith(fontSize: 12),
+              style: STextTheme.headLineBold().copyWith(fontSize: 12),
             ),
             GestureDetector(
               onTap: () {
@@ -131,7 +131,7 @@ class SignupScreen extends StatelessWidget {
               },
               child: Text(
                 'Sign In',
-                style: STextTheme.headLine().copyWith(fontSize: 13),
+                style: STextTheme.headLineBold().copyWith(fontSize: 13),
               ),
             ),
           ],

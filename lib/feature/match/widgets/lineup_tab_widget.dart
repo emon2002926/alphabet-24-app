@@ -41,7 +41,7 @@ class LineUpTab extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'Error',
-                style: STextTheme.headLine().copyWith(fontSize: 18),
+                style: STextTheme.headLineBold().copyWith(fontSize: 18),
               ),
               const SizedBox(height: 8),
               Padding(
@@ -179,7 +179,7 @@ class LineUpTab extends StatelessWidget {
             SizedBox(height: DynamicSize.medium(context)),
             Text(
               'Substitutes',
-              style: STextTheme.headLine().copyWith(
+              style: STextTheme.headLineBold().copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -241,7 +241,7 @@ class LineUpTab extends StatelessWidget {
               children: [
                 Text(
                   teamName,
-                  style: STextTheme.headLine().copyWith(fontSize: 11),
+                  style: STextTheme.headLineBold().copyWith(fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -396,7 +396,7 @@ class LineUpTab extends StatelessWidget {
                   // Jersey Number
                   Text(
                     '${player.jerseyNumber}',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.headLineBold().copyWith(
                       fontSize: 8.5,
                       fontWeight: FontWeight.bold,
                     ),
@@ -406,7 +406,7 @@ class LineUpTab extends StatelessWidget {
                   Flexible(
                     child: Text(
                       _getLastName(player.name),
-                      style: STextTheme.headLine().copyWith(
+                      style: STextTheme.headLineBold().copyWith(
                         fontSize: 8.5,
                         fontWeight: FontWeight.w500,
                       ),
@@ -449,7 +449,7 @@ class LineUpTab extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 teamName,
-                style: STextTheme.headLine().copyWith(
+                style: STextTheme.headLineBold().copyWith(
                   fontSize: 14,
                   color: teamColor,
                   fontWeight: FontWeight.bold,
@@ -517,7 +517,7 @@ class LineUpTab extends StatelessWidget {
                 children: [
                   Text(
                     sub.name,
-                    style: STextTheme.headLine().copyWith(fontSize: 13),
+                    style: STextTheme.headLineBold().copyWith(fontSize: 13),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

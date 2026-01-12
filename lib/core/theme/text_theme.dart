@@ -7,13 +7,21 @@ import 'SColor.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class STextTheme {
-  static TextStyle headLine() {
+  static TextStyle headLineBold() {
     return GoogleFonts.roboto(
       color: SColor.textPrimary,
       fontSize: 16,
       fontWeight: FontWeight.w800,
     );
   }
+  static TextStyle headLineNormal() {
+    return GoogleFonts.roboto(
+      color: SColor.textPrimary,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    );
+  }
+
 
   static TextStyle scoureText() {
     return GoogleFonts.roboto(

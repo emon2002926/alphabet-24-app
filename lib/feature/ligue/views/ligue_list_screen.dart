@@ -91,7 +91,7 @@ class LigueListScreen extends StatelessWidget {
                             Text(
 
                               league.shortCode!,
-                              style: STextTheme.headLine().copyWith(
+                              style: STextTheme.headLineBold().copyWith(
                                 fontSize: 12,
                                 color: Colors.grey[600],
                               ),

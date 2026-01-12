@@ -54,7 +54,7 @@ class TermsAndPrivacyPolicyScreen extends StatelessWidget {
         backgroundColor: SColor.primary,
         title: Text(
           'Terms and Privacy Policy',
-          style: STextTheme.headLine().copyWith(
+          style: STextTheme.headLineBold().copyWith(
             color: SColor.textPrimary,
             fontSize: 20,
             fontWeight: FontWeight.w500,
@@ -69,7 +69,7 @@ class TermsAndPrivacyPolicyScreen extends StatelessWidget {
           children: [
             Text(
               TermsPrivacyText.title,
-              style: STextTheme.headLine().copyWith(
+              style: STextTheme.headLineBold().copyWith(
                 color: SColor.textPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

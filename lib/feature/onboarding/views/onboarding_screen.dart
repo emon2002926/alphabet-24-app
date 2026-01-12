@@ -132,7 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       children: [
                         Text(
                           data.title,
-                          style: STextTheme.headLine().copyWith(
+                          style: STextTheme.headLineBold().copyWith(
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,

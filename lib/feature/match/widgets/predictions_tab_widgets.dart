@@ -158,7 +158,7 @@ class PredictionsTabWidgets extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
       child: Text(
         title,
-        style: STextTheme.headLine().copyWith(
+        style: STextTheme.headLineBold().copyWith(
           fontSize: 12,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.5,
@@ -240,7 +240,7 @@ class PredictionsTabWidgets extends StatelessWidget {
         children: [
           Text(
             '${percentage.toStringAsFixed(0)}%',
-            style: STextTheme.headLine().copyWith(
+            style: STextTheme.headLineBold().copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
@@ -295,7 +295,7 @@ class PredictionsTabWidgets extends StatelessWidget {
                   width: 40,
                   child: Text(
                     '#',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.headLineBold().copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -304,7 +304,7 @@ class PredictionsTabWidgets extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Score',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.headLineBold().copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -312,7 +312,7 @@ class PredictionsTabWidgets extends StatelessWidget {
                 ),
                 Text(
                   'Probability',
-                  style: STextTheme.headLine().copyWith(
+                  style: STextTheme.headLineBold().copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -349,7 +349,7 @@ class PredictionsTabWidgets extends StatelessWidget {
                       ),
                       child: Text(
                         '${index + 1}',
-                        style: STextTheme.headLine().copyWith(
+                        style: STextTheme.headLineBold().copyWith(
                           fontSize: 12,
                           color: SColor.primary,
                         ),
@@ -360,7 +360,7 @@ class PredictionsTabWidgets extends StatelessWidget {
                   Expanded(
                     child: Text(
                       score.score,
-                      style: STextTheme.headLine().copyWith(
+                      style: STextTheme.headLineBold().copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -368,7 +368,7 @@ class PredictionsTabWidgets extends StatelessWidget {
                   ),
                   Text(
                     '${score.probability.toStringAsFixed(1)}%',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.headLineBold().copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -471,7 +471,7 @@ class PredictionsTabWidgets extends StatelessWidget {
             ),
             child: Text(
               '${percentage.toStringAsFixed(1)}%',
-              style: STextTheme.headLine().copyWith(
+              style: STextTheme.headLineBold().copyWith(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: SColor.primary,

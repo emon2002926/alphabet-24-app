@@ -50,7 +50,7 @@ class StatsTabWidgets extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               'Top Stats',
-              style: STextTheme.headLine(),
+              style: STextTheme.headLineBold(),
             ),
           ),
           SizedBox(height: 8),

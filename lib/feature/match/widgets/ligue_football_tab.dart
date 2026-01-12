@@ -65,7 +65,7 @@ class _LigueFootballTabState extends State<LigueFootballTab> {
               ),
               child: Text(
                 'FAVOURITE COMPETITION',
-                style: STextTheme.headLine().copyWith(
+                style: STextTheme.headLineBold().copyWith(
                   fontSize: 12,
                 ),
               ),

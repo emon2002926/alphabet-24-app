@@ -82,7 +82,7 @@ class SummaryTabWidgets extends StatelessWidget {
                 ),
                 child: Text(
                   '2ND-HALF',
-                  style: STextTheme.headLine().copyWith(
+                  style: STextTheme.headLineBold().copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -126,7 +126,7 @@ class SummaryTabWidgets extends StatelessWidget {
                 ),
                 child: Text(
                   '1ST-HALF',
-                  style: STextTheme.headLine().copyWith(
+                  style: STextTheme.headLineBold().copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -229,7 +229,7 @@ class TimelineEventWidget extends StatelessWidget {
                   ),
                   child: Text(
                     '${event.minute}\'$extraMinute',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.headLineBold().copyWith(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       color: isHomeTeam
@@ -294,7 +294,7 @@ class TimelineEventWidget extends StatelessWidget {
                   Flexible(
                     child: Text(
                       playerName,
-                      style: STextTheme.headLine().copyWith(
+                      style: STextTheme.headLineBold().copyWith(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),

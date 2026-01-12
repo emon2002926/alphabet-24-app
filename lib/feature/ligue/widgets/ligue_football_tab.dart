@@ -83,7 +83,7 @@ class LeaguesFootballTab extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'All Games',
-                      style: STextTheme.headLine().copyWith(
+                      style: STextTheme.headLineBold().copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -91,7 +91,7 @@ class LeaguesFootballTab extends StatelessWidget {
                   ),
                   Obx(() => Text(
                     '${leagueListController.leagueByDateResponse.value?.totalMatches}',
-                    style: STextTheme.headLine().copyWith(
+                    style: STextTheme.headLineBold().copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: SColor.primary,

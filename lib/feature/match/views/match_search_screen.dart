@@ -154,7 +154,7 @@ class _MatchSearchScreenState extends State<MatchSearchScreen> {
             children: [
               Text(
                 '${_filteredMatches.length} ${_filteredMatches.length == 1 ? 'Match' : 'Matches'} Found',
-                style: STextTheme.headLine().copyWith(
+                style: STextTheme.headLineBold().copyWith(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
@@ -199,7 +199,7 @@ class _MatchSearchScreenState extends State<MatchSearchScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
               message,
-              style: STextTheme.headLine().copyWith(
+              style: STextTheme.headLineBold().copyWith(
                 color: Colors.grey[600],
                 fontSize: 16,
               ),
@@ -319,7 +319,7 @@ class _SearchResultCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             match.homeTeam.name,
-                            style: STextTheme.headLine().copyWith(
+                            style: STextTheme.headLineBold().copyWith(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
@@ -351,7 +351,7 @@ class _SearchResultCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             match.awayTeam.name,
-                            style: STextTheme.headLine().copyWith(
+                            style: STextTheme.headLineBold().copyWith(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),

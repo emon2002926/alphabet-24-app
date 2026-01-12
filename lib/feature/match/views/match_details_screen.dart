@@ -82,11 +82,11 @@ class MatchDetailsScreen extends StatelessWidget {
                       indicatorWeight: 3,
                       dividerColor: Colors.transparent,
                       indicatorSize: TabBarIndicatorSize.label,
-                      labelStyle: STextTheme.headLine().copyWith(
+                      labelStyle: STextTheme.headLineBold().copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
-                      unselectedLabelStyle: STextTheme.headLine().copyWith(
+                      unselectedLabelStyle: STextTheme.headLineBold().copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.normal,
                       ),

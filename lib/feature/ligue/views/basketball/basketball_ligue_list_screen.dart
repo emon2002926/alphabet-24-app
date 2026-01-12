@@ -114,7 +114,7 @@ class BasketballLigueListScreen extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               league.type ?? '-',
-                              style: STextTheme.headLine().copyWith(
+                              style: STextTheme.headLineBold().copyWith(
                                 fontSize: 12,
                                 color: Colors.grey[600],
                               ),

@@ -212,7 +212,7 @@ class DevelopmentPage extends StatelessWidget {
               Text(
                 'This section is coming soon for future games or events.',
                 textAlign: TextAlign.center,
-                style: STextTheme.headLine().copyWith(
+                style: STextTheme.headLineBold().copyWith(
                   fontSize: 14,
                   color: SColor.textSecondary,
                 ),

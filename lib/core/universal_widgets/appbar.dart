@@ -21,7 +21,7 @@ class SAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(
         title,
-        style: STextTheme.headLine().copyWith(fontSize: 18),
+        style: STextTheme.headLineBold().copyWith(fontSize: 18),
       ),
       centerTitle: true,
       backgroundColor: SColor.bodyColor,

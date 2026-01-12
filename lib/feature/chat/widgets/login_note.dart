@@ -42,7 +42,7 @@ class LoginNote extends StatelessWidget {
             ),
             child: Text(
               'Login or Sign up',
-              style: STextTheme.headLine().copyWith(
+              style: STextTheme.headLineBold().copyWith(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),

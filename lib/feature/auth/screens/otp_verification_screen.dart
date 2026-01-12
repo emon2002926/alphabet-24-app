@@ -55,7 +55,7 @@ class OtpVerificationScreen extends StatelessWidget {
               // === Login Form === //
               Text(
                 'Enter OTP',
-                style: STextTheme.headLine().copyWith(fontSize: 24),
+                style: STextTheme.headLineBold().copyWith(fontSize: 24),
               ),
               SizedBox(
                 height: DynamicSize.medium(context),

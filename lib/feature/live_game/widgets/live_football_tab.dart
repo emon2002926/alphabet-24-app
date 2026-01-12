@@ -53,7 +53,7 @@ class _PredictedFootballTabState extends State<PredictedFootballTab> {
                 const SizedBox(height: 16),
                 Text(
                   "No matches available",
-                  style: STextTheme.headLine().copyWith(
+                  style: STextTheme.headLineBold().copyWith(
                     color: Colors.grey[600],
                   ),
                 ),

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../feature/home/models/leage_list_model.dart';
 import '../../feature/ligue/views/ligue_match_list_screen.dart';
-import '../theme/SColor.dart';
 
 class LeagueListWidget extends StatelessWidget {
   int? totalLig;

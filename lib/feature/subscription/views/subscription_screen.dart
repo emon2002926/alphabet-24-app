@@ -22,7 +22,7 @@ class SubscriptionScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Subscription',
-          style: STextTheme.headLine(),
+          style: STextTheme.headLineBold(),
         ),
         centerTitle: true,
         leading: Padding(
@@ -66,7 +66,7 @@ class SubscriptionScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   'Failed to load plans',
-                  style: STextTheme.headLine(),
+                  style: STextTheme.headLineBold(),
                 ),
                 const SizedBox(height: 8),
                 Padding(
@@ -100,7 +100,7 @@ class SubscriptionScreen extends StatelessWidget {
             children: [
               Text(
                 'Get Premium',
-                style: STextTheme.headLine().copyWith(fontSize: 32),
+                style: STextTheme.headLineBold().copyWith(fontSize: 32),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: DynamicSize.small(context)),
@@ -151,7 +151,7 @@ class SubscriptionScreen extends StatelessWidget {
                             children: [
                               Text(
                                 plan.name,
-                                style: STextTheme.headLine().copyWith(fontSize: 18),
+                                style: STextTheme.headLineBold().copyWith(fontSize: 18),
                               ),
                               Text(
                                 _buildPlanDescription(plan),
@@ -191,7 +191,7 @@ class SubscriptionScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Monthly',
-                              style: STextTheme.headLine().copyWith(fontSize: 18)),
+                              style: STextTheme.headLineBold().copyWith(fontSize: 18)),
                           Text(
                             'First 7 days free - Then \$9.99/month',
                             style: STextTheme.subHeadLine().copyWith(fontSize: 14),
@@ -226,7 +226,7 @@ class SubscriptionScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Yearly',
-                              style: STextTheme.headLine().copyWith(fontSize: 18)),
+                              style: STextTheme.headLineBold().copyWith(fontSize: 18)),
                           Text(
                             'Save 20% - \$99/year',
                             style: STextTheme.subHeadLine().copyWith(fontSize: 14),
@@ -270,7 +270,7 @@ class SubscriptionScreen extends StatelessWidget {
                   )
                       : Text(
                     'Subscribe Now',
-                    style: STextTheme.headLine()
+                    style: STextTheme.headLineBold()
                         .copyWith(color: Colors.white, fontSize: 18),
                   ),
                 )),

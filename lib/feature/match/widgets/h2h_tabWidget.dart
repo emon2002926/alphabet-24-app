@@ -98,7 +98,7 @@ class _H2HState extends State<H2H> {
       ),
       child: Text(
         title,
-        style: STextTheme.headLine().copyWith(
+        style: STextTheme.headLineBold().copyWith(
           fontSize: 13,
           fontWeight: FontWeight.w600,
         ),
@@ -327,7 +327,7 @@ class _H2HState extends State<H2H> {
         // Score
         Text(
           score,
-          style: STextTheme.headLine().copyWith(
+          style: STextTheme.headLineBold().copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),
@@ -356,7 +356,7 @@ class _H2HState extends State<H2H> {
         ),
         child: Text(
           "See More",
-          style: STextTheme.headLine().copyWith(
+          style: STextTheme.headLineBold().copyWith(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: SColor.primary,

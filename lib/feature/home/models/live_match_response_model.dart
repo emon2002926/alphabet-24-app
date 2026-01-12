@@ -549,6 +549,9 @@ class FavouriteLeague {
   final String leagueCountry;
   final String leagueType;
   final DateTime createdAt;
+  final bool hasMatchesToday;
+  final int matchesTodayCount;
+  final List<dynamic> matches; // Dynamic list to handle match objects
 
   FavouriteLeague({
     required this.id,
@@ -558,6 +561,9 @@ class FavouriteLeague {
     required this.leagueCountry,
     required this.leagueType,
     required this.createdAt,
+    required this.hasMatchesToday,
+    required this.matchesTodayCount,
+    required this.matches,
   });
 
   factory FavouriteLeague.fromJson(Map<String, dynamic> json) {
@@ -569,6 +575,9 @@ class FavouriteLeague {
       leagueCountry: json['league_country'] ?? '',
       leagueType: json['league_type'] ?? '',
       createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
+      hasMatchesToday: json['has_matches_today'] ?? false,
+      matchesTodayCount: json['matches_today_count'] ?? 0,
+      matches: json['matches'] ?? [],
     );
   }
 }
@@ -583,7 +592,7 @@ class FavouriteFixture {
   final String stateShort;
   final int stateId;
   final FavouriteFixtureLeague league;
-  final FavouriteFixtureRound round;
+  final FavouriteFixtureRound? round;
   final FavouriteFixtureTeam homeTeam;
   final FavouriteFixtureTeam awayTeam;
   final FavouriteFixtureVenue? venue;
@@ -604,7 +613,7 @@ class FavouriteFixture {
     required this.stateShort,
     required this.stateId,
     required this.league,
-    required this.round,
+    this.round,
     required this.homeTeam,
     required this.awayTeam,
     this.venue,
@@ -627,7 +636,7 @@ class FavouriteFixture {
       stateShort: json['state_short'] ?? '',
       stateId: json['state_id'] ?? 0,
       league: FavouriteFixtureLeague.fromJson(json['league'] ?? {}),
-      round: FavouriteFixtureRound.fromJson(json['round'] ?? {}),
+      round: json['round'] != null ? FavouriteFixtureRound.fromJson(json['round']) : null,
       homeTeam: FavouriteFixtureTeam.fromJson(json['home_team'] ?? {}),
       awayTeam: FavouriteFixtureTeam.fromJson(json['away_team'] ?? {}),
       venue: json['venue'] != null ? FavouriteFixtureVenue.fromJson(json['venue']) : null,
@@ -715,14 +724,14 @@ class FavouriteFixtureTeam {
   final String name;
   final String? shortCode;
   final String logo;
-  final int score;
+  final int? score;
 
   FavouriteFixtureTeam({
     required this.id,
     required this.name,
     this.shortCode,
     required this.logo,
-    required this.score,
+    this.score,
   });
 
   factory FavouriteFixtureTeam.fromJson(Map<String, dynamic> json) {
@@ -731,7 +740,7 @@ class FavouriteFixtureTeam {
       name: json['name'] ?? '',
       shortCode: json['short_code'],
       logo: json['logo'] ?? '',
-      score: json['score'] ?? 0,
+      score: json['score'],
     );
   }
 }
