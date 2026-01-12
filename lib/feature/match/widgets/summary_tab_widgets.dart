@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:scaffassistant/feature/match/controllers/summary_controller.dart';
 import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/text_theme.dart';
-import '../../../core/universal_widgets/s_progress_widget.dart';
 import '../models/summary_model.dart';
 
 class SummaryTabWidgets extends StatelessWidget {
@@ -162,55 +161,7 @@ class SummaryTabWidgets extends StatelessWidget {
             SizedBox(height: DynamicSize.large(context)),
 
             // Prediction Section
-            Padding(
-              padding:
-              EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
-              child: Text(
-                'PREDICTION',
-                style: STextTheme.headLine().copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
-            SizedBox(height: DynamicSize.small(context)),
 
-            // Expected Goals
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: DynamicSize.medium(context),
-                vertical: DynamicSize.small(context),
-              ),
-              child: SProgressWidget(
-                label: 'Expected Goals (xG)',
-                homeValue: '0.34',
-                awayValue: '0.34',
-                homePercentage: 50,
-                awayPercentage: 50,
-                isDark: isDark,
-              ),
-            ),
-
-            // Winning Possibility
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: DynamicSize.medium(context),
-                vertical: DynamicSize.small(context),
-              ),
-              child: SProgressWidget(
-                label: 'Winning Possibility',
-                homeValue:
-                '${summaryData.predictions.fulltimeResult.homeWin.toInt()}%',
-                awayValue:
-                '${summaryData.predictions.fulltimeResult.awayWin.toInt()}%',
-                homePercentage: summaryData.predictions.fulltimeResult.homeWin,
-                awayPercentage: summaryData.predictions.fulltimeResult.awayWin,
-                isDark: isDark,
-              ),
-            ),
-
-            SizedBox(height: DynamicSize.large(context)),
           ],
         ),
       );

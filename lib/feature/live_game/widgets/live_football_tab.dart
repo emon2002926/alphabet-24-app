@@ -284,9 +284,6 @@ class _LeagueGroupWidget extends StatelessWidget {
   }
 }
 
-// Grouped Match Card Widget
-// Grouped Match Card Widget
-// Grouped Match Card Widget
 class _GroupedMatchCard extends StatelessWidget {
   final LiveMatch match;
   final int leagueIndex;
@@ -531,7 +528,7 @@ class _GroupedMatchCard extends StatelessWidget {
     Color? percentageColor,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5), // Reduced from 6 to 4
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(6),
@@ -539,14 +536,18 @@ class _GroupedMatchCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.roboto(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: textColor,
+          Flexible(
+            child: Text(
+              label,
+              style: GoogleFonts.roboto(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: textColor,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+          const SizedBox(width: 4),
           Text(
             '${percentage.toStringAsFixed(0)}%',
             style: GoogleFonts.roboto(

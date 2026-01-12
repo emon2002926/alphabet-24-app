@@ -50,9 +50,7 @@ class LigueScreen extends StatelessWidget {
                 ),
               ),
 
-              // ---------- Horizontal Date Header ----------
 
-              // ---------- TabBar View ----------
               Expanded(
                 child: TabBarView(
                   children: const [

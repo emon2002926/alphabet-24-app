@@ -4,7 +4,6 @@ import '../widgets/h2h_tabWidget.dart';
 import '../widgets/lineup_tab_widget.dart';
 import '../widgets/match_header.dart';
 import '../widgets/predictions_odds_tab.dart';
-import '../widgets/predictions_tab_widgets.dart';
 import '../widgets/stats_tab_widgets.dart';
 import '../widgets/summary_tab_widgets.dart';
 import '../../../core/theme/SColor.dart';
@@ -97,7 +96,6 @@ class MatchDetailsScreen extends StatelessWidget {
                         Tab(text: 'LINEUP'),
                         Tab(text: 'H2H'),
                         Tab(text: 'STATS'),
-                        Tab(text: '2nd PREDICTIONS SCREEN'),
                       ],
                     ),
                   ),
@@ -106,12 +104,12 @@ class MatchDetailsScreen extends StatelessWidget {
             },
             body: TabBarView(
               children: [
-                PredictionsTabWidgets(id: id),
+                PredictionsOddsTab(fixtureId: id),
                 SummaryTabWidgets(id: id),
-                LineUp(fixtureId: id),
+                LineUpTab(fixtureId: id),
                 H2H(fixtureId: id),
                 StatsTabWidgets(id: id),
-                PredictionsOddsTab(fixtureId: id),
+                // PredictionsOddsTab(fixtureId: id),
               ],
             ),
           ),

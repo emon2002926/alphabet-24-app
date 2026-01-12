@@ -4,10 +4,10 @@ import 'package:scaffassistant/core/const/string_const/icon_path.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/feature/favourite/views/favourite_ligue_match_screen.dart';
 import 'package:scaffassistant/feature/home/screens/home_screen.dart';
-import 'package:scaffassistant/feature/prediction/views/prediction_screen.dart';
 import 'package:scaffassistant/feature/settings/screens/settings_screen.dart';
 import 'package:scaffassistant/feature/settings/controllers/setting_controller.dart';
 import 'ligue/views/ligue_screen.dart';
+import 'live_game/views/live_game_screen.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -22,7 +22,7 @@ class _InitialScreenState extends State<InitialScreen> {
 
   final List<Widget> _screens = const [
     HomeScreen(),
-    PredictionScreen(),
+    LiveGameScreen(),
     FavouriteLigueMatchScreen(),
     LigueScreen(),
     SettingsScreen(),

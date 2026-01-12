@@ -190,10 +190,8 @@ class Round {
     return Round(
       id: json['id'] ?? 0,
       name: json['name'] ?? "",
-      startingAt: DateTime.tryParse(json['starting_at'] ?? "") ??
-          DateTime.now(),
-      endingAt:
-      DateTime.tryParse(json['ending_at'] ?? "") ?? DateTime.now(),
+      startingAt: DateTime.tryParse(json['starting_at'] ?? "") ?? DateTime.now(),
+      endingAt: DateTime.tryParse(json['ending_at'] ?? "") ?? DateTime.now(),
     );
   }
 }
@@ -387,11 +385,9 @@ class Predictions {
 
   factory Predictions.fromJson(Map<String, dynamic> json) {
     return Predictions(
-      fulltimeResult:
-      FulltimeResult.fromJson(json['fulltime_result'] ?? {}),
+      fulltimeResult: FulltimeResult.fromJson(json['fulltime_result'] ?? {}),
       correctScores: CorrectScores.fromJson(json['correct_scores'] ?? {}),
-      bothTeamsToScore:
-      BothTeamsToScore.fromJson(json['both_teams_to_score'] ?? {}),
+      bothTeamsToScore: BothTeamsToScore.fromJson(json['both_teams_to_score'] ?? {}),
       overUnder25: OverUnder.fromJson(json['over_under_2_5'] ?? {}),
       doubleChance: DoubleChance.fromJson(json['double_chance'] ?? {}),
     );
@@ -500,6 +496,7 @@ class DoubleChance {
   }
 }
 
+// ================== FAVOURITES ==================
 
 class FavoritesCount {
   int teams;
@@ -514,34 +511,32 @@ class FavoritesCount {
       );
 }
 
-class FavouriteFixture {
-  final int id;
-  final int fixtureId;
-  final DateTime fixtureDate;
-  final String homeTeam;
-  final String awayTeam;
-  final String status;
-  final DateTime createdAt;
+class FavouriteResponse {
+  final List<dynamic> teams;
+  final List<FavouriteLeague> leagues;
+  final List<FavouriteFixture> fixtures;
+  final int total;
 
-  FavouriteFixture({
-    required this.id,
-    required this.fixtureId,
-    required this.fixtureDate,
-    required this.homeTeam,
-    required this.awayTeam,
-    required this.status,
-    required this.createdAt,
+  FavouriteResponse({
+    required this.teams,
+    required this.leagues,
+    required this.fixtures,
+    required this.total,
   });
 
-  factory FavouriteFixture.fromJson(Map<String, dynamic> json) {
-    return FavouriteFixture(
-      id: json['id'] ?? 0,
-      fixtureId: json['fixture_id'] ?? 0,
-      fixtureDate: DateTime.tryParse(json['fixture_date'] ?? '') ?? DateTime.now(),
-      homeTeam: json['home_team'] ?? '',
-      awayTeam: json['away_team'] ?? '',
-      status: json['status'] ?? '',
-      createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
+  factory FavouriteResponse.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] ?? {};
+    final favorites = data['favorites'] ?? {};
+
+    return FavouriteResponse(
+      teams: favorites['teams'] ?? [],
+      leagues: (favorites['leagues'] as List? ?? [])
+          .map((e) => FavouriteLeague.fromJson(e))
+          .toList(),
+      fixtures: (favorites['fixtures'] as List? ?? [])
+          .map((e) => FavouriteFixture.fromJson(e))
+          .toList(),
+      total: data['total'] ?? 0,
     );
   }
 }
@@ -578,32 +573,188 @@ class FavouriteLeague {
   }
 }
 
-class FavouriteResponse {
-  final List<dynamic> teams;
-  final List<FavouriteLeague> leagues;
-  final List<FavouriteFixture> fixtures;
-  final int total;
+class FavouriteFixture {
+  final int id;
+  final String name;
+  final DateTime startingAt;
+  final bool isLive;
+  final int? minute;
+  final String state;
+  final String stateShort;
+  final int stateId;
+  final FavouriteFixtureLeague league;
+  final FavouriteFixtureRound round;
+  final FavouriteFixtureTeam homeTeam;
+  final FavouriteFixtureTeam awayTeam;
+  final FavouriteFixtureVenue? venue;
+  final bool isFavorite;
+  final int? favoriteId;
+  final DateTime? favoritedAt;
+  final Predictions? predictions;
+  final dynamic odds;
+  final Map<String, dynamic>? statistics;
 
-  FavouriteResponse({
-    required this.teams,
-    required this.leagues,
-    required this.fixtures,
-    required this.total,
+  FavouriteFixture({
+    required this.id,
+    required this.name,
+    required this.startingAt,
+    required this.isLive,
+    this.minute,
+    required this.state,
+    required this.stateShort,
+    required this.stateId,
+    required this.league,
+    required this.round,
+    required this.homeTeam,
+    required this.awayTeam,
+    this.venue,
+    required this.isFavorite,
+    this.favoriteId,
+    this.favoritedAt,
+    this.predictions,
+    this.odds,
+    this.statistics,
   });
 
-  factory FavouriteResponse.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] ?? {};
-    final favorites = data['favorites'] ?? {};
+  factory FavouriteFixture.fromJson(Map<String, dynamic> json) {
+    return FavouriteFixture(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      startingAt: DateTime.tryParse(json['starting_at'] ?? '') ?? DateTime.now(),
+      isLive: json['is_live'] ?? false,
+      minute: json['minute'],
+      state: json['state'] ?? '',
+      stateShort: json['state_short'] ?? '',
+      stateId: json['state_id'] ?? 0,
+      league: FavouriteFixtureLeague.fromJson(json['league'] ?? {}),
+      round: FavouriteFixtureRound.fromJson(json['round'] ?? {}),
+      homeTeam: FavouriteFixtureTeam.fromJson(json['home_team'] ?? {}),
+      awayTeam: FavouriteFixtureTeam.fromJson(json['away_team'] ?? {}),
+      venue: json['venue'] != null ? FavouriteFixtureVenue.fromJson(json['venue']) : null,
+      isFavorite: json['is_favorite'] ?? false,
+      favoriteId: json['favorite_id'],
+      favoritedAt: DateTime.tryParse(json['favorited_at'] ?? ''),
+      predictions: json['predictions'] != null ? Predictions.fromJson(json['predictions']) : null,
+      odds: json['odds'],
+      statistics: json['statistics'],
+    );
+  }
+}
 
-    return FavouriteResponse(
-      teams: favorites['teams'] ?? [],
-      leagues: (favorites['leagues'] as List? ?? [])
-          .map((e) => FavouriteLeague.fromJson(e))
-          .toList(),
-      fixtures: (favorites['fixtures'] as List? ?? [])
-          .map((e) => FavouriteFixture.fromJson(e))
-          .toList(),
-      total: data['total'] ?? 0,
+class FavouriteFixtureLeague {
+  final int id;
+  final String name;
+  final String logo;
+  final FavouriteFixtureCountry country;
+
+  FavouriteFixtureLeague({
+    required this.id,
+    required this.name,
+    required this.logo,
+    required this.country,
+  });
+
+  factory FavouriteFixtureLeague.fromJson(Map<String, dynamic> json) {
+    return FavouriteFixtureLeague(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      logo: json['logo'] ?? '',
+      country: FavouriteFixtureCountry.fromJson(json['country'] ?? {}),
+    );
+  }
+}
+
+class FavouriteFixtureCountry {
+  final int id;
+  final String name;
+  final String? code;
+  final String? flag;
+
+  FavouriteFixtureCountry({
+    required this.id,
+    required this.name,
+    this.code,
+    this.flag,
+  });
+
+  factory FavouriteFixtureCountry.fromJson(Map<String, dynamic> json) {
+    return FavouriteFixtureCountry(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      code: json['code'],
+      flag: json['flag'],
+    );
+  }
+}
+
+class FavouriteFixtureRound {
+  final int id;
+  final String name;
+  final DateTime startingAt;
+  final DateTime endingAt;
+
+  FavouriteFixtureRound({
+    required this.id,
+    required this.name,
+    required this.startingAt,
+    required this.endingAt,
+  });
+
+  factory FavouriteFixtureRound.fromJson(Map<String, dynamic> json) {
+    return FavouriteFixtureRound(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      startingAt: DateTime.tryParse(json['starting_at'] ?? '') ?? DateTime.now(),
+      endingAt: DateTime.tryParse(json['ending_at'] ?? '') ?? DateTime.now(),
+    );
+  }
+}
+
+class FavouriteFixtureTeam {
+  final int id;
+  final String name;
+  final String? shortCode;
+  final String logo;
+  final int score;
+
+  FavouriteFixtureTeam({
+    required this.id,
+    required this.name,
+    this.shortCode,
+    required this.logo,
+    required this.score,
+  });
+
+  factory FavouriteFixtureTeam.fromJson(Map<String, dynamic> json) {
+    return FavouriteFixtureTeam(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      shortCode: json['short_code'],
+      logo: json['logo'] ?? '',
+      score: json['score'] ?? 0,
+    );
+  }
+}
+
+class FavouriteFixtureVenue {
+  final int id;
+  final String name;
+  final String city;
+  final int capacity;
+
+  FavouriteFixtureVenue({
+    required this.id,
+    required this.name,
+    required this.city,
+    required this.capacity,
+  });
+
+  factory FavouriteFixtureVenue.fromJson(Map<String, dynamic> json) {
+    return FavouriteFixtureVenue(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      city: json['city'] ?? '',
+      capacity: json['capacity'] ?? 0,
     );
   }
 }

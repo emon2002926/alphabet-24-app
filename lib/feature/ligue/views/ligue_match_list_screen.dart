@@ -21,17 +21,14 @@ class LigueMatchListScreen extends StatelessWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // ✅ If matchList is passed, use it directly (no API call)
     if (matchList != null && matchList.isNotEmpty) {
       return _buildWithPassedData(context, matchList, leagueName, isDark);
     }
 
-    // ✅ Fallback: use controller to fetch from API
     final controller = Get.put(LeagueDetailController(leagueId: leagueId));
     return _buildWithController(context, controller, leagueName, isDark);
   }
 
-  /// Build UI with passed matchList (no API call)
   Widget _buildWithPassedData(
       BuildContext context,
       List<Match> matchList,
@@ -92,7 +89,6 @@ class LigueMatchListScreen extends StatelessWidget {
     );
   }
 
-  /// Build UI with controller (API call)
   Widget _buildWithController(
       BuildContext context,
       LeagueDetailController controller,
@@ -179,7 +175,9 @@ class LigueMatchListScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.star_border, color: SColor.primary, size: 24),
+            Icon(Icons.star_border,
+                color:  Colors.amber ,
+                size: 24),
             SizedBox(width: DynamicSize.medium(context)),
             Expanded(
               child: Column(

@@ -7,10 +7,10 @@ import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/text_theme.dart';
 import 'football_field_painter.dart';
 
-class LineUp extends StatelessWidget {
+class LineUpTab extends StatelessWidget {
   final int fixtureId;
 
-  LineUp({super.key, required this.fixtureId});
+  LineUpTab({super.key, required this.fixtureId});
 
   final MatchLineupController matchLineupController = Get.put(MatchLineupController());
 

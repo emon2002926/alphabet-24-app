@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:scaffassistant/core/const/size_const/dynamic_size.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
-import 'package:scaffassistant/core/universal_widgets/s_text_field.dart';
 
 import '../../home/models/live_match_response_model.dart';
 import '../../ligue/views/ligue_match_list_screen.dart';
@@ -12,9 +13,11 @@ import '../controllers/favourite_controller.dart';
 
 class FavouriteIgueFootballTab extends StatelessWidget {
   const FavouriteIgueFootballTab({super.key});
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(FavouriteController());
+    final TextEditingController searchController = TextEditingController();
 
     return Scaffold(
       backgroundColor: SColor.bodyColor,
@@ -30,88 +33,35 @@ class FavouriteIgueFootballTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Search Field
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
-                  child: SizedBox(
-                    height: 60,
-                    child: STextField(
-                      hintText: 'Search',
-                      labelText: 'Search',
-                      suffixIcon: Icon(Icons.search, color: SColor.primary),
-                      onChanged: (value) => controller.updateSearch(value),
-                    ),
-                  ),
-                ),
 
-                // Filter Row
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
-                  child: SizedBox(
-                    height: 40,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(Icons.filter_list, color: SColor.primary),
-                        SizedBox(width: DynamicSize.small(context)),
-                        Expanded(
-                          child: Text(
-                            'All Favourites',
-                            style: STextTheme.headLine().copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Obx(() => Text(
-                          '${controller.totalFavourites.value}',
-                          style: STextTheme.headLine().copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: SColor.primary,
-                          ),
-                        )),
-                      ],
-                    ),
-                  ),
-                ),
 
-                // ===== FAVOURITE LEAGUES SECTION =====
                 Obx(() {
                   final leagues = controller.filteredLeagues;
                   if (leagues.isEmpty) return const SizedBox.shrink();
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // const SLabel(title: 'FAVOURITE LEAGUES'),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
-                        itemCount: leagues.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap:() {
-                              Get.to(() => LigueMatchListScreen(),arguments: {
-                                'leagueId': leagues[index].id,
-                                'leagueName': leagues[index].leagueName,
-                              });
-                            },
-                            child: FavouriteLeagueCard(
-                              league: leagues[index],
-                              onRemove: () => controller.removeLeagueFavourite(leagues[index].id),
-                            ),
-                          );
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
+                    itemCount: leagues.length,
+                    itemBuilder: (context, index) {
+                      return FavouriteLeagueCard(
+                        league: leagues[index],
+                        onTap: () {
+                          Get.to(() => LigueMatchListScreen(), arguments: {
+                            'leagueId': leagues[index].leagueId,
+                            'leagueName': leagues[index].leagueName,
+                          });
                         },
-                      ),
-                    ],
+                        onRemove: () => controller.removeLeagueFavourite(leagues[index].leagueId),
+                      );
+                    },
                   );
                 }),
 
-                // ===== FAVOURITE MATCHES SECTION =====
                 Obx(() {
                   final fixtures = controller.filteredFixtures;
+
                   if (fixtures.isEmpty && controller.filteredLeagues.isEmpty) {
                     return Center(
                       child: Padding(
@@ -134,23 +84,26 @@ class FavouriteIgueFootballTab extends StatelessWidget {
 
                   if (fixtures.isEmpty) return const SizedBox.shrink();
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // const SLabel(title: 'FAVOURITE MATCHES'),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
-                        itemCount: fixtures.length,
-                        itemBuilder: (context, index) {
-                          return FavouriteMatchCard(
-                            fixture: fixtures[index],
-                            onRemove: () => controller.removeFixtureFavourite(fixtures[index].id),
-                          );
-                        },
-                      ),
-                    ],
+                  // Group fixtures by league
+                  final groupedFixtures = _groupFixturesByLeague(fixtures);
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
+                    itemCount: groupedFixtures.length,
+                    itemBuilder: (context, index) {
+                      final leagueName = groupedFixtures.keys.elementAt(index);
+                      final leagueFixtures = groupedFixtures[leagueName]!;
+                      final leagueLogo = leagueFixtures.first.league.logo;
+
+                      return FavouriteLeagueMatchGroup(
+                        leagueName: leagueName,
+                        leagueLogo: leagueLogo,
+                        fixtures: leagueFixtures,
+                        onRemoveFixture: (fixture) => controller.removeFixtureFavourite(fixture.id),
+                      );
+                    },
                   );
                 }),
 
@@ -162,8 +115,184 @@ class FavouriteIgueFootballTab extends StatelessWidget {
       }),
     );
   }
+
+  Map<String, List<FavouriteFixture>> _groupFixturesByLeague(List<FavouriteFixture> fixtures) {
+    final Map<String, List<FavouriteFixture>> grouped = {};
+
+    for (final fixture in fixtures) {
+      final leagueName = fixture.league.name;
+      if (!grouped.containsKey(leagueName)) {
+        grouped[leagueName] = [];
+      }
+      grouped[leagueName]!.add(fixture);
+    }
+
+    return grouped;
+  }
 }
 
+
+// ===== FAVOURITE LEAGUE CARD =====
+class FavouriteLeagueCard extends StatelessWidget {
+  final FavouriteLeague league;
+  final VoidCallback onTap;
+  final VoidCallback onRemove;
+
+  const FavouriteLeagueCard({
+    required this.league,
+    required this.onTap,
+    required this.onRemove,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+              width: 0.5,
+            ),
+          ),
+        ),
+        child: Row(
+          children: [
+            // League Logo
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.network(
+                league.leagueLogo,
+                height: 28,
+                width: 28,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  height: 28,
+                  width: 28,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Icon(Icons.sports_soccer, size: 16, color: Colors.grey[600]),
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            // League Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    league.leagueName,
+                    style: GoogleFonts.roboto(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'No Matches Today',
+                    style: GoogleFonts.roboto(
+                      fontSize: 12,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Favorite Star Icon
+            GestureDetector(
+              onTap: onRemove,
+              child: Icon(
+                Icons.star_border,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                size: 24,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ===== FAVOURITE LEAGUE MATCH GROUP =====
+class FavouriteLeagueMatchGroup extends StatelessWidget {
+  final String leagueName;
+  final String leagueLogo;
+  final List<FavouriteFixture> fixtures;
+  final Function(FavouriteFixture) onRemoveFixture;
+
+  const FavouriteLeagueMatchGroup({
+    required this.leagueName,
+    required this.leagueLogo,
+    required this.fixtures,
+    required this.onRemoveFixture,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // League Header
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Image.network(
+                  leagueLogo,
+                  height: 20,
+                  width: 20,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.sports_soccer,
+                    size: 20,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                leagueName,
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Match Cards
+        ...fixtures.map((fixture) => FavouriteMatchCard(
+          fixture: fixture,
+          onRemove: () => onRemoveFixture(fixture),
+        )),
+      ],
+    );
+  }
+}
+
+// ===== FAVOURITE MATCH CARD =====
 class FavouriteMatchCard extends StatelessWidget {
   final FavouriteFixture fixture;
   final VoidCallback onRemove;
@@ -176,239 +305,305 @@ class FavouriteMatchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!, width: 0.5),
-        ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // ===== PREDICTION VALUES =====
+    final hasPredictions = fixture.predictions != null;
+    final homeProb = hasPredictions ? fixture.predictions!.fulltimeResult.homeWin : 33.0;
+    final drawProb = hasPredictions ? fixture.predictions!.fulltimeResult.draw : 33.0;
+    final awayProb = hasPredictions ? fixture.predictions!.fulltimeResult.awayWin : 33.0;
+    final overProb = hasPredictions ? fixture.predictions!.overUnder25.over : 50.0;
+    final underProb = hasPredictions ? fixture.predictions!.overUnder25.under : 50.0;
+
+    return GestureDetector(
+      onTap: () => Get.to(
+        MatchDetailsScreen(),
+        arguments: {'matchId': fixture.id},
       ),
-      child: GestureDetector(
-        onTap: () {
-          Get.to(
-            MatchDetailsScreen(),
-            arguments: {'matchId': fixture.fixtureId},
-          );
-        },
-        child: Row(
-          children: [
-            // Favorite Star Icon
-            GestureDetector(
-              onTap: onRemove,
-              child: const Icon(
-                Icons.star,
-                color: Colors.amber,
-                size: 24,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            if (!isDark)
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-            ),
-
-            const SizedBox(width: 12),
-
-            // Team Names
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ===== TOP ROW: TIME/STATUS & FAVORITE =====
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Home Team
-                  Row(
-                    children: [
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.sports_soccer, size: 12, color: Colors.grey[600]),
+                  // Live minute or start time
+                  if (fixture.isLive && fixture.minute != null)
+                    Text(
+                      "${fixture.minute}'",
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.green,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          fixture.homeTeam,
-                          style: STextTheme.headLine().copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                    )
+                  else if (fixture.stateShort == 'FT')
+                    Text(
+                      'FT',
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
                       ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  // Away Team
-                  Row(
-                    children: [
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.sports_soccer, size: 12, color: Colors.grey[600]),
+                    )
+                  else
+                    Text(
+                      DateFormat('h:mma').format(fixture.startingAt).toUpperCase(),
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          fixture.awayTeam,
-                          style: STextTheme.headLine().copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+                    ),
+                  // Favorite button
+                  GestureDetector(
+                    onTap: onRemove,
+                    child: Icon(
+                      Icons.star_border,
+                      color: isDark ? Colors.grey[400] : Colors.grey[500],
+                      size: 24,
+                    ),
                   ),
                 ],
               ),
-            ),
 
-            // Time & Status
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  _formatTime(fixture.fixtureDate),
-                  style: STextTheme.subHeadLine().copyWith(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(fixture.status).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    fixture.status,
-                    style: STextTheme.subHeadLine().copyWith(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: _getStatusColor(fixture.status),
+              const SizedBox(height: 12),
+
+              // ===== HOME TEAM ROW =====
+              _buildTeamRow(
+                logo: fixture.homeTeam.logo,
+                name: fixture.homeTeam.name,
+                score: fixture.homeTeam.score,
+                showScore: fixture.stateShort == 'FT' || fixture.isLive,
+                isDark: isDark,
+              ),
+
+              const SizedBox(height: 8),
+
+              // ===== AWAY TEAM ROW =====
+              _buildTeamRow(
+                logo: fixture.awayTeam.logo,
+                name: fixture.awayTeam.name,
+                score: fixture.awayTeam.score,
+                showScore: fixture.stateShort == 'FT' || fixture.isLive,
+                isDark: isDark,
+              ),
+
+              const SizedBox(height: 12),
+
+              // ===== PREDICTION BOXES (1, X, 2) =====
+              SizedBox(
+                height: 32,
+                child: Row(
+                  children: [
+                    // Home Win (1)
+                    Expanded(
+                      flex: homeProb.round().clamp(1, 100),
+                      child: _buildPredictionBox(
+                        label: '1',
+                        percentage: homeProb,
+                        color: const Color(0xFF0096C7),
+                        textColor: Colors.white,
+                        percentageColor: Colors.white,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 4),
+                    // Draw (X)
+                    Expanded(
+                      flex: drawProb.round().clamp(1, 100),
+                      child: _buildPredictionBox(
+                        label: 'X',
+                        percentage: drawProb,
+                        color: const Color(0xFFD0D4DC),
+                        textColor: Colors.black87,
+                        percentageColor: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    // Away Win (2)
+                    Expanded(
+                      flex: awayProb.round().clamp(1, 100),
+                      child: _buildPredictionBox(
+                        label: '2',
+                        percentage: awayProb,
+                        color: const Color(0xFF01002A),
+                        textColor: Colors.white,
+                        percentageColor: const Color(0xFF4CAF50),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // ===== OVER/UNDER 2.5 BOXES =====
+              SizedBox(
+                height: 32,
+                child: Row(
+                  children: [
+                    // Over 2.5
+                    Expanded(
+                      child: _buildOverUnderBox(
+                        label: 'Over 2.5',
+                        percentage: overProb,
+                        isDark: isDark,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Under 2.5
+                    Expanded(
+                      child: _buildOverUnderBox(
+                        label: 'Under 2.5',
+                        percentage: underProb,
+                        isDark: isDark,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  String _formatTime(DateTime date) {
-    final hour = date.hour;
-    final minute = date.minute.toString().padLeft(2, '0');
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final hour12 = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-    return '$hour12:$minute $period';
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status.toUpperCase()) {
-      case 'LIVE':
-      case '1H':
-      case '2H':
-      case 'HT':
-        return Colors.green;
-      case 'FT':
-        return Colors.blue;
-      case 'NS':
-        return Colors.orange;
-      case 'PST':
-      case 'CANC':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-}
-
-class FavouriteLeagueCard extends StatelessWidget {
-  final FavouriteLeague league;
-  final VoidCallback onRemove;
-
-  const FavouriteLeagueCard({
-    required this.league,
-    required this.onRemove,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!, width: 0.5),
+  Widget _buildTeamRow({
+    required String logo,
+    required String name,
+    required int score,
+    required bool showScore,
+    required bool isDark,
+  }) {
+    return Row(
+      children: [
+        // Team logo
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            logo,
+            height: 24,
+            width: 24,
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => Container(
+              height: 24,
+              width: 24,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.sports_soccer, size: 14, color: Colors.grey[600]),
+            ),
+          ),
         ),
+        const SizedBox(width: 10),
+        // Team name
+        Expanded(
+          child: Text(
+            name,
+            style: GoogleFonts.roboto(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        // Score
+        Text(
+          showScore ? score.toString() : '',
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPredictionBox({
+    required String label,
+    required double percentage,
+    required Color color,
+    required Color textColor,
+    Color? percentageColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // League Logo
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Image.network(
-              league.leagueLogo,
-              height: 32,
-              width: 32,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                height: 28,
-                width: 28,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Icon(Icons.sports_soccer, size: 16, color: Colors.grey[600]),
-              ),
+          Text(
+            label,
+            style: GoogleFonts.roboto(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: textColor,
             ),
           ),
-
-          const SizedBox(width: 12),
-
-          // League Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  league.leagueName,
-                  style: STextTheme.scoureTextNormal().copyWith(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  league.leagueCountry,
-                  style: STextTheme.subHeadLine().copyWith(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
+          Text(
+            '${percentage.toStringAsFixed(0)}%',
+            style: GoogleFonts.roboto(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: percentageColor ?? textColor,
             ),
           ),
+        ],
+      ),
+    );
+  }
 
-          const SizedBox(width: 12),
-
-          // Favorite Star Icon (moved to right)
-          GestureDetector(
-            onTap: onRemove,
-            child: const Icon(
-              Icons.star,
-              color: Colors.amber,
-              size: 24,
+  Widget _buildOverUnderBox({
+    required String label,
+    required double percentage,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF3E3E3E) : const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.roboto(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+          Text(
+            '${percentage.toStringAsFixed(0)}%',
+            style: GoogleFonts.roboto(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF015440),
             ),
           ),
         ],
@@ -416,5 +611,4 @@ class FavouriteLeagueCard extends StatelessWidget {
     );
   }
 }
-
 

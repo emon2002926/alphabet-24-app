@@ -93,9 +93,9 @@ class FavouriteController extends GetxController {
     if (isDateFilterActive.value) {
       tempFixtures = tempFixtures.where((fixture) {
         final fixtureDate = DateTime(
-          fixture.fixtureDate.year,
-          fixture.fixtureDate.month,
-          fixture.fixtureDate.day,
+          fixture.startingAt.year,
+          fixture.startingAt.month,
+          fixture.startingAt.day,
         );
         final selected = DateTime(
           selectedDate.value.year,
@@ -109,8 +109,9 @@ class FavouriteController extends GetxController {
     // Apply search filter
     if (searchQuery.value.isNotEmpty) {
       tempFixtures = tempFixtures.where((fixture) {
-        return fixture.homeTeam.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-            fixture.awayTeam.toLowerCase().contains(searchQuery.value.toLowerCase());
+        return fixture.homeTeam.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+            fixture.awayTeam.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+            fixture.league.name.toLowerCase().contains(searchQuery.value.toLowerCase());
       }).toList();
     }
 
@@ -188,8 +189,8 @@ class FavouriteController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
-          // Remove from main list
-          favouriteFixtures.removeWhere((f) => f.fixtureId == fixtureId);
+          // Remove from main list - use 'id' to match new model
+          favouriteFixtures.removeWhere((f) => f.id == fixtureId);
 
           // Update total
           totalFavourites.value = favouriteFixtures.length + favouriteLeagues.length;

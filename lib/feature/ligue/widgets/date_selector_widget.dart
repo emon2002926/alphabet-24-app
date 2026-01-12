@@ -29,7 +29,7 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
     final LeagueListController controller = Get.find<LeagueListController>();
 
     return SizedBox(
-      height: 80, // Increased from 70 to 80
+      height: 80,
       child: Obx(() {
         final currentSelectedDate = controller.selectedDate.value;
         final isFilterActive = controller.isDateFilterActive.value;
@@ -69,9 +69,9 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
             final isToday = _isToday(date);
             final isSelected = isFilterActive && _isSameDay(date, currentSelectedDate);
 
-            final dayName = DateFormat('EEE').format(date).toUpperCase(); // THU, FRI
-            final dayNumber = date.day.toString(); // 11, 12, 13
-            final monthName = DateFormat('MMM').format(date); // Dec, Jan
+            final dayName = isToday ? 'TODAY' : DateFormat('EEE').format(date).toUpperCase();
+            final dayNumber = date.day.toString();
+            final monthName = DateFormat('MMM').format(date);
 
             return Padding(
               padding: EdgeInsets.only(right: DynamicSize.small(context)),
@@ -108,23 +108,23 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
                         : null,
                   ),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8), // Add padding
+                    padding: EdgeInsets.symmetric(vertical: 8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min, // Important: minimize size
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Day Name (THU, FRI)
+                        // Day Name (TODAY, THU, FRI)
                         Text(
                           dayName,
                           style: STextTheme.headLine().copyWith(
-                            fontSize: 9,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                            fontSize: isToday ? 8 : 9,
+                            fontWeight: isSelected || isToday ? FontWeight.w600 : FontWeight.w500,
                             color: isSelected
                                 ? Colors.white
                                 : isToday
                                 ? SColor.primary
                                 : Colors.grey[600],
-                            height: 1.0, // Reduce line height
+                            height: 1.0,
                           ),
                         ),
                         SizedBox(height: 2),
@@ -139,7 +139,7 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
                                 : isToday
                                 ? SColor.primary
                                 : Colors.grey[800],
-                            height: 1.0, // Reduce line height
+                            height: 1.0,
                           ),
                         ),
                         SizedBox(height: 1),
@@ -154,7 +154,7 @@ class _DateSelectorWidgetState extends State<DateSelectorWidget> {
                                 : isToday
                                 ? SColor.primary.withOpacity(0.8)
                                 : Colors.grey[600],
-                            height: 1.0, // Reduce line height
+                            height: 1.0,
                           ),
                         ),
                       ],

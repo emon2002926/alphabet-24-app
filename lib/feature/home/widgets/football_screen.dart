@@ -10,10 +10,10 @@ import 'package:scaffassistant/feature/home/controllers/sports_data/football_dat
 import 'package:scaffassistant/core/universal_widgets/league_list_widget.dart';
 import 'package:scaffassistant/feature/news/views/news_screen.dart';
 import '../../../core/universal_widgets/news_card_widget.dart';
-import '../../ligue/views/ligue_list_screen.dart';
 import '../../ligue/views/ligue_match_list_screen.dart';
 import '../../ligue/widgets/date_selector_widget.dart';
-import '../../prediction/views/prediction_screen.dart';
+import '../../ligue/widgets/ligue_football_tab.dart';
+import '../../live_game/views/live_game_screen.dart';
 
 class FootballScreen extends StatefulWidget {
   const FootballScreen({super.key});
@@ -185,10 +185,12 @@ class _FootballScreenState extends State<FootballScreen> {
           onTap: () {
             if(title == 'Leagues'){
               Get.to(
-                LigueListScreen(
-                  leagueListController: leagueListController,
-                  showDivider: true,
-                ),
+                // LigueListScreen(
+                //   leagueListController: leagueListController,
+                //   showDivider: true,
+                // ),
+                LeaguesFootballTab(isShowSearch: true,isShowAppBar: true,),
+
               );
             }else if(title == 'Top Stories'){
               Get.to(
@@ -199,7 +201,7 @@ class _FootballScreenState extends State<FootballScreen> {
             else if(title == "Live Now "
             ){
               Get.to(
-                  PredictionScreen()
+                  LiveGameScreen(isShowBackButton: true,)
               );
             }
           },

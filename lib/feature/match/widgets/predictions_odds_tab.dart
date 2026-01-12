@@ -6,9 +6,6 @@ import '../../../core/theme/text_theme.dart';
 import '../controllers/predictionscontroller.dart';
 import '../models/predictions_odds_response.dart';
 
-
-
-
 class PredictionsOddsTab extends StatelessWidget {
   final int fixtureId;
   const PredictionsOddsTab({super.key, required this.fixtureId});
@@ -27,10 +24,7 @@ class PredictionsOddsTab extends StatelessWidget {
             children: [
               CircularProgressIndicator(color: SColor.primary),
               SizedBox(height: 16),
-              Text(
-                'Loading predictions...',
-                style: STextTheme.subHeadLine(),
-              ),
+              Text('Loading predictions...', style: STextTheme.subHeadLine()),
             ],
           ),
         );
@@ -44,10 +38,7 @@ class PredictionsOddsTab extends StatelessWidget {
             children: [
               Icon(Icons.info_outline, size: 60, color: Colors.grey[400]),
               SizedBox(height: 16),
-              Text(
-                "No predictions available",
-                style: STextTheme.headLine(),
-              ),
+              Text("No predictions available", style: STextTheme.headLine()),
             ],
           ),
         );
@@ -58,45 +49,76 @@ class PredictionsOddsTab extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ===== 1. MATCH RESULT PROBABILITIES =====
-            _buildMatchResultProbabilities(
-              data.predictions.fulltimeResult,
-              isDark,
-              context,
-            ),
+            // ===== 1. FULLTIME RESULT PROBABILITY =====
+            _buildFulltimeResultSection(data.predictions.fulltimeResult, isDark),
+            SizedBox(height: 16),
 
-            SizedBox(height: 20),
-
-            // ===== 2. OVER/UNDER PROBABILITY (Multiple) =====
-            _buildOverUnderProbabilitySection(data.predictions, isDark, context),
-
-            SizedBox(height: 20),
+            // ===== 2. OVER/UNDER PROBABILITY (Grouped) =====
+            _buildGroupedOverUnderSection(data.predictions, isDark),
+            SizedBox(height: 16),
 
             // ===== 3. CORRECT SCORE PROBABILITY =====
-            _buildCorrectScoreProbability(
-              data.predictions.correctScores.top10,
-              isDark,
-              context,
-            ),
+            _buildCorrectScoreSection(data.predictions.correctScores.top10, isDark),
+            SizedBox(height: 16),
 
-            SizedBox(height: 20),
+            // ===== 4. BOTH TEAMS TO SCORE =====
+            _buildBTTSSection(data.predictions.bothTeamsToScore, isDark),
+            SizedBox(height: 16),
 
-            // ===== 4. DOUBLE CHANCE PROBABILITY =====
-            _buildDoubleChanceProbability(
-              data.predictions.doubleChance,
-              isDark,
-              context,
-            ),
+            // ===== 5. TEAM TO SCORE FIRST =====
+            if (data.predictions.teamToScoreFirst != null)
+              _buildThreeWaySection(
+                'TEAM TO SCORE FIRST PROBABILITY',
+                'Home', data.predictions.teamToScoreFirst!.home,
+                'Draw', data.predictions.teamToScoreFirst!.draw,
+                'Away', data.predictions.teamToScoreFirst!.away,
+                isDark,
+              ),
+            if (data.predictions.teamToScoreFirst != null) SizedBox(height: 16),
 
-            SizedBox(height: 20),
+            // ===== 6. FIRST HALF WINNER =====
+            if (data.predictions.firstHalfWinner != null)
+              _buildThreeWaySection(
+                'FIRST HALF WINNER PROBABILITY',
+                'Home', data.predictions.firstHalfWinner!.home,
+                'Draw', data.predictions.firstHalfWinner!.draw,
+                'Away', data.predictions.firstHalfWinner!.away,
+                isDark,
+              ),
+            if (data.predictions.firstHalfWinner != null) SizedBox(height: 16),
 
-            // ===== 5. HALF TIME / FULL TIME PROBABILITY =====
-            _buildHalfTimeFullTimeProbability(isDark, context),
+            // ===== 7. DOUBLE CHANCE PROBABILITY =====
+            _buildDoubleChanceSection(data.predictions.doubleChance, isDark),
+            SizedBox(height: 16),
 
-            SizedBox(height: 20),
+            // ===== 8. HALF TIME/FULL TIME PROBABILITY =====
+            _buildHalfTimeFullTimeSection(data.predictions.halfTimeFullTime, isDark),
+            SizedBox(height: 16),
 
-            // ===== 6. BTTS (BOTH TEAMS TO SCORE) =====
-            _buildBTTSSection(data.predictions, isDark, context),
+            // ===== 9. HOME OVER/UNDER (Grouped) =====
+            if (data.predictions.availableHomeOverUnder.isNotEmpty)
+              _buildGroupedTeamOverUnderSection(
+                'HOME OVER/UNDER PROBABILITY',
+                data.predictions.availableHomeOverUnder,
+                isDark,
+              ),
+            if (data.predictions.availableHomeOverUnder.isNotEmpty) SizedBox(height: 16),
+
+            // ===== 10. AWAY OVER/UNDER (Grouped) =====
+            if (data.predictions.availableAwayOverUnder.isNotEmpty)
+              _buildGroupedTeamOverUnderSection(
+                'AWAY OVER/UNDER PROBABILITY',
+                data.predictions.availableAwayOverUnder,
+                isDark,
+              ),
+            if (data.predictions.availableAwayOverUnder.isNotEmpty) SizedBox(height: 16),
+
+            // ===== 11. CORNERS OVER/UNDER (Grouped) =====
+            if (data.predictions.availableCornersPredictions.isNotEmpty)
+              _buildGroupedCornersSection(
+                data.predictions.availableCornersPredictions,
+                isDark,
+              ),
 
             SizedBox(height: 20),
           ],
@@ -106,7 +128,7 @@ class PredictionsOddsTab extends StatelessWidget {
   }
 
   // ===== SECTION HEADER =====
-  Widget _buildSectionHeader(String title, bool isDark) {
+  Widget _buildSectionHeader(String title) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -121,111 +143,158 @@ class PredictionsOddsTab extends StatelessWidget {
         title,
         style: TextStyle(
           color: Colors.white,
-          fontSize: 13,
+          fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  // ===== MATCH RESULT PROBABILITIES =====
-  Widget _buildMatchResultProbabilities(
-      FullTimeResult result,
-      bool isDark,
-      BuildContext context,
-      ) {
+  // ===== TWO-WAY PROGRESS BAR =====
+  Widget _buildTwoWayProgressBar({
+    required String label1,
+    required double value1,
+    required String label2,
+    required double value2,
+    required bool isDark,
+    Color? color1,
+    Color? color2,
+  }) {
+    color1 ??= SColor.primary;
+    color2 ??= Color(0xFF1E3A5F);
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '$label1 ${value1.toStringAsFixed(2)}%',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+            Text(
+              '$label2 ${value2.toStringAsFixed(2)}%',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: Row(
+            children: [
+              Expanded(
+                flex: value1.toInt().clamp(1, 100),
+                child: Container(height: 10, color: color1),
+              ),
+              Expanded(
+                flex: value2.toInt().clamp(1, 100),
+                child: Container(height: 10, color: color2),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ===== THREE-WAY PROGRESS BAR =====
+  Widget _buildThreeWayProgressBar({
+    required String label1,
+    required double value1,
+    required String label2,
+    required double value2,
+    required String label3,
+    required double value3,
+    required bool isDark,
+  }) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '$label1 ${value1.toStringAsFixed(2)}%',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+            Text(
+              '$label2 ${value2.toStringAsFixed(2)}%',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: Row(
+            children: [
+              Expanded(
+                flex: value1.toInt().clamp(1, 100),
+                child: Container(height: 10, color: SColor.primary),
+              ),
+              Expanded(
+                flex: value2.toInt().clamp(1, 100),
+                child: Container(height: 10, color: Color(0xFF9CA3AF)),
+              ),
+              Expanded(
+                flex: value3.toInt().clamp(1, 100),
+                child: Container(height: 10, color: Color(0xFF1E3A5F)),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 8),
+        Center(
+          child: Text(
+            '$label3 ${value3.toStringAsFixed(2)}%',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ===== 1. FULLTIME RESULT =====
+  Widget _buildFulltimeResultSection(FullTimeResult result, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0),
-        ),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
       ),
       child: Column(
         children: [
-          _buildSectionHeader('MATCH RESULT PROBABILITIES', isDark),
+          _buildSectionHeader('FULLTIME RESULT PROBABILITY'),
           Padding(
             padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Top row: Home label positioned over home section, Draw on far right
-                Row(
-                  children: [
-                    // Home label - positioned to align with home bar section
-                    Expanded(
-                      flex: result.homeWin.toInt().clamp(1, 100),
-                      child: Center(
-                        child: Text(
-                          'Home ${result.homeWin.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: isDark ? Colors.white70 : Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Spacer for draw + away sections
-                    Expanded(
-                      flex: (result.draw.toInt() + result.awayWin.toInt()).clamp(1, 100),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          'Draw ${result.draw.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: isDark ? Colors.white70 : Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                // Progress bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: result.homeWin.toInt().clamp(1, 100),
-                        child: Container(
-                          height: 10,
-                          color: SColor.primary,
-                        ),
-                      ),
-                      Expanded(
-                        flex: result.draw.toInt().clamp(1, 100),
-                        child: Container(
-                          height: 10,
-                          color: Color(0xFF9CA3AF),
-                        ),
-                      ),
-                      Expanded(
-                        flex: result.awayWin.toInt().clamp(1, 100),
-                        child: Container(
-                          height: 10,
-                          color: Color(0xFF1E3A5F),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8),
-                // Bottom row: Away label centered
-                Center(
-                  child: Text(
-                    'Away ${result.awayWin.toStringAsFixed(2)}%',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white70 : Colors.black87,
-                    ),
-                  ),
-                ),
-              ],
+            child: _buildThreeWayProgressBar(
+              label1: 'Home',
+              value1: result.homeWin,
+              label2: 'Draw',
+              value2: result.draw,
+              label3: 'Away',
+              value3: result.awayWin,
+              isDark: isDark,
             ),
           ),
         ],
@@ -233,154 +302,183 @@ class PredictionsOddsTab extends StatelessWidget {
     );
   }
 
-  // ===== CORRECT SCORE PROBABILITY =====
-  Widget _buildCorrectScoreProbability(
-      List<TopScore> scores,
-      bool isDark,
-      BuildContext context,
-      ) {
-    // Separate scores into Home Win, Away Win, and Draw categories
-    List<TopScore> homeWinScores = [];
-    List<TopScore> awayWinScores = [];
-    List<TopScore> drawScores = [];
+  // ===== 2. GROUPED OVER/UNDER =====
+// ===== 2. GROUPED OVER/UNDER =====
+  Widget _buildGroupedOverUnderSection(PredictionsData predictions, bool isDark) {
+    final overUnderList = [
+      {'label': '1.5', 'over': predictions.overUnder15.over, 'under': predictions.overUnder15.under},
+      {'label': '2.5', 'over': predictions.overUnder25.over, 'under': predictions.overUnder25.under},
+      {'label': '3.5', 'over': predictions.overUnder35.over, 'under': predictions.overUnder35.under},
+      {'label': '4.5', 'over': predictions.overUnder45.over, 'under': predictions.overUnder45.under},
+    ];
 
-    for (var score in scores) {
-      final parts = score.score.split('-');
-      if (parts.length == 2) {
-        final home = int.tryParse(parts[0]) ?? 0;
-        final away = int.tryParse(parts[1]) ?? 0;
-        if (home > away) {
-          homeWinScores.add(score);
-        } else if (away > home) {
-          awayWinScores.add(score);
-        } else {
-          drawScores.add(score);
-        }
-      }
-    }
+    // Filter out items where both values are 0
+    final validItems = overUnderList.where((item) =>
+    (item['over'] as double) > 0 || (item['under'] as double) > 0
+    ).toList();
 
-    // Sort each category by probability
-    homeWinScores.sort((a, b) => b.probability.compareTo(a.probability));
-    awayWinScores.sort((a, b) => b.probability.compareTo(a.probability));
-    drawScores.sort((a, b) => b.probability.compareTo(a.probability));
-
-    // Take top 4 from each category
-    homeWinScores = homeWinScores.take(4).toList();
-    awayWinScores = awayWinScores.take(4).toList();
-    drawScores = drawScores.take(4).toList();
-
-    // Calculate totals
-    double homeTotal = homeWinScores.fold(0, (sum, s) => sum + s.probability);
-    double awayTotal = awayWinScores.fold(0, (sum, s) => sum + s.probability);
-    double drawTotal = drawScores.fold(0, (sum, s) => sum + s.probability);
+    if (validItems.isEmpty) return SizedBox.shrink();
 
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0),
-        ),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
       ),
       child: Column(
         children: [
-          _buildSectionHeader('CORRECT SCORE PROBABILITY', isDark),
+          // Main header
+          _buildSectionHeader('OVER/UNDER PROBABILITY'),
+
+          // Sub-sections for each over/under
+          ...validItems.map((item) {
+            return Column(
+              children: [
+                // Sub-header
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  color: isDark ? Color(0xFF334155) : Color(0xFFF1F5F9),
+                  child: Text(
+                    'OVER/UNDER ${item['label']} PROBABILITY',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
+                ),
+                // Progress bar
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: _buildTwoWayProgressBar(
+                    label1: 'Yes',
+                    value1: item['over'] as double,
+                    label2: 'No',
+                    value2: item['under'] as double,
+                    isDark: isDark,
+                  ),
+                ),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+  // ===== 3. CORRECT SCORE =====
+  Widget _buildCorrectScoreSection(List<TopScore> scores, bool isDark) {
+    // Filter out "Other" scores and build grid
+    final gridScores = <String, double>{};
+    double otherHomeWin = 0;
+    double otherAwayWin = 0;
+    double otherDraw = 0;
+
+    for (var score in scores) {
+      if (score.score.startsWith('Other')) {
+        if (score.score == 'Other_1') otherHomeWin = score.probability;
+        if (score.score == 'Other_2') otherAwayWin = score.probability;
+        if (score.score == 'Other_X') otherDraw = score.probability;
+      } else {
+        gridScores[score.score] = score.probability;
+      }
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        children: [
+          _buildSectionHeader('CORRECT SCORE PROBABILITY'),
           Padding(
             padding: EdgeInsets.all(12),
             child: Column(
               children: [
-                // Column headers
+                // Header row (columns: 0, 1, 2)
                 Row(
                   children: [
-                    SizedBox(width: 30), // Empty space for rank
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Home Win',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white70 : Colors.black54,
+                    SizedBox(width: 30),
+                    for (int col = 0; col <= 2; col++)
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            '$col',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Away Win',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white70 : Colors.black54,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Draw',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white70 : Colors.black54,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 8),
-                // Score rows
-                for (int i = 0; i < 4; i++)
-                  _buildScoreRow(
-                    i + 1,
-                    i < homeWinScores.length ? homeWinScores[i] : null,
-                    i < awayWinScores.length ? awayWinScores[i] : null,
-                    i < drawScores.length ? drawScores[i] : null,
-                    isDark,
+                // Score grid (rows: 0, 1, 2, 3)
+                for (int row = 0; row <= 3; row++)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 24,
+                          height: 40,
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$row',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        for (int col = 0; col <= 2; col++)
+                          Expanded(
+                            child: _buildScoreGridCell(
+                              '$row-$col',
+                              gridScores['$row-$col'],
+                              row,
+                              col,
+                              isDark,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                SizedBox(height: 8),
-                Divider(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
-                SizedBox(height: 8),
-                // Totals row
+                SizedBox(height: 12),
+                // Other scores row
                 Row(
                   children: [
                     SizedBox(width: 30),
                     Expanded(
                       child: Center(
                         child: Text(
-                          'Other Home Win\n${homeTotal.toStringAsFixed(1)}%',
+                          'Other Home Win\n${otherHomeWin.toStringAsFixed(2)}%',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: isDark ? Colors.white54 : Colors.black45,
-                          ),
+                          style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45),
                         ),
                       ),
                     ),
                     Expanded(
                       child: Center(
                         child: Text(
-                          'Other Away Win\n${awayTotal.toStringAsFixed(1)}%',
+                          'Other Away Win\n${otherAwayWin.toStringAsFixed(2)}%',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: isDark ? Colors.white54 : Colors.black45,
-                          ),
+                          style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45),
                         ),
                       ),
                     ),
                     Expanded(
                       child: Center(
                         child: Text(
-                          'Other Draw\n${drawTotal.toStringAsFixed(1)}%',
+                          'Other Draw\n${otherDraw.toStringAsFixed(2)}%',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: isDark ? Colors.white54 : Colors.black45,
-                          ),
+                          style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45),
                         ),
                       ),
                     ),
@@ -394,82 +492,27 @@ class PredictionsOddsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreRow(
-      int rank,
-      TopScore? homeScore,
-      TopScore? awayScore,
-      TopScore? drawScore,
-      bool isDark,
-      ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: isDark ? Color(0xFF334155) : Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              '$rank',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.black54,
-              ),
-            ),
-          ),
-          SizedBox(width: 6),
-          Expanded(
-            child: _buildScoreCell(homeScore, SColor.primary, isDark),
-          ),
-          Expanded(
-            child: _buildScoreCell(awayScore, Color(0xFF3B82F6), isDark),
-          ),
-          Expanded(
-            child: _buildScoreCell(drawScore, Color(0xFF6B7280), isDark),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildScoreCell(TopScore? score, Color color, bool isDark) {
-    if (score == null) {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 4),
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        decoration: BoxDecoration(
-          color: isDark ? Color(0xFF334155).withOpacity(0.3) : Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Center(
-          child: Text(
-            '-',
-            style: TextStyle(
-              fontSize: 11,
-              color: isDark ? Colors.white38 : Colors.black26,
-            ),
-          ),
-        ),
-      );
+  Widget _buildScoreGridCell(String scoreKey, double? probability, int row, int col, bool isDark) {
+    Color bgColor;
+    if (row > col) {
+      bgColor = SColor.primary.withOpacity(0.15); // Home win
+    } else if (col > row) {
+      bgColor = Color(0xFF3B82F6).withOpacity(0.15); // Away win
+    } else {
+      bgColor = Color(0xFF6B7280).withOpacity(0.15); // Draw
     }
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4),
-      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: bgColor,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
           Text(
-            score.score,
+            scoreKey,
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -477,11 +520,33 @@ class PredictionsOddsTab extends StatelessWidget {
             ),
           ),
           Text(
-            '${score.probability.toStringAsFixed(1)}%',
-            style: TextStyle(
-              fontSize: 10,
-              color: color,
-              fontWeight: FontWeight.w500,
+            probability != null ? '${probability.toStringAsFixed(2)}%' : '-',
+            style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===== 4. BOTH TEAMS TO SCORE =====
+  Widget _buildBTTSSection(BothTeamsToScore btts, bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        children: [
+          _buildSectionHeader('BOTH TEAMS TO SCORE PROBABILITY'),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: _buildTwoWayProgressBar(
+              label1: 'Yes',
+              value1: btts.yes,
+              label2: 'No',
+              value2: btts.no,
+              isDark: isDark,
             ),
           ),
         ],
@@ -489,93 +554,33 @@ class PredictionsOddsTab extends StatelessWidget {
     );
   }
 
-  // ===== DOUBLE CHANCE PROBABILITY =====
-  Widget _buildDoubleChanceProbability(
-      DoubleChance doubleChance,
+  // ===== 5 & 6. THREE-WAY SECTION (Team to Score First, First Half Winner) =====
+  Widget _buildThreeWaySection(
+      String title,
+      String label1, double value1,
+      String label2, double value2,
+      String label3, double value3,
       bool isDark,
-      BuildContext context,
       ) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0),
-        ),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
       ),
       child: Column(
         children: [
-          _buildSectionHeader('DOUBLE CHANCE PROBABILITY', isDark),
+          _buildSectionHeader(title),
           Padding(
             padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Labels row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Draw-Home ${doubleChance.homeOrDraw.toStringAsFixed(0)}%',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white70 : Colors.black87,
-                      ),
-                    ),
-                    Text(
-                      'Home-Away ${doubleChance.homeOrAway.toStringAsFixed(0)}%',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white70 : Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                // Progress bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: doubleChance.homeOrDraw.toInt(),
-                        child: Container(
-                          height: 10,
-                          color: SColor.primary,
-                        ),
-                      ),
-                      Expanded(
-                        flex: doubleChance.homeOrAway.toInt(),
-                        child: Container(
-                          height: 10,
-                          color: Color(0xFF6B7280),
-                        ),
-                      ),
-                      Expanded(
-                        flex: doubleChance.awayOrDraw.toInt(),
-                        child: Container(
-                          height: 10,
-                          color: Color(0xFF3B82F6),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8),
-                // Bottom label
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Draw-Away ${doubleChance.awayOrDraw.toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white70 : Colors.black87,
-                    ),
-                  ),
-                ),
-              ],
+            child: _buildThreeWayProgressBar(
+              label1: label1,
+              value1: value1,
+              label2: label2,
+              value2: value2,
+              label3: label3,
+              value3: value3,
+              isDark: isDark,
             ),
           ),
         ],
@@ -583,82 +588,80 @@ class PredictionsOddsTab extends StatelessWidget {
     );
   }
 
-  // ===== HALF TIME / FULL TIME PROBABILITY =====
-  Widget _buildHalfTimeFullTimeProbability(bool isDark, BuildContext context) {
-    // Sample data - you'll need to add this to your model if API provides it
-    final htftData = [
-      ['Home', '1/1', '1/X', '1/2'],
-      ['Draw', 'X/1', 'X/X', 'X/2'],
-      ['Away', '2/1', '2/X', '2/2'],
-    ];
+  // ===== 7. DOUBLE CHANCE =====
+  Widget _buildDoubleChanceSection(DoubleChance dc, bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        children: [
+          _buildSectionHeader('DOUBLE CHANCE PROBABILITY'),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: _buildThreeWayProgressBar(
+              label1: 'Draw-Home',
+              value1: dc.homeOrDraw,
+              label2: 'Home-Away',
+              value2: dc.homeOrAway,
+              label3: 'Draw-Away',
+              value3: dc.awayOrDraw,
+              isDark: isDark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-    // Sample percentages - replace with actual data
-    final percentages = [
+  // ===== 8. HALF TIME/FULL TIME =====
+  Widget _buildHalfTimeFullTimeSection(HalfTimeFullTime? htft, bool isDark) {
+    final grid = htft?.asGrid ?? [
       [0.0, 0.0, 0.0],
       [0.0, 0.0, 0.0],
       [0.0, 0.0, 0.0],
     ];
+    final labels = htft?.labelsGrid ?? [
+      ['HH', 'HD', 'HA'],
+      ['DH', 'DD', 'DA'],
+      ['AH', 'AD', 'AA'],
+    ];
+    final rowLabels = ['Home', 'Draw', 'Away'];
+    final rowColors = [SColor.primary, Color(0xFF6B7280), Color(0xFF3B82F6)];
 
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0),
-        ),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
       ),
       child: Column(
         children: [
-          _buildSectionHeader('HALF TIME/FULL TIME PROBABILITY', isDark),
+          _buildSectionHeader('HALF TIME/FULL TIME PROBABILITY'),
           Padding(
             padding: EdgeInsets.all(12),
             child: Column(
               children: [
-                // Header row
+                // Header row with icons
                 Row(
                   children: [
-                    SizedBox(width: 60), // HT label space
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Home',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: SColor.primary,
-                          ),
+                    Container(width: 60, alignment: Alignment.center, child: Text('HT / FT', style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45))),
+                    for (int i = 0; i < 3; i++)
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Icon(Icons.sports_soccer, size: 16, color: rowColors[i]),
+                            Text(rowLabels[i], style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: rowColors[i])),
+                          ],
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Draw',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF6B7280),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Away',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF3B82F6),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 8),
                 // Data rows
-                for (int i = 0; i < 3; i++)
+                for (int row = 0; row < 3; row++)
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 4),
                     child: Row(
@@ -667,58 +670,34 @@ class PredictionsOddsTab extends StatelessWidget {
                           width: 60,
                           padding: EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
-                            color: i == 0
-                                ? SColor.primary.withOpacity(0.1)
-                                : i == 1
-                                ? Color(0xFF6B7280).withOpacity(0.1)
-                                : Color(0xFF3B82F6).withOpacity(0.1),
+                            color: rowColors[row].withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Center(
                             child: Text(
-                              htftData[i][0],
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: i == 0
-                                    ? SColor.primary
-                                    : i == 1
-                                    ? Color(0xFF6B7280)
-                                    : Color(0xFF3B82F6),
-                              ),
+                              rowLabels[row],
+                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: rowColors[row]),
                             ),
                           ),
                         ),
-                        for (int j = 0; j < 3; j++)
+                        for (int col = 0; col < 3; col++)
                           Expanded(
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 4),
                               padding: EdgeInsets.symmetric(vertical: 8),
                               decoration: BoxDecoration(
-                                color: isDark
-                                    ? Color(0xFF334155)
-                                    : Color(0xFFF8FAFC),
+                                color: isDark ? Color(0xFF334155) : Color(0xFFF1F5F9),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Column(
                                 children: [
                                   Text(
-                                    htftData[i][j + 1],
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color:
-                                      isDark ? Colors.white : Colors.black87,
-                                    ),
+                                    labels[row][col],
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87),
                                   ),
                                   Text(
-                                    '${percentages[i][j].toStringAsFixed(1)}%',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: isDark
-                                          ? Colors.white54
-                                          : Colors.black45,
-                                    ),
+                                    '${grid[row][col].toStringAsFixed(2)}%',
+                                    style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45),
                                   ),
                                 ],
                               ),
@@ -735,208 +714,143 @@ class PredictionsOddsTab extends StatelessWidget {
     );
   }
 
-  // ===== OVER/UNDER PROBABILITY SECTION =====
-  Widget _buildOverUnderProbabilitySection(
-      PredictionsData predictions,
+  // ===== 9 & 10. GROUPED TEAM OVER/UNDER (Home/Away) =====
+  Widget _buildGroupedTeamOverUnderSection(
+      String mainTitle, // "HOME OVER/UNDER PROBABILITY" or "AWAY OVER/UNDER PROBABILITY"
+      List<MapEntry<String, OverUnderGoals>> items,
       bool isDark,
-      BuildContext context,
       ) {
-    // Build list of over/under data
-    // Currently only 2.5 is available from API, but structured for easy expansion
-    final overUnderItems = <Map<String, dynamic>>[
-      // Uncomment when API provides these:
-      // {'label': '1.5', 'yes': predictions.overUnder15?.over ?? 0, 'no': predictions.overUnder15?.under ?? 0},
-      {'label': '2.5', 'yes': predictions.overUnder25.over, 'no': predictions.overUnder25.under},
-      // {'label': '3.5', 'yes': predictions.overUnder35?.over ?? 0, 'no': predictions.overUnder35?.under ?? 0},
-      // {'label': '4.5', 'yes': predictions.overUnder45?.over ?? 0, 'no': predictions.overUnder45?.under ?? 0},
-    ];
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        children: [
+          // Main header
+          _buildSectionHeader(mainTitle),
 
+          // Sub-sections
+          ...items.map((item) {
+            final subTitle = mainTitle.replaceAll(' PROBABILITY', ' ${item.key} PROBABILITY');
+
+            return Column(
+              children: [
+                // Sub-header
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  color: isDark ? Color(0xFF334155) : Color(0xFFF1F5F9),
+                  child: Text(
+                    subTitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: _buildTwoWayProgressBar(
+                    label1: 'Yes',
+                    value1: item.value.over,
+                    label2: 'No',
+                    value2: item.value.under,
+                    isDark: isDark,
+                  ),
+                ),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+
+  // ===== 11. GROUPED CORNERS OVER/UNDER =====
+  Widget _buildGroupedCornersSection(
+      List<MapEntry<String, CornersOverUnder>> items,
+      bool isDark,
+      ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        children: [
+          // Main header
+          _buildSectionHeader('CORNERS OVER/UNDER PROBABILITY'),
+
+          // Sub-sections
+          ...items.map((item) {
+            return Column(
+              children: [
+                // Sub-header
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  color: isDark ? Color(0xFF334155) : Color(0xFFF1F5F9),
+                  child: Text(
+                    'CORNERS OVER/UNDER ${item.key} PROBABILITY',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: _buildCornersProgressBar(
+                    yes: item.value.yes,
+                    equal: item.value.equal,
+                    no: item.value.no,
+                    isDark: isDark,
+                  ),
+                ),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+  Widget _buildCornersProgressBar({
+    required double yes,
+    required double equal,
+    required double no,
+    required bool isDark,
+  }) {
     return Column(
-      children: overUnderItems.map((item) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: _buildOverUnderCard(
-            'OVER/UNDER ${item['label']} PROBABILITY',
-            item['yes'] as double,
-            item['no'] as double,
-            isDark,
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildOverUnderCard(
-      String title,
-      double yesValue,
-      double noValue,
-      bool isDark,
-      ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Yes ${yes.toStringAsFixed(2)}%', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black87)),
+            Text('No ${no.toStringAsFixed(2)}%', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black87)),
+          ],
         ),
-      ),
-      child: Column(
-        children: [
-          _buildSectionHeader(title, isDark),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Top: Yes label on the left side (above yes portion)
-                Row(
-                  children: [
-                    Expanded(
-                      flex: yesValue.toInt().clamp(1, 100),
-                      child: Center(
-                        child: Text(
-                          'Yes ${yesValue.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white70 : Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: noValue.toInt().clamp(1, 100),
-                      child: SizedBox(),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                // Progress bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: yesValue.toInt().clamp(1, 100),
-                        child: Container(
-                          height: 10,
-                          color: SColor.primary,
-                        ),
-                      ),
-                      Expanded(
-                        flex: noValue.toInt().clamp(1, 100),
-                        child: Container(
-                          height: 10,
-                          color: Color(0xFF1E3A5F),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8),
-                // Bottom: No label on the right
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    'No ${noValue.toStringAsFixed(2)}%',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white70 : Colors.black87,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: Row(
+            children: [
+              Expanded(flex: yes.toInt().clamp(1, 100), child: Container(height: 10, color: SColor.primary)),
+              Expanded(flex: equal.toInt().clamp(1, 100), child: Container(height: 10, color: Color(0xFF9CA3AF))),
+              Expanded(flex: no.toInt().clamp(1, 100), child: Container(height: 10, color: Color(0xFF1E3A5F))),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  // ===== BTTS (BOTH TEAMS TO SCORE) SECTION =====
-  Widget _buildBTTSSection(
-      PredictionsData predictions,
-      bool isDark,
-      BuildContext context,
-      ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? Color(0xFF334155) : Color(0xFFE2E8F0),
         ),
-      ),
-      child: Column(
-        children: [
-          _buildSectionHeader('BOTH TEAMS TO SCORE PROBABILITY', isDark),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Top: Yes label
-                Row(
-                  children: [
-                    Expanded(
-                      flex: predictions.bothTeamsToScore.yes.toInt().clamp(1, 100),
-                      child: Center(
-                        child: Text(
-                          'Yes ${predictions.bothTeamsToScore.yes.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white70 : Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: predictions.bothTeamsToScore.no.toInt().clamp(1, 100),
-                      child: SizedBox(),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                // Progress bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: predictions.bothTeamsToScore.yes.toInt().clamp(1, 100),
-                        child: Container(
-                          height: 10,
-                          color: SColor.primary,
-                        ),
-                      ),
-                      Expanded(
-                        flex: predictions.bothTeamsToScore.no.toInt().clamp(1, 100),
-                        child: Container(
-                          height: 10,
-                          color: Color(0xFF1E3A5F),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8),
-                // Bottom: No label
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    'No ${predictions.bothTeamsToScore.no.toStringAsFixed(2)}%',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white70 : Colors.black87,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        SizedBox(height: 8),
+        Center(
+          child: Text('Equal ${equal.toStringAsFixed(2)}%', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black87)),
+        ),
+      ],
     );
   }
 }

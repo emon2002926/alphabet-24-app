@@ -6,14 +6,22 @@ import 'package:scaffassistant/core/theme/text_theme.dart';
 import 'package:scaffassistant/core/universal_widgets/s_text_field.dart';
 import 'package:scaffassistant/feature/home/controllers/sports_data/football_data/leage_list_controller.dart';
 
+import '../../../core/universal_widgets/appbar.dart';
 import '../../../core/universal_widgets/league_list_widget.dart';
 import '../views/ligue_match_list_screen.dart';
 import 'date_selector_widget.dart';
 
 class LeaguesFootballTab extends StatelessWidget {
   final bool isShowSearch;
+  final bool isShowAppBar;
   final int? totalLig;
-  const LeaguesFootballTab({super.key, required this.isShowSearch, this.totalLig});
+
+  const LeaguesFootballTab({
+    super.key,
+    required this.isShowSearch,
+    this.isShowAppBar = false,
+    this.totalLig,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +35,7 @@ class LeaguesFootballTab extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: SColor.bodyColor,
+      appBar: isShowAppBar ? SAppBar(title: 'All Leagues') : null,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -160,4 +169,3 @@ class LeaguesFootballTab extends StatelessWidget {
     );
   }
 }
-

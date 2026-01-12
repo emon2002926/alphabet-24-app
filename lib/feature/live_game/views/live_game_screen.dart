@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scaffassistant/feature/home/screens/home_screen.dart';
-import 'package:scaffassistant/feature/prediction/widgets/predicted_football_tab.dart';
 import '../../../core/theme/SColor.dart';
 import '../../match/views/match_search_screen.dart';
 import 'package:get/get.dart';
+import '../widgets/live_football_tab.dart';
 
+class LiveGameScreen extends StatefulWidget {
+  final bool isShowBackButton;
 
-class PredictionScreen extends StatefulWidget {
-  const PredictionScreen({super.key});
+  const LiveGameScreen({
+    super.key,
+    this.isShowBackButton = false,
+  });
 
   @override
-  State<PredictionScreen> createState() => _PredictionScreenState();
+  State<LiveGameScreen> createState() => _LiveGameScreenState();
 }
 
-class _PredictionScreenState extends State<PredictionScreen> {
+class _LiveGameScreenState extends State<LiveGameScreen> {
   String selectedSport = 'Football';
-  final List<String> sports = ['Football', 'Basketball', 'Tennis'];
+  final List<String> sports = ['Football', 'Basketball'];
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +49,26 @@ class _PredictionScreenState extends State<PredictionScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Sport Dropdown - Left Side
+                  // Back Button - Left Side
+                  if (widget.isShowBackButton)
+                    GestureDetector(
+                      onTap: () => Get.back(),
+                      child: Container(
+                        margin: EdgeInsets.only(right: 12),
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: SColor.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+
+                  // Sport Dropdown
                   Expanded(
                     child: PopupMenuButton<String>(
                       initialValue: selectedSport,
@@ -139,8 +162,6 @@ class _PredictionScreenState extends State<PredictionScreen> {
       case 'Football':
         return PredictedFootballTab();
       case 'Basketball':
-        return DevelopmentPage();
-      case 'Tennis':
         return DevelopmentPage();
       default:
         return PredictedFootballTab();

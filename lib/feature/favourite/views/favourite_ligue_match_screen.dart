@@ -6,6 +6,7 @@ import 'package:scaffassistant/core/universal_widgets/appbar.dart';
 import '../../../core/const/size_const/dynamic_size.dart';
 import '../../../core/theme/SColor.dart';
 import '../../../core/theme/text_theme.dart';
+import '../../../core/universal_widgets/s_text_field.dart';
 import '../controllers/favourite_controller.dart';
 import '../widgets/favourite_igue_football_tab.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,8 @@ import 'package:get/get.dart';
     Widget build(BuildContext context) {
       // Initialize controller with Get.put to ensure it's created
       final FavouriteController controller = Get.put(FavouriteController());
+      final TextEditingController searchController = TextEditingController();
+
 
       return Scaffold(
         backgroundColor: SColor.bodyColor,
@@ -59,6 +62,33 @@ import 'package:get/get.dart';
 
                 // ---------- Horizontal Date Selector ----------
                 FavouriteDateSelectorWidget(),
+
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
+                  child: SizedBox(
+                    height: 50,
+                    child: STextField(
+                      hintText: 'Search',
+                      labelText: 'Search',
+                      controller: searchController,
+                      onChanged: (value) => controller.updateSearch(value),
+                      suffixIcon: Obx(() => GestureDetector(
+                        onTap: () {
+                          if (controller.searchQuery.value.isNotEmpty) {
+                            searchController.clear();
+                            controller.clearSearch();
+                          }
+                        },
+                        child: Icon(
+                          controller.searchQuery.value.isNotEmpty
+                              ? Icons.close
+                              : Icons.search,
+                          color: SColor.primary,
+                        ),
+                      )),
+                    ),
+                  ),
+                ),
 
                 // ---------- TabBar View ----------
                 Expanded(

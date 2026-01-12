@@ -142,7 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     tabs: const [
                       Tab(text: 'Football'),
                       Tab(text: 'Basketball'),
-                      // Tab(text: 'Tennis'),
                     ],
                   ),
                 ),
@@ -152,7 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     FootballScreen(),
                     DevelopmentPage(),
-                    // DevelopmentPage(),
                   ],
                 ),
               ),
