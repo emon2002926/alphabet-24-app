@@ -432,7 +432,7 @@ class _GroupedMatchCard extends StatelessWidget {
                         percentage: awayProb,
                         color: const Color(0xFF01002A),
                         textColor: Colors.black,
-                        percentageColor: const Color(0xFF015440),
+                        percentageColor: const Color(0xFF0096C6),
                       ),
                     ),
                   ],

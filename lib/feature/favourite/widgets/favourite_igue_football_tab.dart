@@ -444,7 +444,7 @@ class FavouriteMatchCard extends StatelessWidget {
                         percentage: awayProb,
                         color: const Color(0xFF01002A),
                         textColor: Colors.white,
-                        percentageColor: const Color(0xFF4CAF50),
+                        percentageColor: const Color(0xFF0096C6),
                       ),
                     ),
                   ],
@@ -563,19 +563,22 @@ class FavouriteMatchCard extends StatelessWidget {
               color: textColor,
             ),
           ),
-          Text(
-            '${percentage.toStringAsFixed(0)}%',
-            style: GoogleFonts.roboto(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: percentageColor ?? textColor,
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              '${percentage.toStringAsFixed(0)}%',
+              style: GoogleFonts.roboto(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: percentageColor ?? textColor,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
     );
   }
-
   Widget _buildOverUnderBox({
     required String label,
     required double percentage,

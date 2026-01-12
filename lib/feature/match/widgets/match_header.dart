@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scaffassistant/feature/match/controllers/summary_controller.dart';
 
+import '../controllers/match_header_controller.dart';
+
 class MatchHeader extends StatefulWidget {
   final String matchId;
   const MatchHeader({super.key, required this.matchId});
@@ -13,16 +15,18 @@ class MatchHeader extends StatefulWidget {
 
 class _MatchHeaderState extends State<MatchHeader> {
   final SummaryController summaryController = Get.put(SummaryController());
+  final MatchHeaderController headerController = Get.put(MatchHeaderController());
 
   @override
   void initState() {
     super.initState();
     summaryController.fetchSummary(widget.matchId);
+    // Optionally check if the match is already favorited
+    headerController.checkFavoriteStatus(int.parse(widget.matchId));
   }
 
   @override
   Widget build(BuildContext context) {
-    // Reduced height for compact design
     final appBarHeight = 200.0;
 
     return Obx(() {
@@ -97,23 +101,6 @@ class _MatchHeaderState extends State<MatchHeader> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Back Button - smaller
-                        // GestureDetector(
-                        //   onTap: () => Get.back(),
-                        //   child: Container(
-                        //     padding: const EdgeInsets.all(8),
-                        //     decoration: BoxDecoration(
-                        //       color: Colors.white.withOpacity(0.15),
-                        //       borderRadius: BorderRadius.circular(8),
-                        //     ),
-                        //     child: const Icon(
-                        //       Icons.arrow_back,
-                        //       color: Colors.white,
-                        //       size: 20,
-                        //     ),
-                        //   ),
-                        // ),
-
                         // League info - centered
                         Flexible(
                           child: Row(
@@ -153,24 +140,32 @@ class _MatchHeaderState extends State<MatchHeader> {
                           ),
                         ),
 
-                        // Favorite Button - smaller
-                        GestureDetector(
-                          onTap: () {
-                            // Add favorite functionality
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(8),
+                        // Favorite Button with Obx to react to changes
+                        Obx(() {
+                          final isFav = headerController.isFavorite.value;
+                          return GestureDetector(
+                            onTap: () {
+                              headerController.toggleFavorite(int.parse(widget.matchId));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: isFav
+                                    ? Colors.amber.withOpacity(0.3)
+                                    : Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(8),
+                                border: isFav
+                                    ? Border.all(color: Colors.amber, width: 1.5)
+                                    : null,
+                              ),
+                              child: Icon(
+                                isFav ? Icons.star : Icons.star_border,
+                                color: isFav ? Colors.amber : Colors.white,
+                                size: 20,
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.star_border,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
+                          );
+                        }),
                       ],
                     ),
                   ),

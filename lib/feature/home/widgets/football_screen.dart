@@ -30,6 +30,7 @@ class _FootballScreenState extends State<FootballScreen> {
   final NewsListController newsListController = Get.put(NewsListController());
 
 
+
   @override
   Widget build(BuildContext context) {
     final bool isNew = true;
@@ -105,22 +106,22 @@ class _FootballScreenState extends State<FootballScreen> {
             SizedBox(height: DynamicSize.medium(context)),
 
             // Top Stories
-            Obx(() {
-              if (newsListController.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (newsListController.newsList.isNotEmpty) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    LabelWidget('Top Stories', true),
-                    SizedBox(height: DynamicSize.small(context)),
-                    _NewsCard(context),
-                  ],
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            }),
+            // Obx(() {
+            //   if (newsListController.isLoading.value) {
+            //     return const Center(child: CircularProgressIndicator());
+            //   } else if (newsListController.newsList.isNotEmpty) {
+            //     return Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         LabelWidget('Top Stories', true),
+            //         SizedBox(height: DynamicSize.small(context)),
+            //         _NewsCard(context),
+            //       ],
+            //     );
+            //   } else {
+            //     return const SizedBox.shrink();
+            //   }
+            // }),
           ],
         ),
       ),

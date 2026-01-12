@@ -21,11 +21,13 @@ class LigueMatchListScreen extends StatelessWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // Always use controller for favorite functionality
+    final controller = Get.put(LeagueDetailController(leagueId: leagueId));
+
     if (matchList != null && matchList.isNotEmpty) {
-      return _buildWithPassedData(context, matchList, leagueName, isDark);
+      return _buildWithPassedData(context, matchList, leagueName, isDark, controller);
     }
 
-    final controller = Get.put(LeagueDetailController(leagueId: leagueId));
     return _buildWithController(context, controller, leagueName, isDark);
   }
 
@@ -34,12 +36,19 @@ class LigueMatchListScreen extends StatelessWidget {
       List<Match> matchList,
       String? leagueName,
       bool isDark,
+      LeagueDetailController controller,
       ) {
-    // Filter matches by status
     final liveMatches = matchList.where((m) => m.status.isLive).toList();
     final finishedMatches = matchList.where((m) => m.status.isFinished).toList();
     final upcomingMatches = matchList.where((m) => m.status.isUpcoming).toList();
     final todayFixtures = [...finishedMatches, ...upcomingMatches];
+
+    // Initialize favorites for passed matches
+    for (var match in matchList) {
+      if (!controller.favoriteFixtures.containsKey(match.id)) {
+        controller.favoriteFixtures[match.id] = false;
+      }
+    }
 
     return Scaffold(
       backgroundColor: SColor.bodyColor,
@@ -57,7 +66,7 @@ class LigueMatchListScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: DynamicSize.small(context)),
-            ...liveMatches.map((match) => _buildMatchRow(match, context, isLive: true)),
+            ...liveMatches.map((match) => _buildMatchRow(match, context, controller, isLive: true)),
             SizedBox(height: DynamicSize.medium(context)),
           ],
           if (todayFixtures.isNotEmpty) ...[
@@ -70,7 +79,7 @@ class LigueMatchListScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: DynamicSize.small(context)),
-            ...todayFixtures.map((match) => _buildMatchRow(match, context, isLive: false)),
+            ...todayFixtures.map((match) => _buildMatchRow(match, context, controller, isLive: false)),
           ],
           if (liveMatches.isEmpty && todayFixtures.isEmpty)
             Center(
@@ -128,7 +137,7 @@ class LigueMatchListScreen extends StatelessWidget {
               ),
               SizedBox(height: DynamicSize.small(context)),
               ...controller.liveMatches
-                  .map((match) => _buildLeagueMatchRow(match, context, isLive: true)),
+                  .map((match) => _buildLeagueMatchRow(match, context, controller, isLive: true)),
               SizedBox(height: DynamicSize.medium(context)),
             ],
             if (controller.todayFixtures.isNotEmpty) ...[
@@ -142,7 +151,7 @@ class LigueMatchListScreen extends StatelessWidget {
               ),
               SizedBox(height: DynamicSize.small(context)),
               ...controller.todayFixtures
-                  .map((match) => _buildLeagueMatchRow(match, context, isLive: false)),
+                  .map((match) => _buildLeagueMatchRow(match, context, controller, isLive: false)),
             ],
           ],
         );
@@ -150,8 +159,12 @@ class LigueMatchListScreen extends StatelessWidget {
     );
   }
 
-  /// Match row for passed Match model
-  Widget _buildMatchRow(Match match, BuildContext context, {required bool isLive}) {
+  Widget _buildMatchRow(
+      Match match,
+      BuildContext context,
+      LeagueDetailController controller,
+      {required bool isLive}
+      ) {
     final bool hasScore = match.homeTeam.score != null && match.awayTeam.score != null;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -175,9 +188,18 @@ class LigueMatchListScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.star_border,
-                color:  Colors.amber ,
-                size: 24),
+            // Favorite Icon with Obx
+            Obx(() {
+              final isFav = controller.isFavorite(match.id);
+              return GestureDetector(
+                onTap: () => controller.toggleFavorite(match.id),
+                child: Icon(
+                  isFav ? Icons.star : Icons.star_border,
+                  color: isFav ? Colors.amber : Colors.grey,
+                  size: 24,
+                ),
+              );
+            }),
             SizedBox(width: DynamicSize.medium(context)),
             Expanded(
               child: Column(
@@ -196,8 +218,12 @@ class LigueMatchListScreen extends StatelessWidget {
     );
   }
 
-  /// Match row for LeagueMatch model (from API)
-  Widget _buildLeagueMatchRow(LeagueMatch match, BuildContext context, {required bool isLive}) {
+  Widget _buildLeagueMatchRow(
+      LeagueMatch match,
+      BuildContext context,
+      LeagueDetailController controller,
+      {required bool isLive}
+      ) {
     final bool hasScore = match.homeTeam.score != null && match.awayTeam.score != null;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -221,7 +247,18 @@ class LigueMatchListScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.star_border, color: SColor.primary, size: 24),
+            // Favorite Icon with Obx to react to changes
+            Obx(() {
+              final isFav = controller.isFavorite(match.id);
+              return GestureDetector(
+                onTap: () => controller.toggleFavorite(match.id),
+                child: Icon(
+                  isFav ? Icons.star : Icons.star_border,
+                  color: isFav ? Colors.amber : Colors.grey,
+                  size: 24,
+                ),
+              );
+            }),
             SizedBox(width: DynamicSize.medium(context)),
             Expanded(
               child: Column(
@@ -386,14 +423,10 @@ class LigueMatchListScreen extends StatelessWidget {
     return Colors.grey;
   }
 
-
-
   Color _getStateColor(String state) {
     if (state.contains('1H') || state.contains('2H') || state.toLowerCase().contains('live')) return Color(0xFFFF6B6B);
     if (state.toLowerCase().contains('ft') || state.toLowerCase().contains('finished')) return Color(0xFF4CAF50);
     if (state.toLowerCase().contains('ns') || state.toLowerCase().contains('not started')) return Colors.blue;
     return Colors.grey;
   }
-
-
 }

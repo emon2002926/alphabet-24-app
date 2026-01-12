@@ -150,20 +150,8 @@ class LeagueListWidget extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              SColor.primary,
-                              SColor.primary.withOpacity(0.8),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: SColor.primary.withOpacity(0.3),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
+
+
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -175,7 +163,7 @@ class LeagueListWidget extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                                color: Colors.blue,
                               ),
                             ),
                           ],
