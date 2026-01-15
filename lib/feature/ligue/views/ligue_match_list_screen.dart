@@ -394,7 +394,10 @@ class LigueMatchListScreen extends StatelessWidget {
 
   String _formatMatchTime(String startingAt) {
     try {
-      return DateFormat('HH:mm').format(DateTime.parse(startingAt));
+      // Parse as UTC (API returns GMT+0) and convert to user's local time
+      final utcTime = DateTime.parse(startingAt + 'Z');
+      final localTime = utcTime.toLocal();
+      return DateFormat('hh:mm a').format(localTime); // 12-hour format with AM/PM
     } catch (e) {
       return startingAt;
     }
@@ -402,15 +405,18 @@ class LigueMatchListScreen extends StatelessWidget {
 
   String _formatMatchDate(String startingAt) {
     try {
-      final dateTime = DateTime.parse(startingAt);
+      // Parse as UTC and convert to local time
+      final utcTime = DateTime.parse(startingAt + 'Z');
+      final localTime = utcTime.toLocal();
+
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
-      final matchDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+      final matchDate = DateTime(localTime.year, localTime.month, localTime.day);
 
       if (matchDate == today) return 'Today';
       if (matchDate == today.add(Duration(days: 1))) return 'Tomorrow';
       if (matchDate == today.subtract(Duration(days: 1))) return 'Yesterday';
-      return DateFormat('MMM dd').format(dateTime);
+      return DateFormat('MMM dd').format(localTime);
     } catch (e) {
       return '';
     }
