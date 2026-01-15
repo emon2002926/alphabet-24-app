@@ -225,7 +225,7 @@ class LeagueListController extends GetxController {
         }),
       );
 
-      print('Favorite League API Response: ${response.statusCode}');
+      print('Favorite League API Response: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);

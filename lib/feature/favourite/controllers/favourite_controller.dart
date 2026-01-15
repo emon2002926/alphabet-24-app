@@ -150,6 +150,7 @@ class FavouriteController extends GetxController {
           leagueCountry: league.leagueCountry,
           leagueType: league.leagueType,
           createdAt: league.createdAt,
+          isFavourite: league.isFavourite,
           hasMatchesToday: filteredMatches.isNotEmpty,
           matchesTodayCount: filteredMatches.length,
           matches: filteredMatches,
@@ -191,7 +192,7 @@ class FavouriteController extends GetxController {
         },
       );
 
-      print('Favourite API Response: ${response.statusCode}');
+      print('Favourite API Response: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -200,7 +201,13 @@ class FavouriteController extends GetxController {
           final favouriteResponse = FavouriteResponse.fromJson(data);
           favouriteFixtures.value = favouriteResponse.fixtures;
           favouriteTeams.value = favouriteResponse.teams;
-          favouriteLeagues.value = favouriteResponse.leagues;
+
+          // for(var item in favouriteResponse.leagues) {
+          //   if(item.isFavourite) {
+          //     favouriteLeagues.add(item);
+          //   }
+          // }
+           favouriteLeagues.value = favouriteResponse.leagues;
           totalFavourites.value = favouriteResponse.total;
 
           // Apply initial filters
@@ -235,6 +242,8 @@ class FavouriteController extends GetxController {
           'fixture_id': fixtureId,
         }),
       );
+
+      print('Remove Fixture API Response: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);

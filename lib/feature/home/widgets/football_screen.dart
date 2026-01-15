@@ -83,6 +83,7 @@ class _FootballScreenState extends State<FootballScreen> {
                       leagues: leagueListController.filteredLeagues,
                       showDivider: true,
                       onToggleFavorite: (index, league) {
+
                         leagueListController.toggleFavoriteLeague(
                           index,
                           useFiltered: true,

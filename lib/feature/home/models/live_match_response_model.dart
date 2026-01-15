@@ -550,6 +550,7 @@ class FavouriteLeague {
   final String leagueType;
   final DateTime createdAt;
   final bool hasMatchesToday;
+  final bool isFavourite;
   final int matchesTodayCount;
   final List<dynamic> matches; // Dynamic list to handle match objects
 
@@ -564,6 +565,7 @@ class FavouriteLeague {
     required this.hasMatchesToday,
     required this.matchesTodayCount,
     required this.matches,
+    required this.isFavourite,
   });
 
   factory FavouriteLeague.fromJson(Map<String, dynamic> json) {
@@ -576,6 +578,7 @@ class FavouriteLeague {
       leagueType: json['league_type'] ?? '',
       createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
       hasMatchesToday: json['has_matches_today'] ?? false,
+      isFavourite: json['is_favourite'] ?? false,
       matchesTodayCount: json['matches_today_count'] ?? 0,
       matches: json['matches'] ?? [],
     );
