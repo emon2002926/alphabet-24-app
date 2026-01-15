@@ -4,6 +4,7 @@ import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
 import 'package:scaffassistant/core/helper/api_request/get_request.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
 import '../../../../../core/universal_widgets/s_snackbar.dart';
+import '../../../../favourite/controllers/favourite_controller.dart';
 import '../../../models/leage_list_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -192,6 +193,7 @@ class LeagueListController extends GetxController {
   int get totalMatches => leagueByDateResponse.value?.totalMatches ?? 0;
 
   // ===== TOGGLE FAVORITE LEAGUE =====
+// ===== TOGGLE FAVORITE LEAGUE =====
   Future<void> toggleFavoriteLeague(int index, {bool useFiltered = false}) async {
     final targetList = useFiltered ? filteredLeagues : leagues;
 
@@ -230,6 +232,14 @@ class LeagueListController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
+          // ✅ Update FavouriteController to reflect changeschanges
+          try {
+            final favouriteController = Get.find<FavouriteController>();
+            await favouriteController.fetchFavourites();
+          } catch (e) {
+            print('⚠️ FavouriteController not found or error refreshing: $e');
+          }
+
           SSnackbar.success(
             targetList[index].isFavorite
                 ? 'League added to favorites'
@@ -246,6 +256,7 @@ class LeagueListController extends GetxController {
       SSnackbar.error('Something went wrong');
     }
   }
+
 
   void _revertFavorite(int index, bool useFiltered) {
     final targetList = useFiltered ? filteredLeagues : leagues;

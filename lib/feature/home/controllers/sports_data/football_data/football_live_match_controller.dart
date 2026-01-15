@@ -3,6 +3,7 @@ import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
 import 'package:scaffassistant/core/helper/api_request/get_request.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
 import '../../../../../core/universal_widgets/s_snackbar.dart';
+import '../../../../favourite/controllers/favourite_controller.dart';
 import '../../../models/live_match_response_model.dart';
 import 'dart:async';
 
@@ -265,6 +266,12 @@ import 'package:http/http.dart' as http;
         if (response.statusCode == 200 || response.statusCode == 201) {
           final data = jsonDecode(response.body);
           if (data['success'] == true) {
+            try {
+              final favouriteController = Get.find<FavouriteController>();
+              await favouriteController.fetchFavourites();
+            } catch (e) {
+              print('⚠️ FavouriteController not found or error refreshing: $e');
+            }
             SSnackbar.success(
               targetList[targetIndex].isFavoriteMatch
                   ? 'Added to favorites'
@@ -327,6 +334,12 @@ import 'package:http/http.dart' as http;
         if (response.statusCode == 200 || response.statusCode == 201) {
           final data = jsonDecode(response.body);
           if (data['success'] == true) {
+            try {
+              final favouriteController = Get.find<FavouriteController>();
+              await favouriteController.fetchFavourites();
+            } catch (e) {
+              print('⚠️ FavouriteController not found or error refreshing: $e');
+            }
             SSnackbar.success(
               match.isFavoriteMatch
                   ? 'Added to favorites'
