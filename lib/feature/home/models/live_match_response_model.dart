@@ -77,10 +77,11 @@ class LiveMatch {
       name: json['name'] ?? "",
       startingAt: DateTime.tryParse(json['starting_at'] ?? "") ?? DateTime.now(),
       status: MatchStatus.fromJson(json['status'] ?? {}),
-      isFavoriteMatch: json['is_favorite_match'] ?? false,
+      // ⚠️ FIX: The JSON key is "is_favorite", not "is_favorite_match"
+      isFavoriteMatch: json['is_favorite'] ?? false,
       matchReason: json['match_reason'] ?? [],
       league: League.fromJson(json['league'] ?? {}),
-      round: Round.fromJson(json['round'] ?? {}),
+      round: json['round'] != null ? Round.fromJson(json['round']) : Round.empty(),
       homeTeam: Team.fromJson(json['home_team'] ?? {}),
       awayTeam: Team.fromJson(json['away_team'] ?? {}),
       score: MatchScore.fromJson(json['score'] ?? {}),
@@ -95,7 +96,6 @@ class LiveMatch {
     );
   }
 }
-
 // ================== SUB MODELS ==================
 
 class MatchStatus {
@@ -176,8 +176,8 @@ class Country {
 class Round {
   int id;
   String name;
-  DateTime startingAt;
-  DateTime endingAt;
+  String startingAt;
+  String endingAt;
 
   Round({
     required this.id,
@@ -190,12 +190,21 @@ class Round {
     return Round(
       id: json['id'] ?? 0,
       name: json['name'] ?? "",
-      startingAt: DateTime.tryParse(json['starting_at'] ?? "") ?? DateTime.now(),
-      endingAt: DateTime.tryParse(json['ending_at'] ?? "") ?? DateTime.now(),
+      startingAt: json['starting_at'] ?? "",
+      endingAt: json['ending_at'] ?? "",
+    );
+  }
+
+  // Add this for matches without rounds
+  factory Round.empty() {
+    return Round(
+      id: 0,
+      name: "",
+      startingAt: "",
+      endingAt: "",
     );
   }
 }
-
 class Team {
   int id;
   String name;

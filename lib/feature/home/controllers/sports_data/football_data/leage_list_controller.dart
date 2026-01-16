@@ -91,9 +91,11 @@ class LeagueListController extends GetxController {
   }
 
   // Fetch all leagues (original endpoint)
-  Future<void> fetchLeagues() async {
+  Future<void> fetchLeagues({bool silent = false}) async {
     try {
-      isLoading.value = true;
+      if (!silent) {
+        isLoading.value = true;
+      }
 
       GetAPIRequest getAPIRequest = GetAPIRequest(
         url: APIEndpoint.leagueList,
@@ -115,25 +117,37 @@ class LeagueListController extends GetxController {
             .where((league) => league.matchCount == null || league.matchCount! > 0)
             .toList();
         applySearchFilter();
-        print('✅ All Leagues Loaded: ${leagues.length}');
+
+        if (silent) {
+          print('🔄 Silently refreshed leagues: ${leagues.length}');
+        } else {
+          print('✅ All Leagues Loaded: ${leagues.length}');
+        }
       } else {
         print('❌ Failed to fetch league data');
       }
     } catch (e) {
       print('❌ Error fetching leagues: $e');
     } finally {
-      isLoading.value = false;
+      if (!silent) {
+        isLoading.value = false;
+      }
     }
   }
 
-  // Fetch leagues by date
-  Future<void> fetchLeaguesByDate(DateTime date) async {
+  // Fetch leagues by date with optional silent mode
+  Future<void> fetchLeaguesByDate(DateTime date, {bool silent = false}) async {
     try {
-      isLoading.value = true;
+      if (!silent) {
+        isLoading.value = true;
+      }
 
       final formattedDate = DateFormat('yyyy-MM-dd').format(date);
       final url = '${APIEndpoint.baseURL}sports-data/leagues/date/$formattedDate/';
-      print('📅 Fetching leagues for date: $url');
+
+      if (!silent) {
+        print('📅 Fetching leagues for date: $url');
+      }
 
       GetAPIRequest getAPIRequest = GetAPIRequest(
         url: url,
@@ -149,11 +163,13 @@ class LeagueListController extends GetxController {
         final fullResponse = LeagueByDateResponse.fromJson(response);
         leagueByDateResponse.value = fullResponse;
 
-        print('✅ LeagueByDateResponse captured:');
-        print('   - Status: ${fullResponse.status}');
-        print('   - Date: ${fullResponse.date}');
-        print('   - Total Leagues: ${fullResponse.totalLeagues}');
-        print('   - Total Matches: ${fullResponse.totalMatches}');
+        if (!silent) {
+          print('✅ LeagueByDateResponse captured:');
+          print('   - Status: ${fullResponse.status}');
+          print('   - Date: ${fullResponse.date}');
+          print('   - Total Leagues: ${fullResponse.totalLeagues}');
+          print('   - Total Matches: ${fullResponse.totalMatches}');
+        }
 
         // Filter leagues with matches
         final leaguesList = fullResponse.leagues.where((league) {
@@ -169,20 +185,31 @@ class LeagueListController extends GetxController {
         leagues.value = leaguesList;
         applySearchFilter();
 
-        print('✅ Leagues by Date Loaded: ${leagues.length} leagues with matches');
+        if (silent) {
+          print('🔄 Silently refreshed leagues by date: ${leagues.length}');
+        } else {
+          print('✅ Leagues by Date Loaded: ${leagues.length} leagues with matches');
+        }
       } else {
         leagueByDateResponse.value = null;
         leagues.clear();
         filteredLeagues.clear();
-        print('⚠️ No leagues available for $formattedDate');
+
+        if (!silent) {
+          print('⚠️ No leagues available for $formattedDate');
+        }
       }
     } catch (e) {
       print('❌ Error fetching leagues by date: $e');
-      leagueByDateResponse.value = null;
-      leagues.clear();
-      filteredLeagues.clear();
+      if (!silent) {
+        leagueByDateResponse.value = null;
+        leagues.clear();
+        filteredLeagues.clear();
+      }
     } finally {
-      isLoading.value = false;
+      if (!silent) {
+        isLoading.value = false;
+      }
     }
   }
 
@@ -193,7 +220,6 @@ class LeagueListController extends GetxController {
   int get totalMatches => leagueByDateResponse.value?.totalMatches ?? 0;
 
   // ===== TOGGLE FAVORITE LEAGUE =====
-// ===== TOGGLE FAVORITE LEAGUE =====
   Future<void> toggleFavoriteLeague(int index, {bool useFiltered = false}) async {
     final targetList = useFiltered ? filteredLeagues : leagues;
 
@@ -232,13 +258,16 @@ class LeagueListController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
-          // ✅ Update FavouriteController to reflect changeschanges
+          // ✅ Update FavouriteController to reflect changes
           try {
             final favouriteController = Get.find<FavouriteController>();
             await favouriteController.fetchFavourites();
           } catch (e) {
             print('⚠️ FavouriteController not found or error refreshing: $e');
           }
+
+          // ✅ Silently refresh league data in background without showing loading
+          _silentlyRefreshLeagueData();
 
           SSnackbar.success(
             targetList[index].isFavorite
@@ -257,6 +286,15 @@ class LeagueListController extends GetxController {
     }
   }
 
+  // ✅ NEW: Silent refresh method
+  void _silentlyRefreshLeagueData() {
+    // Refresh in background without showing loading indicator
+    if (isDateFilterActive.value) {
+      fetchLeaguesByDate(selectedDate.value, silent: true);
+    } else {
+      fetchLeagues(silent: true);
+    }
+  }
 
   void _revertFavorite(int index, bool useFiltered) {
     final targetList = useFiltered ? filteredLeagues : leagues;

@@ -10,6 +10,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'leage_list_controller.dart';
+
   class FootballLiveMatchController extends GetxController {
     // Reactive lists
     RxList<LiveMatch> liveMatches = <LiveMatch>[].obs;
@@ -62,6 +64,8 @@ import 'package:http/http.dart' as http;
           final liveMatchResponse = LiveMatchResponse.fromJson(response);
 
           if (liveMatchResponse.matches.isNotEmpty) {
+            print('sfghj: ${(liveMatchResponse.matches[0].isFavoriteMatch).toString()}');
+
             liveMatches.value = liveMatchResponse.matches;
             print('✅ Live Matches Loaded: ${liveMatches.length}');
           } else {
@@ -121,10 +125,10 @@ import 'package:http/http.dart' as http;
           stateShort: json['state_short'] ?? "NS",
           stateId: json['state_id'] ?? 1,
         ),
-        isFavoriteMatch: false,
-        matchReason: [],
+        isFavoriteMatch: json['is_favorite'] ?? false, // ✅ Correct key
+        matchReason: json['match_reason'] ?? [],
         league: League.fromJson(json['league'] ?? {}),
-        round: Round.fromJson(json['round'] ?? {}),
+        round: json['round'] != null ? Round.fromJson(json['round']) : Round.empty(),
         homeTeam: Team(
           id: json['home_team']?['id'] ?? 0,
           name: json['home_team']?['name'] ?? "",
@@ -152,8 +156,12 @@ import 'package:http/http.dart' as http;
           away: json['away_team']?['score'] ?? 0,
           display: "- : -",
         ),
-        periods: [],
-        events: [],
+        periods: (json['periods'] as List? ?? [])
+            .map((e) => Period.fromJson(e))
+            .toList(),
+        events: (json['events'] as List? ?? [])
+            .map((e) => Event.fromJson(e))
+            .toList(),
         venue: json['venue'] != null ? Venue.fromJson(json['venue']) : null,
         predictions: Predictions.fromJson(json['predictions'] ?? {}),
       );
@@ -269,6 +277,14 @@ import 'package:http/http.dart' as http;
             try {
               final favouriteController = Get.find<FavouriteController>();
               await favouriteController.fetchFavourites();
+            } catch (e) {
+              print('⚠️ FavouriteController not found or error refreshing: $e');
+            }
+            try {
+              final leagueListController = Get.find<LeagueListController>();
+              await leagueListController.fetchLeaguesByDate(
+                leagueListController.selectedDate.value,
+              );
             } catch (e) {
               print('⚠️ FavouriteController not found or error refreshing: $e');
             }

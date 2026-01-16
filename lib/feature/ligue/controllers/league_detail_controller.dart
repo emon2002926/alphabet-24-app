@@ -5,56 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
-import '../../../core/helper/api_request/get_request.dart';
 import '../../../core/local_storage/user_info.dart';
-import '../models/league_detail_response.dart';
+import '../../favourite/controllers/favourite_controller.dart';
+import '../../home/controllers/sports_data/football_data/football_live_match_controller.dart';
+import '../../home/controllers/sports_data/football_data/leage_list_controller.dart';
 
-class LeagueDetailController extends GetxController {
+class LeagueMatchListController extends GetxController {
   final int leagueId;
-  LeagueDetailController({required this.leagueId});
-
-  RxBool isLoading = false.obs;
-  RxList<LeagueMatch> liveMatches = <LeagueMatch>[].obs;
-  RxList<LeagueMatch> todayFixtures = <LeagueMatch>[].obs;
+  LeagueMatchListController({required this.leagueId});
 
   // Track favorite status for each fixture
   RxMap<int, bool> favoriteFixtures = <int, bool>{}.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    fetchLeagueDetails();
-  }
-
-  Future<void> fetchLeagueDetails() async {
-    try {
-      isLoading.value = true;
-
-      final response = await GetAPIRequest(
-        url: '${APIEndpoint.leagueDetail}/$leagueId',
-        headers: {'Authorization': 'Bearer ${UserInfo.getAccessToken()}'},
-      ).fetchData();
-
-      if (response.isNotEmpty) {
-        final leagueResponse = LeagueDetailResponse.fromJson(response);
-        liveMatches.value = leagueResponse.liveMatches.matches;
-        todayFixtures.value = leagueResponse.todayFixtures.matches;
-
-        // Initialize favorite status (you might want to fetch this from API)
-        for (var match in [...liveMatches, ...todayFixtures]) {
-          favoriteFixtures[match.id] = false; // Default to false
-        }
-
-        print('Live matches: ${liveMatches.length}');
-        print('League details: ${leagueResponse.league.name}');
-        print('Today fixtures: ${todayFixtures.length}');
-      }
-    } catch (e) {
-      print('Error fetching league details: $e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
 
   /// Toggle favorite status for a fixture
   Future<void> toggleFavorite(int fixtureId) async {
@@ -76,6 +38,27 @@ class LeagueDetailController extends GetxController {
         favoriteFixtures[fixtureId] = !(favoriteFixtures[fixtureId] ?? false);
 
         // Show success message
+        try {
+          final favouriteController = Get.find<FavouriteController>();
+          await favouriteController.fetchFavourites();
+        } catch (e) {
+          print('⚠️ FavouriteController not found or error refreshing: $e');
+        }
+        try {
+          final favouriteController = Get.find<LeagueListController>();
+          await favouriteController.fetchLeaguesByDate(
+            favouriteController.selectedDate.value,
+          );
+        } catch (e) {
+          print('⚠️ FavouriteController not found or error refreshing: $e');
+        }
+        try {
+          final footballLiveMatchController = Get.find<FootballLiveMatchController>();
+          await footballLiveMatchController.fetchMatches();
+        } catch (e) {
+          print('⚠️ FavouriteController not found or error refreshing: $e');
+        }
+
         Get.snackbar(
           favoriteFixtures[fixtureId]! ? 'Added to Favorites' : 'Removed from Favorites',
           favoriteFixtures[fixtureId]!
@@ -93,7 +76,6 @@ class LeagueDetailController extends GetxController {
       } else {
         throw Exception('Failed to toggle favorite: ${response.statusCode}');
       }
-
     } catch (e) {
       print('Error toggling favorite: $e');
       Get.snackbar(

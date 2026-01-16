@@ -154,6 +154,7 @@ class Match {
   Team homeTeam;
   Team awayTeam;
   Score score;
+  bool isFavorite;
   Round? round;
   Stage? stage;
   Group? group;
@@ -167,6 +168,7 @@ class Match {
     required this.homeTeam,
     required this.awayTeam,
     required this.score,
+    required this.isFavorite,
     this.round,
     this.stage,
     this.group,
@@ -182,6 +184,7 @@ class Match {
       homeTeam: Team.fromJson(json['home_team'] ?? {}),
       awayTeam: Team.fromJson(json['away_team'] ?? {}),
       score: Score.fromJson(json['score'] ?? {}),
+      isFavorite: json['is_favorite'] ?? false,
       round: json['round'] != null ? Round.fromJson(json['round']) : null,
       stage: json['stage'] != null ? Stage.fromJson(json['stage']) : null,
       group: json['group'] != null ? Group.fromJson(json['group']) : null,
@@ -194,6 +197,7 @@ class Match {
     'name': name,
     'starting_at': startingAt,
     'status': status.toJson(),
+    'is_favorite': isFavorite,
     'home_team': homeTeam.toJson(),
     'away_team': awayTeam.toJson(),
     'score': score.toJson(),
