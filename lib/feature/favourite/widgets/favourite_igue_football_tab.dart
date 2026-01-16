@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,187 +12,217 @@ import '../../home/models/live_match_response_model.dart';
 import '../../match/views/match_details_screen.dart';
 import '../controllers/favourite_controller.dart';
 
-class FavouriteIgueFootballTab extends StatelessWidget {
-  const FavouriteIgueFootballTab({super.key});
+  class FavouriteIgueFootballTab extends StatelessWidget {
+    const FavouriteIgueFootballTab({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final controller = Get.put(FavouriteController());
+    @override
+    Widget build(BuildContext context) {
+      final controller = Get.put(FavouriteController());
 
-    return Scaffold(
-      backgroundColor: SColor.bodyColor,
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      return Scaffold(
+        backgroundColor: SColor.bodyColor,
+        body: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        return RefreshIndicator(
-          onRefresh: () => controller.fetchFavourites(),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Obx(() {
-                  final leagues = controller.filteredLeagues;
-                  final fixtures = controller.filteredFixtures;
+          return RefreshIndicator(
+            onRefresh: () => controller.fetchFavourites(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(() {
+                    final leagues = controller.filteredLeagues;
+                    final fixtures = controller.filteredFixtures;
 
-                  // Check if both are empty
-                  if (leagues.isEmpty && fixtures.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(40),
-                        child: Column(
-                          children: [
-                            Icon(Icons.favorite_border, size: 60, color: Colors.grey[400]),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No favourites yet',
-                              style: STextTheme.subHeadLine().copyWith(
-                                color: Colors.grey[600],
+                    // Check if both are empty
+                    if (leagues.isEmpty && fixtures.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(40),
+                          child: Column(
+                            children: [
+                              Icon(Icons.favorite_border, size: 60, color: Colors.grey[400]),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No favourites yet',
+                                style: STextTheme.subHeadLine().copyWith(
+                                  color: Colors.grey[600],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-
-                  // Build list of all match groups (from both leagues and fixtures)
-                  return Column(
-                    children: [
-                      // ===== LEAGUES WITH MATCHES =====
-                      ...leagues.where((league) => league.matches.isNotEmpty).map((league) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
-                          child: _LeagueMatchesGroup(
-                            leagueName: league.leagueName,
-                            leagueLogo: league.leagueLogo,
-                            matches: league.matches,
-                            onRemoveMatch: (matchId) => controller.removeFixtureFavourite(matchId),
+                            ],
                           ),
-                        );
-                      }),
-
-                      // ===== STANDALONE FIXTURES =====
-                      if (fixtures.isNotEmpty) ...[
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
-                          child: _buildFixturesSection(fixtures, controller),
                         ),
-                      ],
+                      );
+                    }
 
-                      SizedBox(height: DynamicSize.large(context)),
-                    ],
-                  );
-                }),
+                    // Build list of all match groups (from both leagues and fixtures)
+                    return Column(
+                      children: [
+                        // ===== LEAGUES WITH MATCHES =====
+                        ...leagues.where((league) => league.matches.isNotEmpty).map((league) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
+                            child: _LeagueMatchesGroup(
+                              onRemoveLeague: (leagueId) => controller.removeLeagueFavourite(leagueId),
+                              leagueId: league.leagueId,
+                              leagueName: league.leagueName,
+                              leagueLogo: league.leagueLogo,
+                              matches: league.matches,
+                              onRemoveMatch: (matchId) => controller.removeFixtureFavourite(matchId),
+                            ),
+                          );
+                        }),
+
+                        // ===== STANDALONE FIXTURES =====
+                        if (fixtures.isNotEmpty) ...[
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: DynamicSize.medium(context)),
+                            child: _buildFixturesSection(fixtures, controller),
+                          ),
+                        ],
+
+                        SizedBox(height: DynamicSize.large(context)),
+                      ],
+                    );
+                  }),
+                ],
+              ),
+            ),
+          );
+        }),
+      );
+    }
+
+    Widget _buildFixturesSection(List<FavouriteFixture> fixtures, FavouriteController controller) {
+      // Group fixtures by league
+      final groupedFixtures = _groupFixturesByLeague(fixtures);
+
+      return Column(
+        children: groupedFixtures.entries.map((entry) {
+          final leagueName = entry.key;
+          final leagueFixtures = entry.value;
+          final leagueLogo = leagueFixtures.first.league.logo;
+
+          return _FixturesMatchGroup(
+            leagueName: leagueName,
+            leagueLogo: leagueLogo,
+            fixtures: leagueFixtures,
+            onRemoveFixture: (fixture) => controller.removeFixtureFavourite(fixture.id),
+          );
+        }).toList(),
+      );
+    }
+
+    Map<String, List<FavouriteFixture>> _groupFixturesByLeague(List<FavouriteFixture> fixtures) {
+      final Map<String, List<FavouriteFixture>> grouped = {};
+
+      for (final fixture in fixtures) {
+        final leagueName = fixture.league.name;
+        if (!grouped.containsKey(leagueName)) {
+          grouped[leagueName] = [];
+        }
+        grouped[leagueName]!.add(fixture);
+      }
+
+      return grouped;
+    }
+  }
+
+  // ===== WIDGET FOR LEAGUE MATCHES (from leagues array) =====
+  class _LeagueMatchesGroup extends StatelessWidget {
+    final int leagueId;
+    final String leagueName;
+    final String leagueLogo;
+    final List<dynamic> matches;
+    final Function(int) onRemoveMatch;
+    final Function(int) onRemoveLeague;
+
+    const _LeagueMatchesGroup({
+      required this.leagueName,
+      required this.leagueLogo,
+      required this.matches,
+      required this.onRemoveMatch,  required this.onRemoveLeague, required this.leagueId,
+    });
+
+    @override
+    Widget build(BuildContext context) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // League Header
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              children: [
+
+                // claude that will remove the league from the favourite
+                GestureDetector(
+                  onTap: () {
+                    onRemoveLeague(leagueId);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: (isDark ? Color(0xFF3E3E3E) : Colors.grey[100]),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                          size: 22,
+                          ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.network(
+                    leagueLogo,
+                    height: 20,
+                    width: 20,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Icon(
+                      Icons.sports_soccer,
+                      size: 20,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  leagueName,
+                  style: GoogleFonts.roboto(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                ),
               ],
             ),
           ),
-        );
-      }),
-    );
-  }
 
-  Widget _buildFixturesSection(List<FavouriteFixture> fixtures, FavouriteController controller) {
-    // Group fixtures by league
-    final groupedFixtures = _groupFixturesByLeague(fixtures);
-
-    return Column(
-      children: groupedFixtures.entries.map((entry) {
-        final leagueName = entry.key;
-        final leagueFixtures = entry.value;
-        final leagueLogo = leagueFixtures.first.league.logo;
-
-        return _FixturesMatchGroup(
-          leagueName: leagueName,
-          leagueLogo: leagueLogo,
-          fixtures: leagueFixtures,
-          onRemoveFixture: (fixture) => controller.removeFixtureFavourite(fixture.id),
-        );
-      }).toList(),
-    );
-  }
-
-  Map<String, List<FavouriteFixture>> _groupFixturesByLeague(List<FavouriteFixture> fixtures) {
-    final Map<String, List<FavouriteFixture>> grouped = {};
-
-    for (final fixture in fixtures) {
-      final leagueName = fixture.league.name;
-      if (!grouped.containsKey(leagueName)) {
-        grouped[leagueName] = [];
-      }
-      grouped[leagueName]!.add(fixture);
+          // Match Cards
+          ...matches.map((match) => _LeagueMatchCard(
+            match: match,
+            onRemove: () => onRemoveMatch(match['id'] ?? 0),
+          )),
+        ],
+      );
     }
-
-    return grouped;
   }
-}
 
-// ===== WIDGET FOR LEAGUE MATCHES (from leagues array) =====
-class _LeagueMatchesGroup extends StatelessWidget {
-  final String leagueName;
-  final String leagueLogo;
-  final List<dynamic> matches;
-  final Function(int) onRemoveMatch;
 
-  const _LeagueMatchesGroup({
-    required this.leagueName,
-    required this.leagueLogo,
-    required this.matches,
-    required this.onRemoveMatch,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // League Header
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: Image.network(
-                  leagueLogo,
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Icon(
-                    Icons.sports_soccer,
-                    size: 20,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                leagueName,
-                style: GoogleFonts.roboto(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-        ),
 
-        // Match Cards
-        ...matches.map((match) => _LeagueMatchCard(
-          match: match,
-          onRemove: () => onRemoveMatch(match['id'] ?? 0),
-        )),
-      ],
-    );
-  }
-}
 
 // ===== WIDGET FOR STANDALONE FIXTURES GROUP =====
+
 class _FixturesMatchGroup extends StatelessWidget {
   final String leagueName;
   final String leagueLogo;
@@ -253,8 +285,7 @@ class _FixturesMatchGroup extends StatelessWidget {
   }
 }
 
-// ===== MATCH CARD FOR LEAGUE MATCHES =====
-// ===== MATCH CARD FOR LEAGUE MATCHES =====
+
 class _LeagueMatchCard extends StatelessWidget {
   final dynamic match;
   final VoidCallback onRemove;

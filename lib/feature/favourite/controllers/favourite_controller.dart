@@ -9,304 +9,304 @@ import '../../../core/universal_widgets/s_snackbar.dart';
 import '../../home/models/live_match_response_model.dart';
 
 
-class FavouriteController extends GetxController {
-  RxList<FavouriteFixture> favouriteFixtures = <FavouriteFixture>[].obs;
-  RxList<FavouriteFixture> filteredFixtures = <FavouriteFixture>[].obs;
-  RxList<dynamic> favouriteTeams = <dynamic>[].obs;
-  RxList<FavouriteLeague> favouriteLeagues = <FavouriteLeague>[].obs;
-  RxList<FavouriteLeague> filteredLeagues = <FavouriteLeague>[].obs;
-  RxInt totalFavourites = 0.obs;
-  RxBool isLoading = false.obs;
-  RxString searchQuery = ''.obs;
+  class FavouriteController extends GetxController {
+    RxList<FavouriteFixture> favouriteFixtures = <FavouriteFixture>[].obs;
+    RxList<FavouriteFixture> filteredFixtures = <FavouriteFixture>[].obs;
+    RxList<dynamic> favouriteTeams = <dynamic>[].obs;
+    RxList<FavouriteLeague> favouriteLeagues = <FavouriteLeague>[].obs;
+    RxList<FavouriteLeague> filteredLeagues = <FavouriteLeague>[].obs;
+    RxInt totalFavourites = 0.obs;
+    RxBool isLoading = false.obs;
+    RxString searchQuery = ''.obs;
 
-  // ===== DATE SELECTION =====
-  Rx<DateTime> selectedDate = DateTime.now().obs;
-  RxList<DateTime> dateRange = <DateTime>[].obs;
-  RxBool isDateFilterActive = false.obs;
+    // ===== DATE SELECTION =====
+    Rx<DateTime> selectedDate = DateTime.now().obs;
+    RxList<DateTime> dateRange = <DateTime>[].obs;
+    RxBool isDateFilterActive = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    generateDateRange();
-    fetchFavourites();
-  }
-
-  // Generate 4 months of dates: 2 months before today + 2 months after today
-  void generateDateRange() {
-    dateRange.clear();
-    final today = DateTime.now();
-
-    // Generate 60 days BEFORE today (previous 2 months)
-    for (int i = 60; i > 0; i--) {
-      dateRange.add(today.subtract(Duration(days: i)));
+    @override
+    void onInit() {
+      super.onInit();
+      generateDateRange();
+      fetchFavourites();
     }
 
-    // Add today
-    dateRange.add(today);
+    // Generate 4 months of dates: 2 months before today + 2 months after today
+    void generateDateRange() {
+      dateRange.clear();
+      final today = DateTime.now();
 
-    // Generate 60 days AFTER today (next 2 months)
-    for (int i = 1; i <= 60; i++) {
-      dateRange.add(today.add(Duration(days: i)));
+      // Generate 60 days BEFORE today (previous 2 months)
+      for (int i = 60; i > 0; i--) {
+        dateRange.add(today.subtract(Duration(days: i)));
+      }
+
+      // Add today
+      dateRange.add(today);
+
+      // Generate 60 days AFTER today (next 2 months)
+      for (int i = 1; i <= 60; i++) {
+        dateRange.add(today.add(Duration(days: i)));
+      }
+
+      print('📅 Generated ${dateRange.length} dates for favorites');
     }
 
-    print('📅 Generated ${dateRange.length} dates for favorites');
-  }
+    void selectDate(DateTime date) {
+      print('📅 Favorite date selected: ${DateFormat('yyyy-MM-dd').format(date)}');
 
-  void selectDate(DateTime date) {
-    print('📅 Favorite date selected: ${DateFormat('yyyy-MM-dd').format(date)}');
+      if (isDateFilterActive.value && _isSameDay(selectedDate.value, date)) {
+        // Deactivate filter - show all favorites
+        isDateFilterActive.value = false;
+        print('🔓 Filter deactivated - showing all favorites');
+      } else {
+        // Activate filter - filter by date
+        selectedDate.value = date;
+        isDateFilterActive.value = true;
+        print('✅ Date filter activated: ${DateFormat('yyyy-MM-dd').format(date)}');
+      }
 
-    if (isDateFilterActive.value && _isSameDay(selectedDate.value, date)) {
-      // Deactivate filter - show all favorites
-      isDateFilterActive.value = false;
-      print('🔓 Filter deactivated - showing all favorites');
-    } else {
-      // Activate filter - filter by date
-      selectedDate.value = date;
-      isDateFilterActive.value = true;
-      print('✅ Date filter activated: ${DateFormat('yyyy-MM-dd').format(date)}');
+      applyFilters();
     }
 
-    applyFilters();
-  }
-
-  bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
-
-  void updateSearch(String query) {
-    searchQuery.value = query;
-    applyFilters();
-  }
-
-  void clearSearch() {
-    searchQuery.value = '';
-    applyFilters();
-  }
-
-  void applyFilters() {
-    // ===== FILTER FIXTURES =====
-    var tempFixtures = favouriteFixtures.toList();
-
-    // Apply date filter if active
-    if (isDateFilterActive.value) {
-      tempFixtures = tempFixtures.where((fixture) {
-        final fixtureDate = DateTime(
-          fixture.startingAt.year,
-          fixture.startingAt.month,
-          fixture.startingAt.day,
-        );
-        final selected = DateTime(
-          selectedDate.value.year,
-          selectedDate.value.month,
-          selectedDate.value.day,
-        );
-        return fixtureDate.isAtSameMomentAs(selected);
-      }).toList();
+    bool _isSameDay(DateTime date1, DateTime date2) {
+      return date1.year == date2.year &&
+          date1.month == date2.month &&
+          date1.day == date2.day;
     }
 
-    // Apply search filter
-    if (searchQuery.value.isNotEmpty) {
-      tempFixtures = tempFixtures.where((fixture) {
-        return fixture.homeTeam.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-            fixture.awayTeam.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-            fixture.league.name.toLowerCase().contains(searchQuery.value.toLowerCase());
-      }).toList();
+    void updateSearch(String query) {
+      searchQuery.value = query;
+      applyFilters();
     }
 
-    filteredFixtures.value = tempFixtures;
+    void clearSearch() {
+      searchQuery.value = '';
+      applyFilters();
+    }
 
-    // ===== FILTER LEAGUES =====
-    var tempLeagues = favouriteLeagues.toList();
+    void applyFilters() {
+      // ===== FILTER FIXTURES =====
+      var tempFixtures = favouriteFixtures.toList();
 
-    // Apply date filter for league matches
-    if (isDateFilterActive.value) {
-      tempLeagues = tempLeagues.map((league) {
-        // Filter matches inside this league by date
-        final filteredMatches = league.matches.where((match) {
-          final matchStartingAt = DateTime.tryParse(match['starting_at'] ?? '');
-          if (matchStartingAt == null) return false;
-
-          final matchDate = DateTime(
-            matchStartingAt.year,
-            matchStartingAt.month,
-            matchStartingAt.day,
+      // Apply date filter if active
+      if (isDateFilterActive.value) {
+        tempFixtures = tempFixtures.where((fixture) {
+          final fixtureDate = DateTime(
+            fixture.startingAt.year,
+            fixture.startingAt.month,
+            fixture.startingAt.day,
           );
           final selected = DateTime(
             selectedDate.value.year,
             selectedDate.value.month,
             selectedDate.value.day,
           );
-          return matchDate.isAtSameMomentAs(selected);
+          return fixtureDate.isAtSameMomentAs(selected);
         }).toList();
+      }
 
-        // Return league with filtered matches
-        return FavouriteLeague(
-          id: league.id,
-          leagueId: league.leagueId,
-          leagueName: league.leagueName,
-          leagueLogo: league.leagueLogo,
-          leagueCountry: league.leagueCountry,
-          leagueType: league.leagueType,
-          createdAt: league.createdAt,
-          isFavourite: league.isFavourite,
-          hasMatchesToday: filteredMatches.isNotEmpty,
-          matchesTodayCount: filteredMatches.length,
-          matches: filteredMatches,
+      // Apply search filter
+      if (searchQuery.value.isNotEmpty) {
+        tempFixtures = tempFixtures.where((fixture) {
+          return fixture.homeTeam.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+              fixture.awayTeam.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+              fixture.league.name.toLowerCase().contains(searchQuery.value.toLowerCase());
+        }).toList();
+      }
+
+      filteredFixtures.value = tempFixtures;
+
+      // ===== FILTER LEAGUES =====
+      var tempLeagues = favouriteLeagues.toList();
+
+      // Apply date filter for league matches
+      if (isDateFilterActive.value) {
+        tempLeagues = tempLeagues.map((league) {
+          // Filter matches inside this league by date
+          final filteredMatches = league.matches.where((match) {
+            final matchStartingAt = DateTime.tryParse(match['starting_at'] ?? '');
+            if (matchStartingAt == null) return false;
+
+            final matchDate = DateTime(
+              matchStartingAt.year,
+              matchStartingAt.month,
+              matchStartingAt.day,
+            );
+            final selected = DateTime(
+              selectedDate.value.year,
+              selectedDate.value.month,
+              selectedDate.value.day,
+            );
+            return matchDate.isAtSameMomentAs(selected);
+          }).toList();
+
+          // Return league with filtered matches
+          return FavouriteLeague(
+            id: league.id,
+            leagueId: league.leagueId,
+            leagueName: league.leagueName,
+            leagueLogo: league.leagueLogo,
+            leagueCountry: league.leagueCountry,
+            leagueType: league.leagueType,
+            createdAt: league.createdAt,
+            isFavourite: league.isFavourite,
+            hasMatchesToday: filteredMatches.isNotEmpty,
+            matchesTodayCount: filteredMatches.length,
+            matches: filteredMatches,
+          );
+        }).where((league) => league.matches.isNotEmpty).toList();
+      }
+
+      // Apply search filter to leagues
+      if (searchQuery.value.isNotEmpty) {
+        tempLeagues = tempLeagues.where((league) {
+          final leagueMatch = league.leagueName.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+              league.leagueCountry.toLowerCase().contains(searchQuery.value.toLowerCase());
+
+          // Also search in match names
+          final matchMatch = league.matches.any((match) {
+            final matchName = match['name'] ?? '';
+            return matchName.toLowerCase().contains(searchQuery.value.toLowerCase());
+          });
+
+          return leagueMatch || matchMatch;
+        }).toList();
+      }
+
+      filteredLeagues.value = tempLeagues;
+
+      print('📊 Filtered fixtures count: ${filteredFixtures.length}');
+      print('📊 Filtered leagues count: ${filteredLeagues.length}');
+    }
+
+    Future<void> fetchFavourites() async {
+      try {
+        isLoading.value = true;
+
+        final response = await http.get(
+          Uri.parse(APIEndpoint.userFavorites),
+          headers: {
+            'Authorization': 'Bearer ${UserInfo.getAccessToken()}',
+            'Content-Type': 'application/json',
+          },
         );
-      }).where((league) => league.matches.isNotEmpty).toList();
-    }
 
-    // Apply search filter to leagues
-    if (searchQuery.value.isNotEmpty) {
-      tempLeagues = tempLeagues.where((league) {
-        final leagueMatch = league.leagueName.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-            league.leagueCountry.toLowerCase().contains(searchQuery.value.toLowerCase());
+        print('Favourite API Response: ${response.body}');
 
-        // Also search in match names
-        final matchMatch = league.matches.any((match) {
-          final matchName = match['name'] ?? '';
-          return matchName.toLowerCase().contains(searchQuery.value.toLowerCase());
-        });
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
 
-        return leagueMatch || matchMatch;
-      }).toList();
-    }
+          if (data['success'] == true) {
+            final favouriteResponse = FavouriteResponse.fromJson(data);
+            favouriteFixtures.value = favouriteResponse.fixtures;
+            favouriteTeams.value = favouriteResponse.teams;
 
-    filteredLeagues.value = tempLeagues;
+            // for(var item in favouriteResponse.leagues) {
+            //   if(item.isFavourite) {
+            //     favouriteLeagues.add(item);
+            //   }
+            // }
+             favouriteLeagues.value = favouriteResponse.leagues;
+            totalFavourites.value = favouriteResponse.total;
 
-    print('📊 Filtered fixtures count: ${filteredFixtures.length}');
-    print('📊 Filtered leagues count: ${filteredLeagues.length}');
-  }
+            // Apply initial filters
+            applyFilters();
 
-  Future<void> fetchFavourites() async {
-    try {
-      isLoading.value = true;
-
-      final response = await http.get(
-        Uri.parse(APIEndpoint.userFavorites),
-        headers: {
-          'Authorization': 'Bearer ${UserInfo.getAccessToken()}',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      print('Favourite API Response: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        if (data['success'] == true) {
-          final favouriteResponse = FavouriteResponse.fromJson(data);
-          favouriteFixtures.value = favouriteResponse.fixtures;
-          favouriteTeams.value = favouriteResponse.teams;
-
-          // for(var item in favouriteResponse.leagues) {
-          //   if(item.isFavourite) {
-          //     favouriteLeagues.add(item);
-          //   }
-          // }
-           favouriteLeagues.value = favouriteResponse.leagues;
-          totalFavourites.value = favouriteResponse.total;
-
-          // Apply initial filters
-          applyFilters();
-
-          print('✅ Favourite Fixtures Loaded: ${favouriteFixtures.length}');
-          print('✅ Favourite Leagues Loaded: ${favouriteLeagues.length}');
-          print('✅ Total League Matches: ${favouriteLeagues.fold(0, (sum, league) => sum + league.matches.length)}');
-        }
-      } else {
-        print('❌ Failed to fetch favourites: ${response.statusCode}');
-        SSnackbar.error('Failed to load favourites');
-      }
-    } catch (e) {
-      print('❌ Error fetching favourites: $e');
-      SSnackbar.error('Something went wrong');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> removeFixtureFavourite(int fixtureId) async {
-    try {
-      final response = await http.post(
-        Uri.parse(APIEndpoint.userFavorites),
-        headers: {
-          'Authorization': 'Bearer ${UserInfo.getAccessToken()}',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'type': 'FIXTURE',
-          'fixture_id': fixtureId,
-        }),
-      );
-
-      print('Remove Fixture API Response: ${response.body}');
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          // Remove from standalone fixtures
-          favouriteFixtures.removeWhere((f) => f.id == fixtureId);
-
-          // Also remove from league matches if present
-          for (var league in favouriteLeagues) {
-            league.matches.removeWhere((match) => match['id'] == fixtureId);
+            print('✅ Favourite Fixtures Loaded: ${favouriteFixtures.length}');
+            print('✅ Favourite Leagues Loaded: ${favouriteLeagues.length}');
+            print('✅ Total League Matches: ${favouriteLeagues.fold(0, (sum, league) => sum + league.matches.length)}');
           }
-
-          // Update total
-          totalFavourites.value = favouriteFixtures.length + favouriteLeagues.length;
-
-          // Reapply filters
-          applyFilters();
-
-          SSnackbar.success('Match removed from favourites');
+        } else {
+          print('❌ Failed to fetch favourites: ${response.statusCode}');
+          SSnackbar.error('Failed to load favourites');
         }
-      } else {
-        SSnackbar.error('Failed to remove favourite');
+      } catch (e) {
+        print('❌ Error fetching favourites: $e');
+        SSnackbar.error('Something went wrong');
+      } finally {
+        isLoading.value = false;
       }
-    } catch (e) {
-      print('Error removing favourite: $e');
-      SSnackbar.error('Something went wrong');
+    }
+
+    Future<void> removeFixtureFavourite(int fixtureId) async {
+      try {
+        final response = await http.post(
+          Uri.parse(APIEndpoint.userFavorites),
+          headers: {
+            'Authorization': 'Bearer ${UserInfo.getAccessToken()}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'type': 'FIXTURE',
+            'fixture_id': fixtureId,
+          }),
+        );
+
+        print('Remove Fixture API Response: ${response.body}');
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final data = jsonDecode(response.body);
+          if (data['success'] == true) {
+            // Remove from standalone fixtures
+            favouriteFixtures.removeWhere((f) => f.id == fixtureId);
+
+            // Also remove from league matches if present
+            for (var league in favouriteLeagues) {
+              league.matches.removeWhere((match) => match['id'] == fixtureId);
+            }
+
+            // Update total
+            totalFavourites.value = favouriteFixtures.length + favouriteLeagues.length;
+
+            // Reapply filters
+            applyFilters();
+
+            SSnackbar.success('Match removed from favourites');
+          }
+        } else {
+          SSnackbar.error('Failed to remove favourite');
+        }
+      } catch (e) {
+        print('Error removing favourite: $e');
+        SSnackbar.error('Something went wrong');
+      }
+    }
+
+    Future<void> removeLeagueFavourite(int leagueId) async {
+      try {
+        final response = await http.post(
+          Uri.parse(APIEndpoint.userFavorites),
+          headers: {
+            'Authorization': 'Bearer ${UserInfo.getAccessToken()}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'type': 'LEAGUE',
+            'league_id': leagueId,
+          }),
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final data = jsonDecode(response.body);
+          if (data['success'] == true) {
+            // Remove from main list
+            favouriteLeagues.removeWhere((l) => l.leagueId == leagueId);
+
+            // Update total
+            totalFavourites.value = favouriteFixtures.length + favouriteLeagues.length;
+
+            // Reapply filters
+            applyFilters();
+
+            SSnackbar.success('League removed from favourites');
+          }
+        } else {
+          SSnackbar.error('Failed to remove favourite');
+        }
+      } catch (e) {
+        print('Error removing favourite: $e');
+        SSnackbar.error('Something went wrong');
+      }
     }
   }
-
-  Future<void> removeLeagueFavourite(int leagueId) async {
-    try {
-      final response = await http.post(
-        Uri.parse(APIEndpoint.userFavorites),
-        headers: {
-          'Authorization': 'Bearer ${UserInfo.getAccessToken()}',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'type': 'LEAGUE',
-          'league_id': leagueId,
-        }),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          // Remove from main list
-          favouriteLeagues.removeWhere((l) => l.leagueId == leagueId);
-
-          // Update total
-          totalFavourites.value = favouriteFixtures.length + favouriteLeagues.length;
-
-          // Reapply filters
-          applyFilters();
-
-          SSnackbar.success('League removed from favourites');
-        }
-      } else {
-        SSnackbar.error('Failed to remove favourite');
-      }
-    } catch (e) {
-      print('Error removing favourite: $e');
-      SSnackbar.error('Something went wrong');
-    }
-  }
-}
