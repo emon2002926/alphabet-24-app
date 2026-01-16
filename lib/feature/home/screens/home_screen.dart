@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
         top: true,
         bottom: true,
         child: DefaultTabController(
-          length: 3,
+          length: 2,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [

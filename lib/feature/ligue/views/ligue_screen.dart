@@ -15,7 +15,7 @@ class LigueScreen extends StatelessWidget {
       appBar: SAppBar(title: 'All Ligues', isHomeScreen: true),
       body: SafeArea(
         child: DefaultTabController(
-          length: 3,
+          length: 2,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -528,7 +528,7 @@ class _GroupedMatchCard extends StatelessWidget {
     Color? percentageColor,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 5), // Reduced from 4 to 3
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(6),
@@ -536,22 +536,19 @@ class _GroupedMatchCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Flexible(
-            child: Text(
-              label,
-              style: GoogleFonts.roboto(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: textColor,
-              ),
-              overflow: TextOverflow.ellipsis,
+          Text(
+            label,
+            style: GoogleFonts.roboto(
+              fontSize: 11, // Reduced from 12 to 11
+              fontWeight: FontWeight.w700,
+              color: textColor,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 2), // Reduced from 4 to 2
           Text(
             '${percentage.toStringAsFixed(0)}%',
             style: GoogleFonts.roboto(
-              fontSize: 12,
+              fontSize: 11, // Reduced from 12 to 11
               fontWeight: FontWeight.w600,
               color: percentageColor ?? textColor,
             ),
