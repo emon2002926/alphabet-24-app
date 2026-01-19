@@ -11,6 +11,7 @@
   static const String emailIcon = 'assets/icons/email.png';
   static const String shildIcon = 'assets/icons/shild.png';
   static const String exitIcon = 'assets/icons/exit.png';
+  static const String deleteIcon = 'assets/icons/trash.png';
   static const String noteIcon = 'assets/icons/note.png';
   static const String change = 'assets/icons/change.png';
   static const String lock = 'assets/icons/lock.png';

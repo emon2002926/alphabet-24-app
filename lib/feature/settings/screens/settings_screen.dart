@@ -6,6 +6,7 @@ import 'package:scaffassistant/core/const/string_const/image_path.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
 import 'package:scaffassistant/core/theme/SColor.dart';
 import 'package:scaffassistant/core/theme/text_theme.dart';
+import 'package:scaffassistant/core/universal_widgets/custom_webview_screen.dart';
 import 'package:scaffassistant/feature/settings/controllers/setting_controller.dart';
 import 'package:scaffassistant/routing/route_name.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,10 +22,9 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<SettingsController>();
-
-    const privacyPolicyUrl = 'https://www.example.com/privacy';
-    const helpSupportUrl = 'https://www.example.com/support';
-    const termsConditionsUrl = 'https://www.example.com/terms';
+    const privacyPolicyUrl = 'https://alfabets.wonderailab.com/privacy/';
+    const helpSupportUrl = 'https://alfabets.wonderailab.com/contact';
+    const termsConditionsUrl = 'https://alfabets.wonderailab.com/terms';
     final profileController = Get.put(UserController());
     final profile = profileController.userProfile.value;
     profileController.fetchUserProfile();
@@ -83,10 +83,10 @@ class SettingsScreen extends StatelessWidget {
                 SettingTile(
                   leading: Image.asset(IconPath.notification, width: 30, height: 30),
                   title: 'Terms & Conditions',
-                  onTap: () => launchUrl(
-                    Uri.parse(termsConditionsUrl),
-                    mode: LaunchMode.externalApplication,
-                  ),
+                  onTap: () => Get.to(() => const CustomWebViewScreen(
+                    url: termsConditionsUrl,
+                    title: 'Terms & Conditions',
+                  )),
                   isDarkMode: isDark,
                 ),
 
@@ -100,50 +100,56 @@ class SettingsScreen extends StatelessWidget {
                 SettingTile(
                   leading: Image.asset(IconPath.support, width: 30, height: 30),
                   title: 'Help & Support',
-                  onTap: () => launchUrl(
-                    Uri.parse(helpSupportUrl),
-                    mode: LaunchMode.externalApplication,
-                  ),
+                  onTap: () => Get.to(() => const CustomWebViewScreen(
+                    url: helpSupportUrl,
+                    title: 'Help & Support',
+                  )),
                   isDarkMode: isDark,
                 ),
 
                 SettingTile(
                   leading: Image.asset(IconPath.lock, width: 30, height: 30),
                   title: 'Privacy & Policy',
-                  onTap: () => launchUrl(
-                    Uri.parse(privacyPolicyUrl),
-                    mode: LaunchMode.externalApplication,
-                  ),
+                  onTap: () => Get.to(() => const CustomWebViewScreen(
+                    url: privacyPolicyUrl,
+                    title: 'Privacy Policy',
+                  )),
                   isDarkMode: isDark,
                 ),
 
-                Obx(() => SettingTile(
-                  leading: controller.isDeleting.value
-                      ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(textColor),
-                    ),
-                  )
-                      : Image.asset(IconPath.exitIcon, width: 24, height: 24),
-                  title: 'Delete Account',
-                  onTap: controller.isDeleting.value
-                      ? null
-                      : () {
-                    controller.deleteAccount();
-                  },
-                  isDarkMode: isDark,
+                Obx(() => Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: SettingTile(
+                    leading: controller.isDeleting.value
+                        ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(textColor),
+                      ),
+                    )
+                        : Image.asset(IconPath.deleteIcon, width: 18, height: 18),
+                    title: 'Delete Account',
+                    onTap: controller.isDeleting.value
+                        ? null
+                        : () {
+                      controller.deleteAccount();
+                    },
+                    isDarkMode: isDark,
+                  ),
                 )),
 
-                SettingTile(
-                  leading: Image.asset(IconPath.exitIcon, width: 24, height: 24),
-                  title: 'Logout',
-                  onTap: () {
-                    controller.logOut();
-                  },
-                  isDarkMode: isDark,
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: SettingTile(
+                    leading: Image.asset(IconPath.exitIcon, width: 18, height: 18),
+                    title: 'Logout',
+                    onTap: () {
+                      controller.logOut();
+                    },
+                    isDarkMode: isDark,
+                  ),
                 ),
               ],
             ),
@@ -203,24 +209,32 @@ class SettingsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                profileName ?? 'User Name',
+                // ✅ Check for both null and empty string
+                (profileName != null && profileName.isNotEmpty)
+                    ? profileName
+                    : 'User Name',
                 style: STextTheme.headLineBold().copyWith(fontSize: 18, color: textColor),
               ),
               Text(
-                profileEmail ?? 'Email',
+                // ✅ Check for both null and empty string
+                (profileEmail != null && profileEmail.isNotEmpty)
+                    ? profileEmail
+                    : 'user@email.com',
                 style: STextTheme.subHeadLine().copyWith(color: textColor),
               ),
             ],
           ),
         ),
-        TextButton(
-          onPressed: () => Get.to(() => const SubscriptionScreen()),
-          child: Text('Upgrade', style: STextTheme.headLineBold().copyWith(color: SColor.primary)),
-        )
+        // TextButton(
+        //   onPressed: () => Get.to(() => const SubscriptionScreen()),
+        //   child: Text('Upgrade', style: STextTheme.headLineBold().copyWith(color: SColor.primary)),
+        // )
       ],
     );
   }
 }
+
+
 
 class SettingTile extends StatelessWidget {
   final bool isDarkMode;

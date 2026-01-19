@@ -72,12 +72,21 @@ class AccountController extends GetxController {
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
 
+        try {
+          final favouriteController = Get.find<UserController>();
+          await favouriteController.fetchUserProfile();
+        } catch (e) {
+          print('⚠️ FavouriteController not found or error refreshing: $e');
+        }
+
         SSnackbar.success(
            jsonResponse['message'] ?? 'Profile updated successfully',
         );
 
         // Clear selected picture
         picture.value = null;
+
+
 
         // Disable edit mode
         isEditEnabled.value = false;
