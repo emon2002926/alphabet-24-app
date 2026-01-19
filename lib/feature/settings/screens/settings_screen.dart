@@ -52,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProfileHeader(context, textColor, profile?.fullName, profile?.phoneNumber,profile?.profilePictureUrl),
+                _buildProfileHeader(context, textColor, profile?.fullName, profile?.phoneNumber, profile?.profilePictureUrl),
                 SizedBox(height: DynamicSize.large(context)),
 
                 Text(
@@ -117,12 +117,31 @@ class SettingsScreen extends StatelessWidget {
                   isDarkMode: isDark,
                 ),
 
+                Obx(() => SettingTile(
+                  leading: controller.isDeleting.value
+                      ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(textColor),
+                    ),
+                  )
+                      : Image.asset(IconPath.exitIcon, width: 24, height: 24),
+                  title: 'Delete Account',
+                  onTap: controller.isDeleting.value
+                      ? null
+                      : () {
+                    controller.deleteAccount();
+                  },
+                  isDarkMode: isDark,
+                )),
+
                 SettingTile(
                   leading: Image.asset(IconPath.exitIcon, width: 24, height: 24),
                   title: 'Logout',
                   onTap: () {
-                    UserInfo.clearUserInfo();
-                    Get.offAllNamed(RouteNames.login);
+                    controller.logOut();
                   },
                   isDarkMode: isDark,
                 ),
@@ -135,15 +154,14 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildProfileHeader(BuildContext context, Color textColor,
-      String? profileName, String? profileEmail,String? profilePictureUrl) {
+      String? profileName, String? profileEmail, String? profilePictureUrl) {
     return Row(
       children: [
         CircleAvatar(
           backgroundColor: SColor.primary,
           radius: 20,
           child: ClipOval(
-            child: profilePictureUrl != null &&
-              profilePictureUrl.isNotEmpty
+            child: profilePictureUrl != null && profilePictureUrl.isNotEmpty
                 ? Image.network(
               profilePictureUrl,
               fit: BoxFit.cover,
@@ -185,11 +203,11 @@ class SettingsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                profileName!,
+                profileName ?? 'User Name',
                 style: STextTheme.headLineBold().copyWith(fontSize: 18, color: textColor),
               ),
               Text(
-                profileEmail!,
+                profileEmail ?? 'Email',
                 style: STextTheme.subHeadLine().copyWith(color: textColor),
               ),
             ],

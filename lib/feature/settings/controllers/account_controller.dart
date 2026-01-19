@@ -41,7 +41,7 @@ class AccountController extends GetxController {
 
       // Create multipart request for POST with form-data
       var request = http.MultipartRequest(
-        'POST',
+        'PUT',
         Uri.parse(APIEndpoint.userInfo),
       );
 

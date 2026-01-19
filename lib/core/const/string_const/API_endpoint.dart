@@ -1,5 +1,5 @@
 class APIEndpoint {
-  static const String baseURL = "https://alfabets.dsrt321.online/api/";
+  static const String baseURL = "https://alfabets.wonderailab.com/api/";
 
 
   // Authentication Endpoints

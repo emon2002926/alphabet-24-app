@@ -58,7 +58,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/branding/logo_yellow.png"
+  image_path: "assets/icons/app_icon/app_icon.png"
 
 flutter:
 
