@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SSnackbar {
-  SSnackbar._();
+class CustomSnackbar {
+  CustomSnackbar._();
 
   static void _show(
     String message, {

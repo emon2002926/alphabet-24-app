@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:scaffassistant/feature/auth/screens/update_password.dart';
 
 import '../../../core/const/string_const/API_endpoint.dart';
-import '../../../core/universal_widgets/s_snackbar.dart';
+import '../../../core/universal_widgets/custom_snackbar.dart';
 import '../../../routing/route_name.dart';
 
 
@@ -23,7 +23,7 @@ class ForgetPasswordController extends GetxController {
       );
       print('Response status for forget password: ${response.statusCode} and body: ${response.body}');
       if (response.statusCode == 200) {
-        SSnackbar.success("OTP sent successfully to your email");
+        CustomSnackbar.success("OTP sent successfully to your email");
         Get.toNamed(RouteNames.otpVerification, arguments: {
           'email': email,
           'isSignup': false,
@@ -31,11 +31,11 @@ class ForgetPasswordController extends GetxController {
         });
         isLoading.value = false;
       }else{
-        SSnackbar.error("Failed to send OTP");
+        CustomSnackbar.error("Failed to send OTP");
         isLoading.value = false;
       }
     }catch(e){
-      SSnackbar.error("An error occurred: $e");
+      CustomSnackbar.error("An error occurred: $e");
       isLoading.value = false;
     }
   }
@@ -59,17 +59,17 @@ class ForgetPasswordController extends GetxController {
         final token = result['data']['token'];
 
 
-        SSnackbar.success("OTP verified successfully");
+        CustomSnackbar.success("OTP verified successfully");
         Get.to(
           UpdatePassword(token: token)
         );
         isLoading.value = false;
       }else{
-        SSnackbar.error("Failed to verify OTP");
+        CustomSnackbar.error("Failed to verify OTP");
         isLoading.value = false;
       }
     }catch(e){
-      SSnackbar.error("An error occurred: $e");
+      CustomSnackbar.error("An error occurred: $e");
       isLoading.value = false;
     }
   }
@@ -89,15 +89,15 @@ class ForgetPasswordController extends GetxController {
       print('Response status for reset password: ${response.statusCode} and body: ${response.body}');
 
       if (response.statusCode == 200) {
-        SSnackbar.success("Password reset successfully");
+        CustomSnackbar.success("Password reset successfully");
         Get.offAllNamed(RouteNames.login);
         isLoading.value = false;
       }else{
-        SSnackbar.error("Failed to reset password");
+        CustomSnackbar.error("Failed to reset password");
         isLoading.value = false;
       }
     }catch(e){
-      SSnackbar.error("An error occurred: $e");
+      CustomSnackbar.error("An error occurred: $e");
       isLoading.value = false;
     }
   }

@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
-import 'package:scaffassistant/core/universal_widgets/s_snackbar.dart';
+import 'package:scaffassistant/core/universal_widgets/custom_snackbar.dart';
 
 import '../../../core/user_controller.dart';
 
@@ -33,7 +33,7 @@ class AccountController extends GetxController {
       final token = UserInfo.getAccessToken();
 
       if (token == null || token.isEmpty) {
-        SSnackbar.error('No access token found',
+        CustomSnackbar.error('No access token found',
         );
         isLoading.value = false;
         return;
@@ -79,7 +79,7 @@ class AccountController extends GetxController {
           print('⚠️ FavouriteController not found or error refreshing: $e');
         }
 
-        SSnackbar.success(
+        CustomSnackbar.success(
            jsonResponse['message'] ?? 'Profile updated successfully',
         );
 
@@ -91,23 +91,23 @@ class AccountController extends GetxController {
         // Disable edit mode
         isEditEnabled.value = false;
       } else if (response.statusCode == 401) {
-        SSnackbar.error(
+        CustomSnackbar.error(
          'Unauthorized: Invalid or expired token',
         );
       } else {
         try {
           final jsonResponse = json.decode(response.body);
-          SSnackbar.error(
+          CustomSnackbar.error(
              jsonResponse['message'] ?? 'Failed to update profile',
           );
         } catch (e) {
-          SSnackbar.error(
+          CustomSnackbar.error(
            'Failed to update profile: ${response.statusCode}',
           );
         }
       }
     } catch (e) {
-      SSnackbar.error(
+      CustomSnackbar.error(
        'An error occurred: $e',
 
       );
@@ -130,7 +130,7 @@ class AccountController extends GetxController {
         picture.value = File(image.path);
       }
     } catch (e) {
-      SSnackbar.error(
+      CustomSnackbar.error(
 'Failed to pick image: $e',
       );
     }

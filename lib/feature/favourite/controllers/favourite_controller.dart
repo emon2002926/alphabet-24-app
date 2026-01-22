@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/const/string_const/API_endpoint.dart';
 import '../../../core/local_storage/user_info.dart';
-import '../../../core/universal_widgets/s_snackbar.dart';
+import '../../../core/universal_widgets/custom_snackbar.dart';
 import '../../home/models/live_match_response_model.dart';
 
 
@@ -219,11 +219,11 @@ import '../../home/models/live_match_response_model.dart';
           }
         } else {
           print('❌ Failed to fetch favourites: ${response.statusCode}');
-          SSnackbar.error('Failed to load favourites');
+          CustomSnackbar.error('Failed to load favourites');
         }
       } catch (e) {
         print('❌ Error fetching favourites: $e');
-        SSnackbar.error('Something went wrong');
+        CustomSnackbar.error('Something went wrong');
       } finally {
         isLoading.value = false;
       }
@@ -262,14 +262,14 @@ import '../../home/models/live_match_response_model.dart';
             // Reapply filters
             applyFilters();
 
-            SSnackbar.success('Match removed from favourites');
+            CustomSnackbar.success('Match removed from favourites');
           }
         } else {
-          SSnackbar.error('Failed to remove favourite');
+          CustomSnackbar.error('Failed to remove favourite');
         }
       } catch (e) {
         print('Error removing favourite: $e');
-        SSnackbar.error('Something went wrong');
+        CustomSnackbar.error('Something went wrong');
       }
     }
 
@@ -299,14 +299,14 @@ import '../../home/models/live_match_response_model.dart';
             // Reapply filters
             applyFilters();
 
-            SSnackbar.success('League removed from favourites');
+            CustomSnackbar.success('League removed from favourites');
           }
         } else {
-          SSnackbar.error('Failed to remove favourite');
+          CustomSnackbar.error('Failed to remove favourite');
         }
       } catch (e) {
         print('Error removing favourite: $e');
-        SSnackbar.error('Something went wrong');
+        CustomSnackbar.error('Something went wrong');
       }
     }
   }

@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
 import 'package:scaffassistant/core/helper/api_request/get_request.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
-import '../../../../../core/universal_widgets/s_snackbar.dart';
+import '../../../../../core/universal_widgets/custom_snackbar.dart';
 import '../../../../favourite/controllers/favourite_controller.dart';
 import '../../../models/leage_list_model.dart';
 import 'dart:convert';
@@ -269,7 +269,7 @@ class LeagueListController extends GetxController {
           // ✅ Silently refresh league data in background without showing loading
           _silentlyRefreshLeagueData();
 
-          SSnackbar.success(
+          CustomSnackbar.success(
             targetList[index].isFavorite
                 ? 'League added to favorites'
                 : 'League removed from favorites',
@@ -277,12 +277,12 @@ class LeagueListController extends GetxController {
         }
       } else {
         _revertFavorite(index, useFiltered);
-        SSnackbar.error('Failed to update favorite');
+        CustomSnackbar.error('Failed to update favorite');
       }
     } catch (e) {
       _revertFavorite(index, useFiltered);
       print('Error toggling favorite league: $e');
-      SSnackbar.error('Something went wrong');
+      CustomSnackbar.error('Something went wrong');
     }
   }
 

@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
 import 'package:scaffassistant/core/helper/api_request/get_request.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
-import '../../../../../core/universal_widgets/s_snackbar.dart';
+import '../../../../../core/universal_widgets/custom_snackbar.dart';
 import '../../../../favourite/controllers/favourite_controller.dart';
 import '../../../models/live_match_response_model.dart';
 import 'dart:async';
@@ -288,7 +288,7 @@ import 'leage_list_controller.dart';
             } catch (e) {
               print('⚠️ FavouriteController not found or error refreshing: $e');
             }
-            SSnackbar.success(
+            CustomSnackbar.success(
               targetList[targetIndex].isFavoriteMatch
                   ? 'Added to favorites'
                   : 'Removed from favorites',
@@ -299,7 +299,7 @@ import 'leage_list_controller.dart';
           targetList[targetIndex].isFavoriteMatch = !targetList[targetIndex].isFavoriteMatch;
           targetList.refresh();
           _updateFavoriteInGroups(match.id, targetList[targetIndex].isFavoriteMatch);
-          SSnackbar.error('Failed to update favorite');
+          CustomSnackbar.error('Failed to update favorite');
         }
       } catch (e) {
         // Revert on error
@@ -307,7 +307,7 @@ import 'leage_list_controller.dart';
         targetList.refresh();
         _updateFavoriteInGroups(match.id, targetList[targetIndex].isFavoriteMatch);
         print('Error toggling favorite: $e');
-        SSnackbar.error('Something went wrong');
+        CustomSnackbar.error('Something went wrong');
       }
     }
 
@@ -356,7 +356,7 @@ import 'leage_list_controller.dart';
             } catch (e) {
               print('⚠️ FavouriteController not found or error refreshing: $e');
             }
-            SSnackbar.success(
+            CustomSnackbar.success(
               match.isFavoriteMatch
                   ? 'Added to favorites'
                   : 'Removed from favorites',
@@ -364,12 +364,12 @@ import 'leage_list_controller.dart';
           }
         } else {
           _revertFavoriteInGroup(leagueIndex, matchIndex);
-          SSnackbar.error('Failed to update favorite');
+          CustomSnackbar.error('Failed to update favorite');
         }
       } catch (e) {
         _revertFavoriteInGroup(leagueIndex, matchIndex);
         print('Error toggling favorite: $e');
-        SSnackbar.error('Something went wrong');
+        CustomSnackbar.error('Something went wrong');
       }
     }
 

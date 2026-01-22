@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
 import 'package:scaffassistant/core/local_storage/user_info.dart';
-import 'package:scaffassistant/core/universal_widgets/s_snackbar.dart';
+import 'package:scaffassistant/core/universal_widgets/custom_snackbar.dart';
 
 class ChangePasswordController extends GetxController {
   RxBool isLoading = false.obs;
@@ -27,14 +27,14 @@ class ChangePasswordController extends GetxController {
       print('Response status for change password: ${response.statusCode} and body: ${response.body}');
 
       if (response.statusCode == 200) {
-        SSnackbar.success("Password changed successfully");
+        CustomSnackbar.success("Password changed successfully");
         Get.back();
       } else {
-        SSnackbar.error("Failed to change password");
+        CustomSnackbar.error("Failed to change password");
       }
 
     } catch (e) {
-      SSnackbar.error("An error occurred: $e");
+      CustomSnackbar.error("An error occurred: $e");
     } finally {
       isLoading.value = false;
     }

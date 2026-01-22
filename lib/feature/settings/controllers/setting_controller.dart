@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/const/string_const/API_endpoint.dart';
 import '../../../core/local_storage/user_info.dart';
-import '../../../core/universal_widgets/s_snackbar.dart';
+import '../../../core/universal_widgets/custom_snackbar.dart';
 import '../../../routing/route_name.dart';
 
 import 'dart:convert';
@@ -69,7 +69,7 @@ class SettingsController extends GetxController {
       final token = UserInfo.getAccessToken();
 
       if (token == null || token.isEmpty) {
-        SSnackbar.error('No access token found');
+        CustomSnackbar.error('No access token found');
         isDeleting.value = false;
         return;
       }
@@ -111,7 +111,7 @@ class SettingsController extends GetxController {
         });
 
       } else if (response.statusCode == 401) {
-        SSnackbar.error('Unauthorized: Invalid or expired token');
+        CustomSnackbar.error('Unauthorized: Invalid or expired token');
 
         // Clear invalid token and redirect to login
         UserInfo.clearUserInfo();
@@ -120,26 +120,26 @@ class SettingsController extends GetxController {
       } else if (response.statusCode == 400) {
         try {
           final jsonResponse = json.decode(response.body);
-          SSnackbar.error(
+          CustomSnackbar.error(
             jsonResponse['message'] ?? 'Bad request',
           );
         } catch (e) {
-          SSnackbar.error('Failed to delete account');
+          CustomSnackbar.error('Failed to delete account');
         }
       } else {
         try {
           final jsonResponse = json.decode(response.body);
-          SSnackbar.error(
+          CustomSnackbar.error(
             jsonResponse['message'] ?? 'Failed to delete account',
           );
         } catch (e) {
-          SSnackbar.error(
+          CustomSnackbar.error(
             'Failed to delete account: ${response.statusCode}',
           );
         }
       }
     } catch (e) {
-      SSnackbar.error('An error occurred: $e');
+      CustomSnackbar.error('An error occurred: $e');
     } finally {
       isDeleting.value = false;
     }
@@ -159,7 +159,7 @@ class SettingsController extends GetxController {
 
         // Show success message
         Future.delayed(const Duration(milliseconds: 300), () {
-          SSnackbar.success('Logged out successfully');
+          CustomSnackbar.success('Logged out successfully');
         });
       },
       onCancel: () {

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:scaffassistant/core/universal_widgets/s_snackbar.dart';
+import 'package:scaffassistant/core/universal_widgets/custom_snackbar.dart';
 
 class PostAPIRequest {
   final String url;
@@ -30,13 +30,13 @@ class PostAPIRequest {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data as Map<String, dynamic>;
       } else {
-        SSnackbar.error(response.data['error'] ?? 'An error occurred');
+        CustomSnackbar.error(response.data['error'] ?? 'An error occurred');
         return {};
       }
 
     } catch (e) {
       print('Error during POST request: $e');
-      SSnackbar.error('Server error occurred. Please try again later.');
+      CustomSnackbar.error('Server error occurred. Please try again later.');
       return {};
     }
   }
