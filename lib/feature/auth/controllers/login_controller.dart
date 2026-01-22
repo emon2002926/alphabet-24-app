@@ -1,4 +1,5 @@
-  import 'package:flutter/cupertino.dart';
+  import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
   import 'package:scaffassistant/core/const/string_const/API_endpoint.dart';
   import 'package:scaffassistant/core/helper/api_request/post_request.dart';
@@ -17,44 +18,67 @@ import '../../../routing/route_name.dart';
 
     void login() {
       isLoading.value = true;
+
       PostAPIRequest postAPIRequest = PostAPIRequest(
         url: APIEndpoint.login,
         body: {
           "email": emailController.text.trim(),
           "password": passwordController.text.trim(),
-          "remember_me": true
+          "remember_me": true,
         },
       );
-      postAPIRequest.sendData().then((response) {
-        if (response.isNotEmpty) {
+
+      postAPIRequest.sendData().then((result) {
+        isLoading.value = false;
+
+        final int statusCode = result['statusCode'];
+        final Map<String, dynamic> response = result['data'];
+
+        if (statusCode == 200) {
+          // Extract tokens
           final data = response['data'];
-          final tokens = data != null ? data['tokens'] : null;
-          final accessToken = tokens != null ? tokens['access'] : response['access_token'];
-          if (accessToken != null && accessToken is String && accessToken.isNotEmpty) {
-            print('Login successful. Access Token: $accessToken');
+          final tokens = data?['tokens'];
+          final accessToken = tokens?['access'];
+          final refreshToken = tokens?['refresh'];
+
+          if (accessToken != null && accessToken.isNotEmpty) {
+            // ✅ Save tokens
             UserInfo.setAccessToken(accessToken);
+            // UserInfo.setRefreshToken(refreshToken ?? '');
             UserStatus.setIsLoggedIn(true);
+
+            // Optional: save user info
+            final user = data?['user'];
+            // if (user != null) {
+            //   UserInfo.setUser(user); // Implement this method in your UserInfo
+            // }
+
             Get.offAllNamed(RouteNames.initial);
-            CustomSnackbar.success('Login successful');
-
-            isLoading.value = false;
+            CustomSnackbar.success(response['message'] ?? 'Login successful');
           } else {
-            print('Login failed: access token missing in response');
-            CustomSnackbar.error('Login failed: access token missing');
-
-            isLoading.value = false;
+            CustomSnackbar.error('Invalid token received');
           }
         } else {
-          print('Login failed: Empty response');
-          CustomSnackbar.error('Login failed: Empty response');
-
-          isLoading.value = false;
+          // Show actual server error
+          CustomSnackbar.error(
+            response['error'] ??
+                response['message'] ??
+                'Incorrect email or password',
+          );
         }
-      }).catchError((error) {
-        print('Login error: $error');
-        CustomSnackbar.error('Login error');
-
+      }).catchError((e) {
         isLoading.value = false;
+
+        if (e is DioException && e.response?.data != null) {
+          final errorMsg = e.response?.data['error'] ??
+              e.response?.data['message'] ??
+              'Server error. Please try again.';
+          CustomSnackbar.error(errorMsg);
+        } else {
+          CustomSnackbar.error('Network error. Please try again.');
+        }
+
+        print('Login exception: $e');
       });
     }
   }
