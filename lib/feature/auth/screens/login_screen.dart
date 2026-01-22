@@ -12,104 +12,124 @@ import '../../../core/universal_widgets/s_text_field.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
-  final LoginController loginController = Get.put(LoginController());
 
+  final LoginController loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: SColor.bodyColor,
 
-      // === App Bar === //
-      appBar: PreferredSize(
-        preferredSize: Size(double.infinity, 200),
-        child: AppBar(
-          backgroundColor: SColor.bodyColor,
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: Align(
-            alignment: Alignment.center,
-            child: Image(image: AssetImage(ImagePath.logo), width: 200),
-          ),
-          toolbarHeight: 200,
-        ),
-      ),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: DynamicSize.horizontalLarge(context),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min, // 🔑 important
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
 
-      // === Body === //
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: DynamicSize.horizontalLarge(context)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // === Login Form === //
-              Text(
-                'Sign In',
-                style: STextTheme.headLineBold().copyWith(fontSize: 24),
-              ),
-              SizedBox(
-                height: DynamicSize.medium(context),
-              ),
+                        // === Logo (centered) ===
+                        Align(
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            ImagePath.logo,
+                            width: 200,
+                          ),
+                        ),
 
-              // === Email Fields === //
-              STextField(
-                labelText: 'E-mail',
-                hintText: 'Enter your email',
-                keyboardType: TextInputType.emailAddress,
-                controller: loginController.emailController,
-              ),
-              SizedBox(height: DynamicSize.medium(context)),
+                        const SizedBox(height: 32),
 
-              // === Password Fields === //
-              STextField(
-                labelText: 'Password',
-                hintText: 'Enter your password',
-                obscureText: true,
-                controller: loginController.passwordController,
-                suffixIcon: Icon(Icons.visibility_off, color: SColor.borderColor),
-                changedSuffixIcon: Icon(Icons.visibility, color: SColor.textPrimary),
-              ),
+                        // === Title ===
+                        Text(
+                          'Sign In',
+                          style: STextTheme.headLineBold()
+                              .copyWith(fontSize: 24),
+                        ),
 
-              SizedBox(height: DynamicSize.small(context)),
+                        SizedBox(height: DynamicSize.medium(context)),
 
-              // === Forgot Password === //
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Get.toNamed(RouteNames.mailVerification);
-                  },
-                  child: Text(
-                    'Forgot password?',
-                    style: STextTheme.headLineBold().copyWith(fontSize: 14),
+                        // === Email ===
+                        STextField(
+                          labelText: 'E-mail',
+                          hintText: 'Enter your email',
+                          keyboardType: TextInputType.emailAddress,
+                          controller: loginController.emailController,
+                        ),
+
+                        SizedBox(height: DynamicSize.medium(context)),
+
+                        // === Password ===
+                        STextField(
+                          labelText: 'Password',
+                          hintText: 'Enter your password',
+                          obscureText: true,
+                          controller: loginController.passwordController,
+                          suffixIcon: Icon(
+                            Icons.visibility_off,
+                            color: SColor.borderColor,
+                          ),
+                          changedSuffixIcon: Icon(
+                            Icons.visibility,
+                            color: SColor.textPrimary,
+                          ),
+                        ),
+
+                        SizedBox(height: DynamicSize.small(context)),
+
+                        // === Forgot Password ===
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Get.toNamed(RouteNames.mailVerification);
+                            },
+                            child: Text(
+                              'Forgot password?',
+                              style: STextTheme.headLineBold()
+                                  .copyWith(fontSize: 14),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: DynamicSize.medium(context)),
+
+                        // === Login Button ===
+                        Obx(
+                              () => SFullBtn(
+                            text: loginController.isLoading.value
+                                ? 'Signing In...'
+                                : 'Sign In',
+                            onPressed: loginController.login,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-
-              SizedBox(height: DynamicSize.small(context)),
-
-              // === Login Button === //
-              Obx(()=>SFullBtn(
-                text: loginController.isLoading.value ? 'Signing In...' : 'Sign In',
-                onPressed: () {
-                  loginController.login();
-                },
-              )
-              ),
-
-            ],
-          ),
+            );
+          },
         ),
       ),
+
+      // === Bottom Sheet ===
       bottomSheet: Container(
         width: double.infinity,
-        padding: EdgeInsets.only(bottom: DynamicSize.large(context)),
-        decoration: BoxDecoration(
-          color: SColor.bodyColor,
+        padding: EdgeInsets.only(
+          bottom: DynamicSize.large(context),
         ),
+        color: SColor.bodyColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -118,9 +138,7 @@ class LoginScreen extends StatelessWidget {
               style: STextTheme.headLineBold().copyWith(fontSize: 12),
             ),
             GestureDetector(
-              onTap: () {
-                Get.toNamed(RouteNames.signup);
-              },
+              onTap: () => Get.toNamed(RouteNames.signup),
               child: Text(
                 'Sign Up',
                 style: STextTheme.headLineBold().copyWith(fontSize: 13),
@@ -132,9 +150,4 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
 
