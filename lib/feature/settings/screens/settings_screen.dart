@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/user_controller.dart';
 import '../../auth/screens/password_change_screen.dart';
+import '../../experimental/in_app_purchase/in_app_purchase.dart';
 import '../../subscription/views/subscription_screen.dart';
 import 'account_screen.dart';
 
@@ -113,6 +114,13 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () => Get.to(() => const CustomWebViewScreen(
                     url: privacyPolicyUrl,
                     title: 'Privacy Policy',
+                  )),
+                  isDarkMode: isDark,
+                ),
+                SettingTile(
+                  leading: Image.asset(IconPath.lock, width: 30, height: 30),
+                  title: 'Subscription ',
+                  onTap: () => Get.to(() =>  PremiumScreen(
                   )),
                   isDarkMode: isDark,
                 ),
